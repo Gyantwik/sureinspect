@@ -4,7 +4,7 @@ Bounded storage and session cache managing:
 - Standardized inputs and contour masks as lossless PNG.
 - Photographic overlays, reference previews, and anomaly heatmaps as display-quality JPEG (quality=85).
 - Bounded LRU/TTL cache: 200 MiB total asset bytes, 100 max stored inspections, 30-minute idle TTL.
-- Coherent eviction: inspection metadata and all associated asset payloads are evicted together.
+- Coherent eviction: inspection metadata, associated asset payloads, and idempotency records are evicted together.
 - Audit feedback tracking with idempotency safety, RETAKE rejection, and session ownership enforcement.
 """
 from __future__ import annotations
@@ -12,14 +12,16 @@ from __future__ import annotations
 import collections
 import threading
 import time
-from typing import Dict, Optional, Tuple, Any, List
+import uuid
+from typing import Any
+
 import cv2
 import numpy as np
 from fastapi import HTTPException, status
 
 from backend.schemas import (
-    InspectionResponse,
     FeedbackResponse,
+    InspectionResponse,
 )
 
 # Cache limits
@@ -52,10 +54,11 @@ class StorageManager:
         #   "decision": str,
         #   "created_at": float,
         #   "expires_at": float,
-        #   "asset_ids": List[str],
-        #   "orig_dimensions": Tuple[int, int]
+        #   "asset_ids": list[str],
+        #   "orig_dimensions": tuple[int, int],
+        #   "feedback_keys": list[tuple[str, str]]
         # }
-        self._inspections: collections.OrderedDict[str, Dict[str, Any]] = collections.OrderedDict()
+        self._inspections: collections.OrderedDict[str, dict[str, Any]] = collections.OrderedDict()
 
         # asset_id -> dict with keys:
         # {
@@ -64,13 +67,14 @@ class StorageManager:
         #   "media_type": str,
         #   "inspection_id": str,
         #   "created_at": float,
+        #   "expires_at": float,
         #   "size_bytes": int
         # }
-        self._assets: Dict[str, Dict[str, Any]] = {}
+        self._assets: dict[str, dict[str, Any]] = {}
         self._total_asset_bytes: int = 0
 
-        # (session_token, idempotency_key) -> FeedbackResponse
-        self._feedback_idempotency: Dict[Tuple[str, str], Dict[str, Any]] = {}
+        # (session_token, idempotency_key) -> feedback record
+        self._feedback_idempotency: dict[tuple[str, str], dict[str, Any]] = {}
 
     @property
     def total_bytes(self) -> int:
@@ -83,7 +87,7 @@ class StorageManager:
             return len(self._inspections)
 
     def _purge_expired_locked(self, now: float) -> None:
-        """Removes expired inspections and their orphaned assets."""
+        """Removes expired inspections and their orphaned assets and feedback records."""
         expired_ids = [
             iid for iid, data in self._inspections.items()
             if now > data["expires_at"]
@@ -92,14 +96,18 @@ class StorageManager:
             self._evict_inspection_locked(iid)
 
     def _evict_inspection_locked(self, inspection_id: str) -> None:
-        """Evicts an inspection and all of its associated asset bytes."""
+        """Evicts an inspection, its associated asset bytes, and its feedback idempotency entries."""
         record = self._inspections.pop(inspection_id, None)
         if not record:
             return
+        # Evict all assets and deduct byte size
         for asset_id in record.get("asset_ids", []):
             asset_record = self._assets.pop(asset_id, None)
             if asset_record:
                 self._total_asset_bytes = max(0, self._total_asset_bytes - asset_record["size_bytes"])
+        # Evict all feedback idempotency keys bound to this inspection
+        for cache_key in record.get("feedback_keys", []):
+            self._feedback_idempotency.pop(cache_key, None)
 
     def _ensure_capacity_locked(self, incoming_bytes: int) -> None:
         """Evicts oldest inspections until both count limit and byte limit are satisfied."""
@@ -117,17 +125,34 @@ class StorageManager:
         inspection: InspectionResponse,
         category: str,
         decision: str,
-        assets: Dict[str, Tuple[bytes, str]],
-        orig_dimensions: Optional[Tuple[int, int]] = None,
+        assets: dict[str, tuple[bytes, str]],
+        orig_dimensions: tuple[int, int] | None = None,
     ) -> None:
         """
         Stores an inspection and its associated assets bound to a session.
         assets is a dict mapping asset_id -> (bytes_content, media_type).
         """
-        now = time.time()
         incoming_bytes = sum(len(content) for content, _ in assets.values())
+        if incoming_bytes > self.max_bytes:
+            raise HTTPException(
+                status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                detail={
+                    "code": "PAYLOAD_TOO_LARGE",
+                    "message": (
+                        f"Incoming inspection assets ({incoming_bytes} bytes) exceed "
+                        f"maximum cache capacity of {self.max_bytes} bytes."
+                    ),
+                },
+            )
+
+        now = time.time()
+        expires_at = now + self.ttl_seconds
 
         with self._lock:
+            # Overwrite protection: if inspection_id exists, evict old record and assets first
+            if inspection.inspection_id in self._inspections:
+                self._evict_inspection_locked(inspection.inspection_id)
+
             self._purge_expired_locked(now)
             self._ensure_capacity_locked(incoming_bytes)
 
@@ -140,6 +165,7 @@ class StorageManager:
                     "media_type": media_type,
                     "inspection_id": inspection.inspection_id,
                     "created_at": now,
+                    "expires_at": expires_at,
                     "size_bytes": size,
                 }
                 self._total_asset_bytes += size
@@ -151,18 +177,20 @@ class StorageManager:
                 "category": category,
                 "decision": decision,
                 "created_at": now,
-                "expires_at": now + self.ttl_seconds,
+                "expires_at": expires_at,
                 "asset_ids": asset_ids,
                 "orig_dimensions": orig_dimensions or (0, 0),
+                "feedback_keys": [],
             }
 
     def get_trace(self, inspection_id: str, session_token: str) -> InspectionResponse:
         """
         Retrieves stored inspection trace for owning session.
-        Returns 404 for unknown or non-owned inspection.
+        Returns 404 for unknown, non-owned, or expired inspection.
         """
         now = time.time()
         with self._lock:
+            self._purge_expired_locked(now)
             record = self._inspections.get(inspection_id)
             if not record or now > record["expires_at"]:
                 raise HTTPException(
@@ -179,14 +207,16 @@ class StorageManager:
             self._inspections.move_to_end(inspection_id)
             return record["response"]
 
-    def get_asset(self, asset_id: str, session_token: str) -> Tuple[bytes, str]:
+    def get_asset(self, asset_id: str, session_token: str) -> tuple[bytes, str]:
         """
         Retrieves stored asset bytes for owning session.
-        Returns (data_bytes, media_type) or raises 404.
+        Enforces TTL expiration and returns (data_bytes, media_type) or raises 404.
         """
+        now = time.time()
         with self._lock:
+            self._purge_expired_locked(now)
             record = self._assets.get(asset_id)
-            if not record:
+            if not record or now > record.get("expires_at", 0):
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
                     detail={"code": "NOT_FOUND", "message": "Asset not found"},
@@ -210,6 +240,7 @@ class StorageManager:
         """
         Records human feedback for an inspection.
         Enforces:
+        - Target inspection ownership and existence checked FIRST.
         - Safe repeated idempotency keys.
         - HTTP 409 for conflicting label under same idempotency key.
         - HTTP 400 rejection if user_label is applied on RETAKE or expired inspections.
@@ -217,7 +248,23 @@ class StorageManager:
         """
         now = time.time()
         with self._lock:
-            # Check idempotency
+            self._purge_expired_locked(now)
+
+            # 1. Validate inspection existence and ownership FIRST
+            record = self._inspections.get(inspection_id)
+            if not record or now > record["expires_at"]:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail={"code": "NOT_FOUND", "message": "Target inspection record not found or expired"},
+                )
+
+            if record["session_token"] != session_token:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail={"code": "NOT_FOUND", "message": "Target inspection record not found"},
+                )
+
+            # 2. Check idempotency for this session
             cache_key = (session_token, idempotency_key)
             if cache_key in self._feedback_idempotency:
                 prior = self._feedback_idempotency[cache_key]
@@ -237,21 +284,7 @@ class StorageManager:
                         },
                     )
 
-            # Check inspection existence and ownership
-            record = self._inspections.get(inspection_id)
-            if not record or now > record["expires_at"]:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail={"code": "NOT_FOUND", "message": "Target inspection record not found or expired"},
-                )
-
-            if record["session_token"] != session_token:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail={"code": "NOT_FOUND", "message": "Target inspection record not found"},
-                )
-
-            # Rule: RETAKE inspections cannot receive normal/defect feedback
+            # 3. Rule: RETAKE inspections cannot receive normal/defect feedback
             if record["decision"] == "RETAKE":
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
@@ -261,7 +294,8 @@ class StorageManager:
                     },
                 )
 
-            feedback_id = f"fb_{int(now)}_{idempotency_key[:8]}"
+            # 4. Generate collision-resistant unique feedback ID
+            feedback_id = f"fb_{uuid.uuid4().hex}"
             self._feedback_idempotency[cache_key] = {
                 "feedback_id": feedback_id,
                 "inspection_id": inspection_id,
@@ -269,6 +303,7 @@ class StorageManager:
                 "category": category,
                 "created_at": now,
             }
+            record.setdefault("feedback_keys", []).append(cache_key)
 
             return FeedbackResponse(
                 status="LOGGED",
