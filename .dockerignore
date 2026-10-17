@@ -1,0 +1,15 @@
+.git
+.venv
+.venv-train
+**/__pycache__
+**/node_modules
+frontend/dist
+artifacts
+datasets
+data/visa
+data/VisA*
+eval/results
+docs
+.env
+.env.*
+*.log

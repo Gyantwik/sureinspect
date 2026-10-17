@@ -1,0 +1,16 @@
+/core/                 @Biswabasini90 @Gyantwik
+/train/                @Biswabasini90 @Gyantwik
+/config/               @Biswabasini90 @Gyantwik
+/data/templates/       @Biswabasini90 @P3_CONTRIBUTOR
+/backend/              @Gyantwik @Biswabasini90
+/deploy/               @Gyantwik @Biswabasini90
+/eval/                 @Gyantwik @Biswabasini90
+/data/samples/         @Gyantwik @P3_CONTRIBUTOR
+/frontend/             @P3_CONTRIBUTOR @Gyantwik
+/docs/                 @P3_CONTRIBUTOR @Biswabasini90
+/docs/failure_cases/   @Biswabasini90 @P3_CONTRIBUTOR
+/docs/aws_section.md   @Gyantwik @P3_CONTRIBUTOR
+/.github/              @Biswabasini90 @Gyantwik @P3_CONTRIBUTOR
+/contracts/            @Biswabasini90 @Gyantwik @P3_CONTRIBUTOR
+/backend/schemas.py    @Biswabasini90 @Gyantwik @P3_CONTRIBUTOR
+/core/interfaces.py    @Biswabasini90 @Gyantwik @P3_CONTRIBUTOR

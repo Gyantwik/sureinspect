@@ -1,0 +1,9 @@
+-r requirements.txt
+torch
+torchvision
+onnx
+onnxscript
+scikit-learn
+tqdm
+pandas
+pillow

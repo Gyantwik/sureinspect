@@ -1,0 +1,25 @@
+dataset: visa
+image_max_side: 1024
+categories:
+  - id: pcb1
+    display_name: PCB 1
+    enabled: true
+    backbone: wide_resnet50_2
+    backbone_input: 256
+    bank_images: 200
+    calib_images: 300
+    alpha_pass: 0.20
+    alpha_fail_default: 0.05
+    alpha_fail_options: [0.01, 0.02, 0.05, 0.10]
+    templates: 5
+  - id: cashew
+    display_name: Cashew
+    enabled: false
+    backbone: wide_resnet50_2
+    backbone_input: 256
+    bank_images: 150
+    calib_images: 150
+    alpha_pass: 0.20
+    alpha_fail_default: 0.05
+    alpha_fail_options: [0.02, 0.05, 0.10]
+    templates: 5
