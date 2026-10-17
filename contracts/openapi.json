@@ -1,0 +1,1757 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "SureInspect API",
+    "description": "Explainable, Risk-Controlled Agentic Quality Inspection System",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/health": {
+      "get": {
+        "summary": "Health Check",
+        "operationId": "health_check_api_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/session": {
+      "post": {
+        "summary": "Create Session",
+        "operationId": "create_session_api_session_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionCreateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/categories": {
+      "get": {
+        "summary": "List Categories",
+        "operationId": "list_categories_api_categories_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoriesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/samples": {
+      "get": {
+        "summary": "List Samples",
+        "operationId": "list_samples_api_samples_get",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "pcb1",
+              "title": "Category"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SamplesResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/samples/{sample_id}/image": {
+      "get": {
+        "summary": "Get Sample Image",
+        "operationId": "get_sample_image_api_samples__sample_id__image_get",
+        "parameters": [
+          {
+            "name": "sample_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Sample Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/calibration/{category}": {
+      "get": {
+        "summary": "Get Calibration",
+        "operationId": "get_calibration_api_calibration__category__get",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Category"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalibrationSummaryResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/session/reset": {
+      "post": {
+        "summary": "Reset Session",
+        "operationId": "reset_session_api_session_reset_post",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionResetResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/inspect": {
+      "post": {
+        "summary": "Inspect Part",
+        "operationId": "inspect_part_api_inspect_post",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_inspect_part_api_inspect_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspectionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/trace/{inspection_id}": {
+      "get": {
+        "summary": "Get Trace",
+        "operationId": "get_trace_api_trace__inspection_id__get",
+        "parameters": [
+          {
+            "name": "inspection_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Inspection Id"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspectionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/assets/{asset_id}": {
+      "get": {
+        "summary": "Get Asset",
+        "operationId": "get_asset_api_assets__asset_id__get",
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Asset Id"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/feedback": {
+      "post": {
+        "summary": "Submit Feedback",
+        "operationId": "submit_feedback_api_feedback_post",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeedbackRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AlignmentInfo": {
+        "properties": {
+          "template_id": {
+            "type": "string",
+            "title": "Template Id"
+          },
+          "method": {
+            "type": "string",
+            "title": "Method"
+          },
+          "quality": {
+            "type": "number",
+            "title": "Quality"
+          },
+          "q_min": {
+            "type": "number",
+            "title": "Q Min"
+          },
+          "rotation_deg": {
+            "type": "number",
+            "title": "Rotation Deg"
+          }
+        },
+        "type": "object",
+        "required": [
+          "template_id",
+          "method",
+          "quality",
+          "q_min",
+          "rotation_deg"
+        ],
+        "title": "AlignmentInfo"
+      },
+      "AssetsInfo": {
+        "properties": {
+          "input_standardized": {
+            "type": "string",
+            "title": "Input Standardized"
+          },
+          "reference_aligned": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference Aligned"
+          },
+          "anomaly_heatmap": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Anomaly Heatmap"
+          },
+          "contour_mask": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contour Mask"
+          }
+        },
+        "type": "object",
+        "required": [
+          "input_standardized"
+        ],
+        "title": "AssetsInfo"
+      },
+      "Body_inspect_part_api_inspect_post": {
+        "properties": {
+          "file": {
+            "anyOf": [
+              {
+                "type": "string",
+                "contentMediaType": "application/octet-stream"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File"
+          },
+          "sample_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sample Id"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category",
+            "default": "pcb1"
+          },
+          "simulate_blur": {
+            "type": "boolean",
+            "title": "Simulate Blur",
+            "default": false
+          },
+          "simulate_darken": {
+            "type": "boolean",
+            "title": "Simulate Darken",
+            "default": false
+          },
+          "simulate_glare": {
+            "type": "boolean",
+            "title": "Simulate Glare",
+            "default": false
+          },
+          "alpha_fail": {
+            "type": "number",
+            "title": "Alpha Fail",
+            "default": 0.05
+          }
+        },
+        "type": "object",
+        "title": "Body_inspect_part_api_inspect_post"
+      },
+      "CalibrationInfo": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "frozen_assumption_dependent",
+              "not_applicable_lighting_shift",
+              "not_evaluated"
+            ],
+            "title": "Status"
+          },
+          "claim": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "normal_marginal_upper_tail"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Claim"
+          },
+          "assumptions": {
+            "type": "string",
+            "title": "Assumptions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "assumptions"
+        ],
+        "title": "CalibrationInfo"
+      },
+      "CalibrationSummaryResponse": {
+        "properties": {
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "scope": {
+            "type": "string",
+            "const": "frozen_production",
+            "title": "Scope",
+            "default": "frozen_production"
+          },
+          "t_pass": {
+            "type": "number",
+            "title": "T Pass"
+          },
+          "t_fail": {
+            "type": "number",
+            "title": "T Fail"
+          },
+          "alpha_pass": {
+            "type": "number",
+            "title": "Alpha Pass"
+          },
+          "alpha_fail": {
+            "type": "number",
+            "title": "Alpha Fail"
+          },
+          "n_calib": {
+            "type": "integer",
+            "title": "N Calib"
+          },
+          "report_bundle_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Report Bundle Id"
+          },
+          "evaluation_status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "available"
+            ],
+            "title": "Evaluation Status"
+          },
+          "evaluation_summary": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evaluation Summary"
+          }
+        },
+        "type": "object",
+        "required": [
+          "category",
+          "t_pass",
+          "t_fail",
+          "alpha_pass",
+          "alpha_fail",
+          "n_calib",
+          "evaluation_status"
+        ],
+        "title": "CalibrationSummaryResponse"
+      },
+      "CategoriesResponse": {
+        "properties": {
+          "categories": {
+            "items": {
+              "$ref": "#/components/schemas/CategoryInfo"
+            },
+            "type": "array",
+            "title": "Categories"
+          }
+        },
+        "type": "object",
+        "required": [
+          "categories"
+        ],
+        "title": "CategoriesResponse"
+      },
+      "CategoryInfo": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "display_name": {
+            "type": "string",
+            "title": "Display Name"
+          },
+          "enabled": {
+            "type": "boolean",
+            "title": "Enabled"
+          },
+          "alpha_pass": {
+            "type": "number",
+            "title": "Alpha Pass"
+          },
+          "alpha_fail_default": {
+            "type": "number",
+            "title": "Alpha Fail Default"
+          },
+          "alpha_fail_options": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Alpha Fail Options"
+          },
+          "n_calib": {
+            "type": "integer",
+            "title": "N Calib"
+          },
+          "sample_count": {
+            "type": "integer",
+            "title": "Sample Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "display_name",
+          "enabled",
+          "alpha_pass",
+          "alpha_fail_default",
+          "alpha_fail_options",
+          "n_calib",
+          "sample_count"
+        ],
+        "title": "CategoryInfo"
+      },
+      "CounterfactualItem": {
+        "properties": {
+          "alpha_fail": {
+            "type": "number",
+            "title": "Alpha Fail"
+          },
+          "t_fail": {
+            "type": "number",
+            "title": "T Fail"
+          },
+          "decision": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DecisionEnum"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "decision_path": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DecisionPathEnum"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "needs_rerun": {
+            "type": "boolean",
+            "title": "Needs Rerun",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "alpha_fail",
+          "t_fail"
+        ],
+        "title": "CounterfactualItem"
+      },
+      "DecisionEnum": {
+        "type": "string",
+        "enum": [
+          "PASS",
+          "FAIL",
+          "HUMAN",
+          "RETAKE"
+        ],
+        "title": "DecisionEnum"
+      },
+      "DecisionPathEnum": {
+        "type": "string",
+        "enum": [
+          "QUALITY_REJECTED",
+          "FAST_PASS",
+          "AGENT_CLEARED",
+          "AGENT_CONFIRMED",
+          "SUSPECTED_DEFECT",
+          "EVIDENCE_CONFLICT",
+          "LIGHTING_SHIFT_REVIEW",
+          "ALIGN_FAILED",
+          "INCONCLUSIVE",
+          "BUDGET_EXHAUSTED"
+        ],
+        "title": "DecisionPathEnum"
+      },
+      "ExperimentalShadowInfo": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "const": "experimental_no_calibration_claim",
+            "title": "Status"
+          },
+          "shadow_version": {
+            "type": "string",
+            "title": "Shadow Version"
+          },
+          "score": {
+            "type": "number",
+            "title": "Score"
+          },
+          "shadow_t_pass": {
+            "type": "number",
+            "title": "Shadow T Pass"
+          },
+          "shadow_t_fail": {
+            "type": "number",
+            "title": "Shadow T Fail"
+          },
+          "approximate": {
+            "type": "boolean",
+            "title": "Approximate"
+          },
+          "note": {
+            "type": "string",
+            "title": "Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "shadow_version",
+          "score",
+          "shadow_t_pass",
+          "shadow_t_fail",
+          "approximate",
+          "note"
+        ],
+        "title": "ExperimentalShadowInfo"
+      },
+      "FeedbackRequest": {
+        "properties": {
+          "inspection_id": {
+            "type": "string",
+            "title": "Inspection Id"
+          },
+          "user_label": {
+            "type": "string",
+            "enum": [
+              "NORMAL",
+              "DEFECT"
+            ],
+            "title": "User Label"
+          },
+          "idempotency_key": {
+            "type": "string",
+            "title": "Idempotency Key"
+          }
+        },
+        "type": "object",
+        "required": [
+          "inspection_id",
+          "user_label",
+          "idempotency_key"
+        ],
+        "title": "FeedbackRequest"
+      },
+      "FeedbackResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "LOGGED",
+              "UPDATED",
+              "DUPLICATE"
+            ],
+            "title": "Status"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "scope": {
+            "type": "string",
+            "enum": [
+              "audit_only",
+              "session_shadow"
+            ],
+            "title": "Scope",
+            "default": "audit_only"
+          },
+          "production_changed": {
+            "type": "boolean",
+            "title": "Production Changed",
+            "default": false
+          },
+          "patches_added": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Patches Added"
+          },
+          "new_t_pass": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "New T Pass"
+          },
+          "new_t_fail": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "New T Fail"
+          },
+          "rescore": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rescore"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "message"
+        ],
+        "title": "FeedbackResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "healthy",
+              "degraded",
+              "unhealthy"
+            ],
+            "title": "Status"
+          },
+          "engine": {
+            "type": "string",
+            "enum": [
+              "live",
+              "mock"
+            ],
+            "title": "Engine"
+          },
+          "model_version": {
+            "type": "string",
+            "title": "Model Version"
+          },
+          "enabled_categories": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Enabled Categories"
+          },
+          "loaded_categories": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Loaded Categories"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "engine",
+          "model_version",
+          "enabled_categories",
+          "loaded_categories"
+        ],
+        "title": "HealthResponse"
+      },
+      "ImageMetadata": {
+        "properties": {
+          "original_size": {
+            "prefixItems": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "type": "array",
+            "maxItems": 2,
+            "minItems": 2,
+            "title": "Original Size"
+          },
+          "standardized_size": {
+            "prefixItems": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "type": "array",
+            "maxItems": 2,
+            "minItems": 2,
+            "title": "Standardized Size"
+          },
+          "scale_x": {
+            "type": "number",
+            "title": "Scale X"
+          },
+          "scale_y": {
+            "type": "number",
+            "title": "Scale Y"
+          }
+        },
+        "type": "object",
+        "required": [
+          "original_size",
+          "standardized_size",
+          "scale_x",
+          "scale_y"
+        ],
+        "title": "ImageMetadata"
+      },
+      "InspectionResponse": {
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "const": "1.0",
+            "title": "Schema Version",
+            "default": "1.0"
+          },
+          "inspection_id": {
+            "type": "string",
+            "title": "Inspection Id"
+          },
+          "request_id": {
+            "type": "string",
+            "title": "Request Id"
+          },
+          "timestamp": {
+            "type": "string",
+            "title": "Timestamp"
+          },
+          "engine": {
+            "type": "string",
+            "enum": [
+              "live",
+              "mock"
+            ],
+            "title": "Engine"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "snapshot": {
+            "$ref": "#/components/schemas/SnapshotInfo"
+          },
+          "image": {
+            "$ref": "#/components/schemas/ImageMetadata"
+          },
+          "decision": {
+            "$ref": "#/components/schemas/DecisionEnum"
+          },
+          "decision_path": {
+            "$ref": "#/components/schemas/DecisionPathEnum"
+          },
+          "suggested_decision": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "PASS",
+                  "FAIL"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suggested Decision"
+          },
+          "anomaly_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Anomaly Score"
+          },
+          "thresholds": {
+            "$ref": "#/components/schemas/ThresholdsInfo"
+          },
+          "calibration": {
+            "$ref": "#/components/schemas/CalibrationInfo"
+          },
+          "quality_gate": {
+            "$ref": "#/components/schemas/QualityGateResult"
+          },
+          "alignment": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AlignmentInfo"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "measurements": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MeasurementStats"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "assets": {
+            "$ref": "#/components/schemas/AssetsInfo"
+          },
+          "execution_trace": {
+            "items": {
+              "$ref": "#/components/schemas/TraceStep"
+            },
+            "type": "array",
+            "title": "Execution Trace"
+          },
+          "steps_used": {
+            "type": "integer",
+            "title": "Steps Used"
+          },
+          "step_budget": {
+            "type": "integer",
+            "title": "Step Budget",
+            "default": 4
+          },
+          "timing_ms": {
+            "$ref": "#/components/schemas/TimingInfo"
+          },
+          "grounded_report": {
+            "type": "string",
+            "title": "Grounded Report"
+          },
+          "counterfactuals": {
+            "items": {
+              "$ref": "#/components/schemas/CounterfactualItem"
+            },
+            "type": "array",
+            "title": "Counterfactuals"
+          },
+          "experimental_shadow": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ExperimentalShadowInfo"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "inspection_id",
+          "request_id",
+          "timestamp",
+          "engine",
+          "category",
+          "snapshot",
+          "image",
+          "decision",
+          "decision_path",
+          "thresholds",
+          "calibration",
+          "quality_gate",
+          "assets",
+          "execution_trace",
+          "steps_used",
+          "timing_ms",
+          "grounded_report"
+        ],
+        "title": "InspectionResponse"
+      },
+      "MeasurementStats": {
+        "properties": {
+          "roi_bbox": {
+            "prefixItems": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "type": "array",
+            "maxItems": 4,
+            "minItems": 4,
+            "title": "Roi Bbox"
+          },
+          "roi_source": {
+            "type": "string",
+            "enum": [
+              "threshold",
+              "peak_fallback"
+            ],
+            "title": "Roi Source"
+          },
+          "rois_checked": {
+            "type": "integer",
+            "title": "Rois Checked"
+          },
+          "rois_total": {
+            "type": "integer",
+            "title": "Rois Total"
+          },
+          "residual_mean": {
+            "type": "number",
+            "title": "Residual Mean"
+          },
+          "r_low": {
+            "type": "number",
+            "title": "R Low"
+          },
+          "r_high": {
+            "type": "number",
+            "title": "R High"
+          },
+          "area_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area Pct"
+          },
+          "area_denominator": {
+            "type": "string",
+            "enum": [
+              "image",
+              "part_mask"
+            ],
+            "title": "Area Denominator",
+            "default": "image"
+          },
+          "elongation": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Elongation"
+          },
+          "shape_class": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "elongated",
+                  "compact",
+                  "irregular"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shape Class"
+          }
+        },
+        "type": "object",
+        "required": [
+          "roi_bbox",
+          "roi_source",
+          "rois_checked",
+          "rois_total",
+          "residual_mean",
+          "r_low",
+          "r_high"
+        ],
+        "title": "MeasurementStats"
+      },
+      "QualityGateResult": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "PASSED",
+              "FAILED"
+            ],
+            "title": "Status"
+          },
+          "action": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "REQUEST_RETAKE"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Action"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "blur_variance": {
+            "type": "number",
+            "title": "Blur Variance"
+          },
+          "blur_threshold": {
+            "type": "number",
+            "title": "Blur Threshold"
+          },
+          "dark_fraction": {
+            "type": "number",
+            "title": "Dark Fraction"
+          },
+          "bright_fraction": {
+            "type": "number",
+            "title": "Bright Fraction"
+          },
+          "glare_fraction": {
+            "type": "number",
+            "title": "Glare Fraction"
+          },
+          "glare_threshold": {
+            "type": "number",
+            "title": "Glare Threshold"
+          },
+          "l_mean": {
+            "type": "number",
+            "title": "L Mean"
+          },
+          "exposure_ok": {
+            "type": "boolean",
+            "title": "Exposure Ok"
+          },
+          "lighting_shift_detected": {
+            "type": "boolean",
+            "title": "Lighting Shift Detected"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "reason",
+          "blur_variance",
+          "blur_threshold",
+          "dark_fraction",
+          "bright_fraction",
+          "glare_fraction",
+          "glare_threshold",
+          "l_mean",
+          "exposure_ok",
+          "lighting_shift_detected"
+        ],
+        "title": "QualityGateResult"
+      },
+      "SampleItem": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "display_name": {
+            "type": "string",
+            "title": "Display Name"
+          },
+          "ground_truth": {
+            "type": "string",
+            "enum": [
+              "good",
+              "bad"
+            ],
+            "title": "Ground Truth"
+          },
+          "attribution": {
+            "type": "string",
+            "title": "Attribution"
+          },
+          "image_url": {
+            "type": "string",
+            "title": "Image Url"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "category",
+          "display_name",
+          "ground_truth",
+          "attribution",
+          "image_url"
+        ],
+        "title": "SampleItem"
+      },
+      "SamplesResponse": {
+        "properties": {
+          "samples": {
+            "items": {
+              "$ref": "#/components/schemas/SampleItem"
+            },
+            "type": "array",
+            "title": "Samples"
+          }
+        },
+        "type": "object",
+        "required": [
+          "samples"
+        ],
+        "title": "SamplesResponse"
+      },
+      "SessionCreateResponse": {
+        "properties": {
+          "session_token": {
+            "type": "string",
+            "title": "Session Token"
+          },
+          "expires_at": {
+            "type": "string",
+            "title": "Expires At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "session_token",
+          "expires_at"
+        ],
+        "title": "SessionCreateResponse"
+      },
+      "SessionResetResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "RESET"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "Shadow state cleared"
+          },
+          "snapshot_id": {
+            "type": "string",
+            "title": "Snapshot Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "snapshot_id"
+        ],
+        "title": "SessionResetResponse"
+      },
+      "SnapshotInfo": {
+        "properties": {
+          "model_version": {
+            "type": "string",
+            "title": "Model Version"
+          },
+          "bank_version": {
+            "type": "string",
+            "title": "Bank Version"
+          },
+          "calibration_version": {
+            "type": "string",
+            "title": "Calibration Version"
+          },
+          "policy_version": {
+            "type": "string",
+            "title": "Policy Version"
+          }
+        },
+        "type": "object",
+        "required": [
+          "model_version",
+          "bank_version",
+          "calibration_version",
+          "policy_version"
+        ],
+        "title": "SnapshotInfo"
+      },
+      "ThresholdsInfo": {
+        "properties": {
+          "t_pass": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "T Pass"
+          },
+          "t_fail": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "T Fail"
+          },
+          "alpha_pass": {
+            "type": "number",
+            "title": "Alpha Pass"
+          },
+          "alpha_fail": {
+            "type": "number",
+            "title": "Alpha Fail"
+          },
+          "n_calib": {
+            "type": "integer",
+            "title": "N Calib"
+          }
+        },
+        "type": "object",
+        "required": [
+          "alpha_pass",
+          "alpha_fail",
+          "n_calib"
+        ],
+        "title": "ThresholdsInfo"
+      },
+      "TimingInfo": {
+        "properties": {
+          "quality": {
+            "type": "number",
+            "title": "Quality"
+          },
+          "perception": {
+            "type": "number",
+            "title": "Perception"
+          },
+          "tools": {
+            "type": "number",
+            "title": "Tools"
+          },
+          "total": {
+            "type": "number",
+            "title": "Total"
+          }
+        },
+        "type": "object",
+        "required": [
+          "quality",
+          "perception",
+          "tools",
+          "total"
+        ],
+        "title": "TimingInfo"
+      },
+      "ToolEnum": {
+        "type": "string",
+        "enum": [
+          "SIMULATED_DEGRADATION",
+          "QUALITY_GATE",
+          "PATCHCORE_PERCEPTION",
+          "T1_ALIGN_REFERENCE",
+          "T2_ROI_COMPARE",
+          "T3_ROI_ZOOM_MEASURE",
+          "T4_LIGHT_NORMALIZE",
+          "T5_NEXT_ROI_COMPARE"
+        ],
+        "title": "ToolEnum"
+      },
+      "TraceStep": {
+        "properties": {
+          "step": {
+            "type": "integer",
+            "title": "Step"
+          },
+          "tool": {
+            "$ref": "#/components/schemas/ToolEnum"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "counts_toward_budget": {
+            "type": "boolean",
+            "title": "Counts Toward Budget"
+          },
+          "duration_ms": {
+            "type": "number",
+            "title": "Duration Ms"
+          },
+          "overlay_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Overlay Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "step",
+          "tool",
+          "reason",
+          "status",
+          "counts_toward_budget",
+          "duration_ms"
+        ],
+        "title": "TraceStep"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
