@@ -292,9 +292,17 @@ def test_percentile_fit_outlier_resistance_and_small_n_fallback():
     assert th_without_outlier["blur_fit_method"] == "percentile_1"
 
     # Outlier has Laplacian variance 0.0. If minimum were used, blur_thr would floor to 10.0.
-    # Because 1st percentile of 30 items interpolates above the single outlier, blur_thr
-    # remains robustly above 10.0 and close to the threshold without the outlier.
-    assert th_with_outlier["blur_thr"] > 15.0
+    # At N=30, 1st percentile linearly interpolates at index 0.29 between 0.0 and lowest normal.
+    # Verify the exact expected mathematical ratio against the no-outlier threshold:
+    ratio_30 = th_with_outlier["blur_thr"] / th_without_outlier["blur_thr"]
+    assert 0.25 <= ratio_30 <= 0.35, f"Expected ratio near 0.29, got {ratio_30:.3f}"
+
+    # For standard N >= 100 development batches, 1st percentile filters out 1 outlier:
+    normals_100 = [make_clean_image(seed=i) for i in range(100)]
+    th_100_outlier = fit_gate_thresholds([flat_outlier] + normals_100)
+    th_100_clean = fit_gate_thresholds(normals_100)
+    ratio_100 = th_100_outlier["blur_thr"] / th_100_clean["blur_thr"]
+    assert ratio_100 >= 0.99, f"Expected 1st percentile to be >= 99% retained at N=101, got {ratio_100:.3f}"
 
     # Small N (< 20) falls back to min_small_n
     th_small = fit_gate_thresholds(normals_29[:15])
@@ -353,6 +361,23 @@ def test_fit_and_report_100_clean_normals():
     assert th["n_fit"] == 100
     assert th["gate_version"] == "v1.0"
     assert th["blur_fit_method"] == "percentile_1"
+
+
+def test_out_of_sample_held_out_rejection_rate():
+    """
+    Evaluates false rejection rate on a held-out set of 100 clean normals
+    never seen during fitting (out-of-sample generalization).
+    Must remain below the 2.0% false rejection budget.
+    """
+    train_normals = [make_clean_image(seed=i) for i in range(100)]
+    held_out_normals = [make_clean_image(seed=1000 + i) for i in range(100)]
+
+    th = fit_gate_thresholds(train_normals)
+    report = gate_reject_report(held_out_normals, th)
+
+    assert report["n"] == 100
+    assert report["n_rejected"] <= 2
+    assert report["reject_rate"] < 0.02
 
 
 def test_extra_keys_in_thresholds_tolerated(clean_normals, fitted_thresholds):
