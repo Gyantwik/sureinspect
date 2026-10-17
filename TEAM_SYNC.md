@@ -10,7 +10,7 @@
 | Role | Assigned Developer | Branch | Current Status |
 | :--- | :--- | :--- | :--- |
 | **Person 1 (OpenCV & ML Lead)** | `@Biswabasini90` | `feat/core-opencv` | **Ready to start** (scaffolding & data contracts ready on main) |
-| **Person 2 (Backend & AWS Lead)** | `@Gyantwik` (Owner) | `main` | **COMPLETED: Day 1 Contract, Mock Engine, Quality Gate & Degradations (PR #1 Merged)** |
+| **Person 2 (Backend & AWS Lead)** | `@Gyantwik` (Owner) | `main` | **COMPLETED: Full P2 Lifecycle (Contracts, Gate, Queue, Storage, Eval, Deploy - PR #1 & PR #2 Merged)** |
 | **Person 3 (Frontend & Docs Lead)** | `@Khushbu656` | `feat/frontend-scaffold` | **Ready to start** (OpenAPI spec, fixtures, and pins verified on main) |
 
 ---
@@ -47,6 +47,13 @@
 * [x] **Rejection Reporting:** Pure `gate_reject_report` and `fit_and_report` with verified out-of-sample false rejection rate $< 2.0\%$.
 * [x] **Deterministic Degradations (`core/degrade.py`):** Fixed diagonal motion blur kernel, gamma darken curve, and content-hash seeded glare blob with canonical execution ordering (`blur` $\rightarrow$ `darken` $\rightarrow$ `glare`).
 * [x] **Pinned Dependencies:** `fastapi==0.143.3`, `starlette==1.8.0`, `pydantic==2.14.1`, `opencv-python-headless==5.0.0.93` locked and verified on `main`.
+
+### 2.4 Bounded Queue, Storage Engine, Sample Catalog, Eval Suite & AWS Deployment (PR #2 Merged)
+* [x] **Upload Limiter & Decompression Bomb Guard (`backend/admission.py`):** 10 MiB limit while streaming chunks, PNG/JPEG magic bytes, 25 MP ceiling (`OPENCV_IO_MAX_IMAGE_PIXELS=25000000`), bounded async admission queue (max 1 running, 4 queued, HTTP 503 on saturation).
+* [x] **Bounded LRU/TTL Storage Cache (`backend/storage.py`):** 200 MiB byte limit, 100 inspections, 30-min idle TTL, lossless PNG & display JPEG encoding, session ownership protection, feedback idempotency.
+* [x] **Curated Demo Samples (`data/samples/`):** `manifest.json` and 4 sample PCB PNGs covering FAST_PASS, AGENT_CONFIRMED, HUMAN_REVIEW, and QUALITY_REJECTED demo roles with VisA attribution.
+* [x] **Evaluation Protocols (`eval/`):** E1 Baseline runner (`run_baseline.py`), E1 Agent runner (`run_agent.py`), E2 Calibration split sensitivity analysis (`run_calibration_splits.py`), E3 Robustness evaluation (`run_corruptions.py`), Wilson 95% CIs and Clopper-Pearson exact bounds.
+* [x] **Docker & AWS Deployment Specifications (`deploy/`, `docs/aws_section.md`):** Multi-stage Dockerfile (Node 24 + Python 3.11), Caddy TLS reverse proxy, Docker Compose, EC2 Graviton setup script, and AWS architecture/security/cost report.
 
 ---
 
