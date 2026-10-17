@@ -100,18 +100,19 @@
         }
       }
     },
-    "/api/samples/{sample_id}/image": {
+    "/api/samples/{id}/image": {
       "get": {
         "summary": "Get Sample Image",
-        "operationId": "get_sample_image_api_samples__sample_id__image_get",
+        "description": "Allowlisted lookup for curated samples; rejects unknown IDs with 404 without touching filesystem.",
+        "operationId": "get_sample_image_api_samples__id__image_get",
         "parameters": [
           {
-            "name": "sample_id",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string",
-              "title": "Sample Id"
+              "title": "Id"
             }
           }
         ],
@@ -277,18 +278,19 @@
         }
       }
     },
-    "/api/trace/{inspection_id}": {
+    "/api/trace/{id}": {
       "get": {
         "summary": "Get Trace",
-        "operationId": "get_trace_api_trace__inspection_id__get",
+        "description": "Protected trace lookup. Non-owned or unknown returns identical 404.",
+        "operationId": "get_trace_api_trace__id__get",
         "parameters": [
           {
-            "name": "inspection_id",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string",
-              "title": "Inspection Id"
+              "title": "Id"
             }
           },
           {
@@ -332,18 +334,19 @@
         }
       }
     },
-    "/api/assets/{asset_id}": {
+    "/api/assets/{id}": {
       "get": {
         "summary": "Get Asset",
-        "operationId": "get_asset_api_assets__asset_id__get",
+        "description": "Protected asset lookup. Non-owned or unknown returns identical 404.",
+        "operationId": "get_asset_api_assets__id__get",
         "parameters": [
           {
-            "name": "asset_id",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string",
-              "title": "Asset Id"
+              "title": "Id"
             }
           },
           {
@@ -388,6 +391,7 @@
     "/api/feedback": {
       "post": {
         "summary": "Submit Feedback",
+        "description": "Operator feedback endpoint:\n- Resolves category from stored inspection.\n- Unknown or non-owned inspection returns 404.\n- Rejects RETAKE or expired records.\n- Idempotent: repeated identical key is safe, conflicting reuse is 409.\n- Returns {\"status\": \"LOGGED\", \"scope\": \"audit_only\", \"production_changed\": False}.",
         "operationId": "submit_feedback_api_feedback_post",
         "parameters": [
           {
@@ -572,6 +576,17 @@
             "type": "number",
             "title": "Alpha Fail",
             "default": 0.05
+          },
+          "path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Path"
           }
         },
         "type": "object",
@@ -661,7 +676,8 @@
               "pending",
               "available"
             ],
-            "title": "Evaluation Status"
+            "title": "Evaluation Status",
+            "default": "pending"
           },
           "evaluation_summary": {
             "anyOf": [
@@ -683,8 +699,7 @@
           "t_fail",
           "alpha_pass",
           "alpha_fail",
-          "n_calib",
-          "evaluation_status"
+          "n_calib"
         ],
         "title": "CalibrationSummaryResponse"
       },
@@ -904,11 +919,8 @@
               "UPDATED",
               "DUPLICATE"
             ],
-            "title": "Status"
-          },
-          "message": {
-            "type": "string",
-            "title": "Message"
+            "title": "Status",
+            "default": "LOGGED"
           },
           "scope": {
             "type": "string",
@@ -923,6 +935,17 @@
             "type": "boolean",
             "title": "Production Changed",
             "default": false
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
           },
           "patches_added": {
             "anyOf": [
@@ -970,10 +993,6 @@
           }
         },
         "type": "object",
-        "required": [
-          "status",
-          "message"
-        ],
         "title": "FeedbackResponse"
       },
       "HTTPValidationError": {

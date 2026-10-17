@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "BAD_REQUEST",
+    "message": "Either 'file' or 'sample_id' must be provided.",
+    "request_id": "req_fixture_bad_request"
+  }
+}

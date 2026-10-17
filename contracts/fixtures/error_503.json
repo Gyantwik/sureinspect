@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "SERVICE_UNAVAILABLE",
+    "message": "Model inference queue full or artifacts unavailable",
+    "request_id": "req_fixture_service_unavailable"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "RATE_LIMIT_EXCEEDED",
+    "message": "Rate limit exceeded; please wait before retrying",
+    "request_id": "req_fixture_rate_limit_exceeded"
+  }
+}

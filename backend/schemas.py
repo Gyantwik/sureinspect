@@ -272,10 +272,10 @@ class FeedbackRequest(BaseModel):
 
 
 class FeedbackResponse(BaseModel):
-    status: Literal["LOGGED", "UPDATED", "DUPLICATE"]
-    message: str
+    status: Literal["LOGGED", "UPDATED", "DUPLICATE"] = "LOGGED"
     scope: Literal["audit_only", "session_shadow"] = "audit_only"
     production_changed: bool = False
+    message: Optional[str] = None
     patches_added: Optional[int] = None
     new_t_pass: Optional[float] = None
     new_t_fail: Optional[float] = None
@@ -295,5 +295,5 @@ class CalibrationSummaryResponse(BaseModel):
     alpha_fail: float
     n_calib: int
     report_bundle_id: Optional[str] = None
-    evaluation_status: Literal["pending", "available"]
+    evaluation_status: Literal["pending", "available"] = "pending"
     evaluation_summary: Optional[Dict[str, Any]] = None

@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0",
+  "inspection_id": "insp_fixture_quality_rejected",
+  "request_id": "req_fixture_det",
+  "timestamp": "2026-10-17T12:00:00Z",
+  "engine": "mock",
+  "category": "pcb1",
+  "snapshot": {
+    "model_version": "wrn50_v1_frozen",
+    "bank_version": "coreset_5pct_v1",
+    "calibration_version": "calib_alpha05_v1",
+    "policy_version": "policy_v8_1"
+  },
+  "image": {
+    "original_size": [
+      1024,
+      1024
+    ],
+    "standardized_size": [
+      1024,
+      1024
+    ],
+    "scale_x": 1.0,
+    "scale_y": 1.0
+  },
+  "decision": "RETAKE",
+  "decision_path": "QUALITY_REJECTED",
+  "suggested_decision": null,
+  "anomaly_score": null,
+  "thresholds": {
+    "t_pass": null,
+    "t_fail": null,
+    "alpha_pass": 0.2,
+    "alpha_fail": 0.05,
+    "n_calib": 300
+  },
+  "calibration": {
+    "status": "not_evaluated",
+    "claim": null,
+    "assumptions": "Quality gate rejected frame before anomaly inference"
+  },
+  "quality_gate": {
+    "status": "FAILED",
+    "action": "REQUEST_RETAKE",
+    "reason": "Laplacian variance 42.3 is below category focus threshold 110.0 (image is out of focus)",
+    "blur_variance": 42.3,
+    "blur_threshold": 110.0,
+    "dark_fraction": 0.02,
+    "bright_fraction": 0.01,
+    "glare_fraction": 0.0,
+    "glare_threshold": 0.08,
+    "l_mean": 128.5,
+    "exposure_ok": true,
+    "lighting_shift_detected": false
+  },
+  "alignment": null,
+  "measurements": null,
+  "assets": {
+    "input_standardized": "/api/assets/insp_fixture_quality_rejected_input.png",
+    "reference_aligned": null,
+    "anomaly_heatmap": null,
+    "contour_mask": null
+  },
+  "execution_trace": [
+    {
+      "step": 1,
+      "tool": "QUALITY_GATE",
+      "reason": "Laplacian variance 42.3 < threshold 110.0",
+      "status": "FAILED",
+      "counts_toward_budget": false,
+      "duration_ms": 6.8,
+      "overlay_url": null
+    }
+  ],
+  "steps_used": 0,
+  "step_budget": 4,
+  "timing_ms": {
+    "quality": 6.8,
+    "perception": 0.0,
+    "tools": 0.0,
+    "total": 6.8
+  },
+  "grounded_report": "Quality gate rejected frame due to severe blur (variance 42.3 vs threshold 110.0). No anomaly inference performed.",
+  "counterfactuals": [],
+  "experimental_shadow": null
+}

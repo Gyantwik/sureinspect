@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "PAYLOAD_TOO_LARGE",
+    "message": "Image payload exceeds maximum allowed size of 10 MiB",
+    "request_id": "req_fixture_payload_too_large"
+  }
+}

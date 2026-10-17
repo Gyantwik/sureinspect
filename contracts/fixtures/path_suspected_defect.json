@@ -1,0 +1,174 @@
+{
+  "schema_version": "1.0",
+  "inspection_id": "insp_fixture_suspected_defect",
+  "request_id": "req_fixture_det",
+  "timestamp": "2026-10-17T12:00:00Z",
+  "engine": "mock",
+  "category": "pcb1",
+  "snapshot": {
+    "model_version": "wrn50_v1_frozen",
+    "bank_version": "coreset_5pct_v1",
+    "calibration_version": "calib_alpha05_v1",
+    "policy_version": "policy_v8_1"
+  },
+  "image": {
+    "original_size": [
+      1024,
+      1024
+    ],
+    "standardized_size": [
+      1024,
+      1024
+    ],
+    "scale_x": 1.0,
+    "scale_y": 1.0
+  },
+  "decision": "HUMAN",
+  "decision_path": "SUSPECTED_DEFECT",
+  "suggested_decision": "FAIL",
+  "anomaly_score": 1.85,
+  "thresholds": {
+    "t_pass": 1.21,
+    "t_fail": 2.05,
+    "alpha_pass": 0.2,
+    "alpha_fail": 0.05,
+    "n_calib": 300
+  },
+  "calibration": {
+    "status": "frozen_assumption_dependent",
+    "claim": null,
+    "assumptions": "Statistical calibration bounds not guaranteed under covariate or quality shift"
+  },
+  "quality_gate": {
+    "status": "PASSED",
+    "action": null,
+    "reason": "Focus and illumination within normal limits",
+    "blur_variance": 298.6,
+    "blur_threshold": 110.0,
+    "dark_fraction": 0.02,
+    "bright_fraction": 0.01,
+    "glare_fraction": 0.01,
+    "glare_threshold": 0.08,
+    "l_mean": 130.4,
+    "exposure_ok": true,
+    "lighting_shift_detected": false
+  },
+  "alignment": {
+    "template_id": "template_pcb1_norm03",
+    "method": "ORB+RANSAC_Affine",
+    "quality": 0.88,
+    "q_min": 0.45,
+    "rotation_deg": 0.42
+  },
+  "measurements": {
+    "roi_bbox": [
+      412,
+      180,
+      78,
+      64
+    ],
+    "roi_source": "threshold",
+    "rois_checked": 1,
+    "rois_total": 1,
+    "residual_mean": 0.46,
+    "r_low": 0.15,
+    "r_high": 0.35,
+    "area_pct": 0.48,
+    "area_denominator": "image",
+    "elongation": 1.22,
+    "shape_class": "compact"
+  },
+  "assets": {
+    "input_standardized": "/api/assets/insp_fixture_suspected_defect_input.png",
+    "reference_aligned": "/api/assets/insp_fixture_suspected_defect_ref.png",
+    "anomaly_heatmap": "/api/assets/insp_fixture_suspected_defect_heatmap.png",
+    "contour_mask": "/api/assets/insp_fixture_suspected_defect_mask.png"
+  },
+  "execution_trace": [
+    {
+      "step": 1,
+      "tool": "QUALITY_GATE",
+      "reason": "Focus and illumination within normal limits",
+      "status": "PASSED",
+      "counts_toward_budget": false,
+      "duration_ms": 7.3,
+      "overlay_url": null
+    },
+    {
+      "step": 2,
+      "tool": "PATCHCORE_PERCEPTION",
+      "reason": "Anomaly score 1.85 evaluated against thresholds",
+      "status": "COMPLETED",
+      "counts_toward_budget": false,
+      "duration_ms": 38.4,
+      "overlay_url": "/api/assets/insp_fixture_suspected_defect_heatmap.png"
+    },
+    {
+      "step": 3,
+      "tool": "T1_ALIGN_REFERENCE",
+      "reason": "Register input image with golden reference template",
+      "status": "COMPLETED",
+      "counts_toward_budget": true,
+      "duration_ms": 28.1,
+      "overlay_url": "/api/assets/insp_fixture_suspected_defect_ref.png"
+    },
+    {
+      "step": 4,
+      "tool": "T2_ROI_COMPARE",
+      "reason": "Residual mean 0.46 compared with r_low=0.15, r_high=0.35",
+      "status": "CONFIRMED_ANOMALY",
+      "counts_toward_budget": true,
+      "duration_ms": 18.5,
+      "overlay_url": "/api/assets/insp_fixture_suspected_defect_diff.png"
+    },
+    {
+      "step": 5,
+      "tool": "T3_ROI_ZOOM_MEASURE",
+      "reason": "Contour metrology extracted",
+      "status": "COMPLETED",
+      "counts_toward_budget": true,
+      "duration_ms": 14.2,
+      "overlay_url": "/api/assets/insp_fixture_suspected_defect_mask.png"
+    }
+  ],
+  "steps_used": 3,
+  "step_budget": 4,
+  "timing_ms": {
+    "quality": 7.3,
+    "perception": 38.4,
+    "tools": 60.8,
+    "total": 106.5
+  },
+  "grounded_report": "High structural residual (0.46 > r_high 0.35) detected, but image score 1.85 is within borderline zone (<= t_fail 2.05). Escalated to HUMAN with suggested decision FAIL.",
+  "counterfactuals": [
+    {
+      "alpha_fail": 0.01,
+      "t_fail": 2.48,
+      "decision": "HUMAN",
+      "decision_path": "SUSPECTED_DEFECT",
+      "needs_rerun": false
+    },
+    {
+      "alpha_fail": 0.02,
+      "t_fail": 2.25,
+      "decision": "HUMAN",
+      "decision_path": "SUSPECTED_DEFECT",
+      "needs_rerun": false
+    },
+    {
+      "alpha_fail": 0.05,
+      "t_fail": 2.05,
+      "decision": "HUMAN",
+      "decision_path": "SUSPECTED_DEFECT",
+      "needs_rerun": false
+    },
+    {
+      "alpha_fail": 0.1,
+      "t_fail": 1.82,
+      "decision": "HUMAN",
+      "decision_path": "SUSPECTED_DEFECT",
+      "needs_rerun": false
+    }
+  ],
+  "experimental_shadow": null
+}

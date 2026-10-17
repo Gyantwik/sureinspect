@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "UNSUPPORTED_MEDIA_TYPE",
+    "message": "Unsupported image format; expected PNG or JPEG",
+    "request_id": "req_fixture_unsupported_media_type"
+  }
+}

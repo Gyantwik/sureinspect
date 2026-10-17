@@ -1,0 +1,124 @@
+{
+  "schema_version": "1.0",
+  "inspection_id": "insp_fixture_fast_pass",
+  "request_id": "req_fixture_det",
+  "timestamp": "2026-10-17T12:00:00Z",
+  "engine": "mock",
+  "category": "pcb1",
+  "snapshot": {
+    "model_version": "wrn50_v1_frozen",
+    "bank_version": "coreset_5pct_v1",
+    "calibration_version": "calib_alpha05_v1",
+    "policy_version": "policy_v8_1"
+  },
+  "image": {
+    "original_size": [
+      1024,
+      1024
+    ],
+    "standardized_size": [
+      1024,
+      1024
+    ],
+    "scale_x": 1.0,
+    "scale_y": 1.0
+  },
+  "decision": "PASS",
+  "decision_path": "FAST_PASS",
+  "suggested_decision": null,
+  "anomaly_score": 0.88,
+  "thresholds": {
+    "t_pass": 1.21,
+    "t_fail": 2.05,
+    "alpha_pass": 0.2,
+    "alpha_fail": 0.05,
+    "n_calib": 300
+  },
+  "calibration": {
+    "status": "frozen_assumption_dependent",
+    "claim": "normal_marginal_upper_tail",
+    "assumptions": "Marginal false-FAIL bound holds under exchangeability with training normals"
+  },
+  "quality_gate": {
+    "status": "PASSED",
+    "action": null,
+    "reason": "Focus and illumination within normal parameters",
+    "blur_variance": 310.4,
+    "blur_threshold": 110.0,
+    "dark_fraction": 0.01,
+    "bright_fraction": 0.02,
+    "glare_fraction": 0.01,
+    "glare_threshold": 0.08,
+    "l_mean": 132.1,
+    "exposure_ok": true,
+    "lighting_shift_detected": false
+  },
+  "alignment": null,
+  "measurements": null,
+  "assets": {
+    "input_standardized": "/api/assets/insp_fixture_fast_pass_input.png",
+    "reference_aligned": null,
+    "anomaly_heatmap": "/api/assets/insp_fixture_fast_pass_heatmap.png",
+    "contour_mask": null
+  },
+  "execution_trace": [
+    {
+      "step": 1,
+      "tool": "QUALITY_GATE",
+      "reason": "Verify focus and illumination before perception",
+      "status": "PASSED",
+      "counts_toward_budget": false,
+      "duration_ms": 7.1,
+      "overlay_url": null
+    },
+    {
+      "step": 2,
+      "tool": "PATCHCORE_PERCEPTION",
+      "reason": "Anomaly score 0.88 <= t_pass (1.21); immediate clear pass",
+      "status": "COMPLETED",
+      "counts_toward_budget": false,
+      "duration_ms": 34.2,
+      "overlay_url": "/api/assets/insp_fixture_fast_pass_heatmap.png"
+    }
+  ],
+  "steps_used": 0,
+  "step_budget": 4,
+  "timing_ms": {
+    "quality": 7.1,
+    "perception": 34.2,
+    "tools": 0.0,
+    "total": 41.3
+  },
+  "grounded_report": "Part scored comfortably within normal parameters (score 0.88 <= pass threshold 1.21). Immediate PASS emitted via fast path.",
+  "counterfactuals": [
+    {
+      "alpha_fail": 0.01,
+      "t_fail": 2.48,
+      "decision": "PASS",
+      "decision_path": "FAST_PASS",
+      "needs_rerun": false
+    },
+    {
+      "alpha_fail": 0.02,
+      "t_fail": 2.25,
+      "decision": "PASS",
+      "decision_path": "FAST_PASS",
+      "needs_rerun": false
+    },
+    {
+      "alpha_fail": 0.05,
+      "t_fail": 2.05,
+      "decision": "PASS",
+      "decision_path": "FAST_PASS",
+      "needs_rerun": false
+    },
+    {
+      "alpha_fail": 0.1,
+      "t_fail": 1.82,
+      "decision": "PASS",
+      "decision_path": "FAST_PASS",
+      "needs_rerun": false
+    }
+  ],
+  "experimental_shadow": null
+}

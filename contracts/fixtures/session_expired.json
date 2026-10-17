@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "SESSION_EXPIRED",
+    "message": "Session has expired or is invalid",
+    "request_id": "req_fixture_expired"
+  }
+}

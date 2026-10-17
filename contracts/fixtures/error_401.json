@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "UNAUTHORIZED",
+    "message": "Missing or malformed Authorization header with Bearer token",
+    "request_id": "req_fixture_unauthorized"
+  }
+}

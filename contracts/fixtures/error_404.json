@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "NOT_FOUND",
+    "message": "Inspection not found",
+    "request_id": "req_fixture_not_found"
+  }
+}

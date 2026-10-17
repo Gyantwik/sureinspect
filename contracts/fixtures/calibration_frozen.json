@@ -1,0 +1,12 @@
+{
+  "category": "pcb1",
+  "scope": "frozen_production",
+  "t_pass": 1.21,
+  "t_fail": 2.05,
+  "alpha_pass": 0.2,
+  "alpha_fail": 0.05,
+  "n_calib": 300,
+  "report_bundle_id": null,
+  "evaluation_status": "pending",
+  "evaluation_summary": null
+}

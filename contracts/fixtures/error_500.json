@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "INTERNAL_SERVER_ERROR",
+    "message": "Internal server error",
+    "request_id": "req_fixture_internal_server_error"
+  }
+}
