@@ -15,15 +15,27 @@
 
 ---
 
-## 2. What Has Already Been Done by Person 2 (@Gyantwik)
-* Initialized the GitHub repository and established the `main` branch.
-* Built the unified monorepo directory tree (`core/`, `backend/`, `train/`, `eval/`, `config/`, `data/`, `deploy/`, `docs/`, `.github/`).
-* Created all configuration, environment, and requirements files:
-  * `.gitignore`, `.gitattributes`, `.dockerignore`, `.env.example`
-  * `requirements.txt`, `requirements-dev.txt`, `requirements-train.txt`, `requirements-eval.txt`
-  * `config/categories.yaml` (configured for Amazon VisA `pcb1`)
-* Created CI automation in `.github/workflows/ci.yml` with automated boundary checking (`boundary_check.sh`) and anti-large-file checking (`large_file_check.sh`).
-* Verified initial bootstrap tests and pushed to GitHub `main`.
+## 2. COMPLETED: Basic GitHub & Directory Setup (by Person 2 @Gyantwik)
+
+The entire baseline repository initialization and folder structure has been **fully completed and verified**:
+
+* [x] **GitHub Repository & Main Branch:** Created at `https://github.com/Gyantwik/sureinspect.git` and pushed to `origin/main`.
+* [x] **Complete Directory Setup:** All monorepo folders have been generated with `.gitkeep` and `__init__.py` files:
+  * `/core` & `/core/tests`: OpenCV perception, tools, and agent logic.
+  * `/backend` & `/backend/tests`: FastAPI application, endpoints, and mock engine.
+  * `/train`: Dataset preparation, split freezing, and ONNX export scripts.
+  * `/eval`, `/eval/results`, & `/eval/tests`: Evaluation metrics, tables, and Wilson statistics.
+  * `/config`: Dataset configuration (`categories.yaml` pre-configured for VisA `pcb1`).
+  * `/contracts/fixtures`: Shared OpenAPI specifications and mock payloads.
+  * `/data/templates` & `/data/samples`: Golden references and UI demo samples.
+  * `/deploy`: Multi-stage Dockerfile and AWS EC2 Graviton deployment scripts.
+  * `/docs` & `/docs/failure_cases`: Architecture diagrams, technical reports, and failure analysis (PDF research papers moved here).
+  * `/.github/workflows` & `/.github/scripts`: Automated CI pipeline with boundary checking.
+* [x] **Configuration & Dependencies:** Added `.gitignore`, `.gitattributes`, `.dockerignore`, `.env.example`, `requirements.txt`, `requirements-dev.txt`, `requirements-train.txt`, `requirements-eval.txt`.
+* [x] **CI & Ownership Rules:** P1 (`@Biswabasini90`), P2 (`@Gyantwik`), and P3 mapped in `CODEOWNERS` and CI boundary checker.
+* [x] **Initial Tests:** Verified bootstrap tests passing in `core/tests/test_bootstrap.py`.
+
+> **Note to Person 1 & Person 3:** You do **NOT** need to initialize Git, create directories, or set up `.gitignore`. Everything is ready. Just `git clone` and check out your feature branch!
 
 ---
 
