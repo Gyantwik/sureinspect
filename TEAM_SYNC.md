@@ -9,9 +9,9 @@
 
 | Role | Assigned Developer | Branch | Current Status |
 | :--- | :--- | :--- | :--- |
-| **Person 1 (OpenCV & ML Lead)** | `@Biswabasini90` | `feat/core-opencv` | **Ready to start** (scaffolding & data contracts ready) |
-| **Person 2 (Backend & AWS Lead)** | `@Gyantwik` (Owner) | `feat/backend-contract` | **COMPLETED: Day 1 Contract & Mock Engine** (PR open) |
-| **Person 3 (Frontend & Docs Lead)** | Assigned Contributor | `feat/frontend-scaffold` | **Ready to start** (OpenAPI spec & mock API ready) |
+| **Person 1 (OpenCV & ML Lead)** | `@Biswabasini90` | `feat/core-opencv` | **Ready to start** (scaffolding & data contracts ready on main) |
+| **Person 2 (Backend & AWS Lead)** | `@Gyantwik` (Owner) | `main` | **COMPLETED: Day 1 Contract, Mock Engine, Quality Gate & Degradations (PR #1 Merged)** |
+| **Person 3 (Frontend & Docs Lead)** | `@Khushbu656` | `feat/frontend-scaffold` | **Ready to start** (OpenAPI spec, fixtures, and pins verified on main) |
 
 ---
 
@@ -31,14 +31,22 @@
   * `/docs` & `/docs/failure_cases`: Architecture diagrams, technical reports, and failure analysis (PDF research papers moved here).
   * `/.github/workflows` & `/.github/scripts`: Automated CI pipeline with boundary checking.
 * [x] **Configuration & Dependencies:** Added `.gitignore`, `.gitattributes`, `.dockerignore`, `.env.example`, `requirements*.txt`.
-* [x] **CI & Ownership Rules:** P1 (`@Biswabasini90`), P2 (`@Gyantwik`), and P3 mapped in `CODEOWNERS` and CI boundary checker.
+* [x] **CI & Ownership Rules:** P1 (`@Biswabasini90`), P2 (`@Gyantwik`), and P3 (`@Khushbu656`) mapped in `CODEOWNERS` and CI boundary checker.
 
 ### 2.2 Day 1 API Contract, Mock Engine & OpenAPI Specification
 * [x] **API Schemas (`backend/schemas.py`):** Pydantic v2 models covering all decision enums (`PASS`, `FAIL`, `HUMAN`, `RETAKE`), 10 decision paths, quality gates, measurements, traces, and feedback.
 * [x] **Mock Engine (`backend/mock_service.py`):** Generates realistic traces and overlays for `pcb1` covering all 4 decision outcomes.
 * [x] **FastAPI App Factory (`backend/app_factory.py`):** Provides cryptographic bearer sessions (`POST /api/session`), mock inspection endpoints, sample listings, and feedback logging.
-* [x] **Exported OpenAPI Contract (`contracts/openapi.json`):** 44.7 KB tracked specification ready for Person 3's TypeScript type generator.
-* [x] **Test Verification (`backend/tests/test_api.py`):** 18/18 tests passing across `core/tests`, `backend/tests`, and `eval/tests`.
+* [x] **Exported OpenAPI Contract (`contracts/openapi.json`):** Tracked specification ready for Person 3's TypeScript type generator.
+* [x] **Contract Fixtures (`contracts/fixtures/*.json`):** Complete test fixtures covering all 10 decision paths, error shapes (400, 401, 404, 413, 415, 422, 429, 503, 500), categories, samples, calibration, feedback, and sessions.
+
+### 2.3 Quality Gate & Deterministic Degradation Engine (PR #1 Merged)
+* [x] **Quality Gate (`core/quality_gate.py`):** Focus/blur detection via Laplacian variance, exposure limits (dark/bright fractions), specular glare detection in HSV, and lighting covariate shift detection in CIELAB.
+* [x] **Stub Guard:** `STUB_GATE_VERSION = "stub"` and `assert_live_ready` load-time artifact validator preventing uncalibrated inference.
+* [x] **Robust Fitting:** 1st percentile blur threshold fitting for $N \ge 20$ with small-$N$ minimum fallback and $10.0$ safety floor.
+* [x] **Rejection Reporting:** Pure `gate_reject_report` and `fit_and_report` with verified out-of-sample false rejection rate $< 2.0\%$.
+* [x] **Deterministic Degradations (`core/degrade.py`):** Fixed diagonal motion blur kernel, gamma darken curve, and content-hash seeded glare blob with canonical execution ordering (`blur` $\rightarrow$ `darken` $\rightarrow$ `glare`).
+* [x] **Pinned Dependencies:** `fastapi==0.143.3`, `starlette==1.8.0`, `pydantic==2.14.1`, `opencv-python-headless==5.0.0.93` locked and verified on `main`.
 
 ---
 
@@ -58,8 +66,8 @@ To ensure developers never collide or produce merge conflicts, **each person edi
 | `deploy/` | **Person 2** (`@Gyantwik`) | Dockerfile, AWS EC2 Graviton deployment, Caddy HTTPS setup |
 | `data/samples/` | **Person 2** (`@Gyantwik`) | Curated test samples for web UI demo and manifest |
 | `core/quality_gate.py` & `degrade.py` | **Person 2** (`@Gyantwik`) | Image quality gate and deterministic blur/glare simulations |
-| `frontend/` | **Person 3** | React + Vite + Tailwind CSS 3-panel operator console |
-| `docs/` (general) | **Person 3** | 7-section competition technical report, architecture diagram |
+| `frontend/` | **Person 3** (`@Khushbu656`) | React + Vite + Tailwind CSS 3-panel operator console |
+| `docs/` (general) | **Person 3** (`@Khushbu656`) | 7-section competition technical report, architecture diagram |
 | Root files & `.github/` | **Shared** | Requires review before modifying |
 
 ---
@@ -92,9 +100,17 @@ python -m pip install -r requirements-train.txt
 
 ---
 
-## 5. Instructions for Person 3
+## 5. Instructions for Person 3 (@Khushbu656)
 
-Welcome! The repository setup and backend OpenAPI contracts are already live.
+Welcome! The repository setup, pinned backend dependencies, quality gate engine, and OpenAPI contracts are live on `main`.
+
+### Step 0: Review the API Contract & Fixtures (Informal contract-ok)
+Before generating types, please skim:
+1. `backend/schemas.py` — Pydantic models for decision outcomes, reasons, error shapes, and 10 decision paths.
+2. `contracts/openapi.json` — Frozen OpenAPI 3.1 specification.
+3. `contracts/fixtures/*.json` — Response fixtures covering all 10 decision paths, 401 session expiration, error shapes, feedback, and sample listings.
+
+*Note: `backend/main.py` is deliberately not present yet. You develop the frontend against the mock fixtures in `contracts/fixtures/`. Person 2 adds `backend/main.py` in Step 4 after you merge the generated types.*
 
 ### Step 1: Clone the Repo
 ```bash
