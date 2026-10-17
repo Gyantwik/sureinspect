@@ -20,9 +20,15 @@ import pytest
 
 from core.degrade import apply_degradations
 from core.quality_gate import (
+    BLUR_PERCENTILE,
+    BLUR_VARIANCE_SAFETY_RATIO,
+    STUB_GATE_VERSION,
+    assert_live_ready,
     check_quality,
     compute_frame_metrics,
+    fit_and_report,
     fit_gate_thresholds,
+    gate_reject_report,
     validate_standardized_image,
 )
 
@@ -180,6 +186,7 @@ def test_boundary_equality_behavior():
         "l_mean_ref": metrics["l_mean"],
         "l_mean_sd": 5.0,
         "l_std_ref": metrics["l_std"],
+        "n_fit": 10,
         "gate_version": "test",
     }
     res = check_quality(img, exact_th)
@@ -213,3 +220,151 @@ def test_joint_gate_behavior(clean_normals, fitted_thresholds):
 
         glared, _ = apply_degradations(img, glare=True)
         assert check_quality(glared, fitted_thresholds)["status"] == "FAILED"
+
+
+def test_assert_live_ready_validation(clean_normals, fitted_thresholds):
+    """Verifies that assert_live_ready enforces live-ready artifact requirements."""
+    # 1. Accepts valid fitted thresholds
+    assert_live_ready(fitted_thresholds)
+
+    # 2. Rejects stub gate version
+    stub_th = fit_gate_thresholds(clean_normals[:5], gate_version=STUB_GATE_VERSION)
+    with pytest.raises(ValueError, match="stub"):
+        assert_live_ready(stub_th)
+
+    # 3. Rejects missing key
+    incomplete_th = dict(fitted_thresholds)
+    del incomplete_th["blur_thr"]
+    with pytest.raises(ValueError, match="blur_thr"):
+        assert_live_ready(incomplete_th)
+
+    # 4. Rejects NaN / inf values
+    nan_th = dict(fitted_thresholds)
+    nan_th["l_mean_ref"] = float("nan")
+    with pytest.raises(ValueError, match="finite"):
+        assert_live_ready(nan_th)
+
+    inf_th = dict(fitted_thresholds)
+    inf_th["dark_max"] = float("inf")
+    with pytest.raises(ValueError, match="finite"):
+        assert_live_ready(inf_th)
+
+
+def test_check_quality_raises_value_error_not_key_error(clean_normals, fitted_thresholds):
+    """check_quality must raise ValueError (never bare KeyError) naming the missing/invalid key."""
+    img = clean_normals[0]
+
+    # Non-dict input
+    with pytest.raises(ValueError, match="must be a dict"):
+        check_quality(img, "invalid_th")  # type: ignore
+
+    # Missing required key
+    incomplete_th = dict(fitted_thresholds)
+    del incomplete_th["glare_thr"]
+    with pytest.raises(ValueError, match="glare_thr") as exc_info:
+        check_quality(img, incomplete_th)
+    assert not issubclass(exc_info.type, KeyError) or exc_info.type is ValueError
+
+    # Non-finite value in required numeric field
+    nan_th = dict(fitted_thresholds)
+    nan_th["blur_thr"] = float("nan")
+    with pytest.raises(ValueError, match="blur_thr"):
+        check_quality(img, nan_th)
+
+
+def test_percentile_fit_outlier_resistance_and_small_n_fallback():
+    """
+    Verifies that for N >= 20, 1st percentile avoids collapse from a single extreme outlier,
+    and for N < 20, fallback to minimum is used with appropriate blur_fit_method tags.
+    """
+    assert BLUR_PERCENTILE == 1
+    assert BLUR_VARIANCE_SAFETY_RATIO == 0.70
+
+    normals_29 = [make_clean_image(seed=i) for i in range(29)]
+    # An extreme outlier image (e.g. flat image with near-zero Laplacian variance)
+    flat_outlier = np.full((256, 256, 3), 128, dtype=np.uint8)
+
+    th_with_outlier = fit_gate_thresholds([flat_outlier] + normals_29)
+    assert th_with_outlier["blur_fit_method"] == "percentile_1"
+    assert th_with_outlier["n_fit"] == 30
+
+    th_without_outlier = fit_gate_thresholds(normals_29)
+    assert th_without_outlier["blur_fit_method"] == "percentile_1"
+
+    # Outlier has Laplacian variance 0.0. If minimum were used, blur_thr would floor to 10.0.
+    # Because 1st percentile of 30 items interpolates above the single outlier, blur_thr
+    # remains robustly above 10.0 and close to the threshold without the outlier.
+    assert th_with_outlier["blur_thr"] > 15.0
+
+    # Small N (< 20) falls back to min_small_n
+    th_small = fit_gate_thresholds(normals_29[:15])
+    assert th_small["blur_fit_method"] == "min_small_n"
+    assert th_small["n_fit"] == 15
+
+
+def test_gate_reject_report_consistency(clean_normals, fitted_thresholds):
+    """
+    Verifies that gate_reject_report produces mathematically consistent rejection counts and rates.
+    """
+    # Create a mixed batch: clean images + individual faults + multi-fault images
+    batch = list(clean_normals[:20])
+    blurred_img, _ = apply_degradations(clean_normals[21], blur=True)
+    dark_img = np.full((256, 256, 3), 5, dtype=np.uint8)
+    bright_img = np.full((256, 256, 3), 250, dtype=np.uint8)
+    glare_img, _ = apply_degradations(clean_normals[23], glare=True)
+    # Multi-fault: zero image triggers both blur (variance 0 < thr) and dark (dark_fraction 1.0 > max)
+    multi_fault = np.zeros((256, 256, 3), dtype=np.uint8)
+    batch.extend([blurred_img, dark_img, bright_img, glare_img, multi_fault])
+
+    report = gate_reject_report(batch, fitted_thresholds)
+
+    assert report["n"] == len(batch)
+    assert 0 <= report["n_rejected"] <= report["n"]
+    assert report["reject_rate"] == report["n_rejected"] / report["n"]
+
+    reason_sum = sum(report["per_reason_counts"].values())
+    # Multi-fault images increment multiple reason counters, so reason_sum >= n_rejected
+    assert reason_sum >= report["n_rejected"]
+    assert reason_sum > report["n_rejected"]  # Strictly greater due to multi_fault
+    assert report["per_reason_counts"]["blur"] >= 2
+    assert report["per_reason_counts"]["dark"] >= 2
+    assert report["per_reason_counts"]["bright"] >= 1
+    assert report["per_reason_counts"]["glare"] >= 1
+
+    assert 0 <= report["n_lighting_shift"] <= report["n"]
+    assert report["lighting_shift_rate"] == report["n_lighting_shift"] / report["n"]
+
+    # Empty collection report
+    empty_report = gate_reject_report([], fitted_thresholds)
+    assert empty_report["n"] == 0
+    assert empty_report["n_rejected"] == 0
+    assert empty_report["reject_rate"] == 0.0
+
+
+def test_fit_and_report_100_clean_normals():
+    """
+    fit_and_report on 100 clean normals must have false reject rate < 2.0%.
+    """
+    normals_100 = [make_clean_image(seed=i) for i in range(100)]
+    th, report = fit_and_report(normals_100)
+
+    assert report["n"] == 100
+    assert report["reject_rate"] < 0.02
+    assert th["n_fit"] == 100
+    assert th["gate_version"] == "v1.0"
+    assert th["blur_fit_method"] == "percentile_1"
+
+
+def test_extra_keys_in_thresholds_tolerated(clean_normals, fitted_thresholds):
+    """Extra non-standard keys in thresholds dict must be tolerated without error."""
+    extended_th = dict(fitted_thresholds)
+    extended_th["custom_engine_tag"] = "test_run_42"
+    extended_th["extra_metadata"] = {"batch": 1, "owner": "Gyantwik"}
+
+    res = check_quality(clean_normals[0], extended_th)
+    assert res["status"] == "PASSED"
+
+    report = gate_reject_report([clean_normals[0]], extended_th)
+    assert report["n"] == 1
+    assert report["n_rejected"] == 0
+

@@ -125,3 +125,23 @@ def test_degrade_to_gate_integration_retake():
     assert q_glare["status"] == "FAILED"
     assert q_glare["action"] == "REQUEST_RETAKE"
     assert "Glare pixel fraction" in q_glare["reason"]
+
+
+def test_fixed_effect_ordering():
+    """Effect application order and returned applied list strictly preserve ['blur', 'darken', 'glare']."""
+    img = make_test_frame(seed=105)
+
+    # All three effects: applied list strictly matches ['blur', 'darken', 'glare']
+    _, applied_all = apply_degradations(img, glare=True, blur=True, darken=True)
+    assert applied_all == ["blur", "darken", "glare"]
+
+    # Subsets preserve canonical order
+    _, applied_bg = apply_degradations(img, glare=True, blur=True)
+    assert applied_bg == ["blur", "glare"]
+
+    _, applied_dg = apply_degradations(img, glare=True, darken=True)
+    assert applied_dg == ["darken", "glare"]
+
+    _, applied_bd = apply_degradations(img, darken=True, blur=True)
+    assert applied_bd == ["blur", "darken"]
+

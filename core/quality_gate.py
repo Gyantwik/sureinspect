@@ -14,17 +14,22 @@ Adheres strictly to SureInspect v8.1 specification:
 - Lighting shift flags lighting_shift_detected but does NOT reject the image alone.
 - Rejection (FAILED + REQUEST_RETAKE) occurs only for blur, exposure, or glare violations.
 - Concrete recorded margins used for all fitted thresholds.
+- Live artifacts must call assert_live_ready at load time to prevent stub or corrupt
+  thresholds from serving production inference.
 """
 from __future__ import annotations
 
+import math
 from collections.abc import Sequence
 from typing import Any
 
 import cv2
 import numpy as np
 
-# Concrete safety margins for threshold fitting from development normals
-BLUR_VARIANCE_SAFETY_RATIO = 0.70  # Floor set at 70% of lowest clean normal variance
+# Stub marker and public constants
+STUB_GATE_VERSION = "stub"
+BLUR_PERCENTILE = 1
+BLUR_VARIANCE_SAFETY_RATIO = 0.70  # Safety ratio applied to 1st percentile of normal blur variances
 DARK_FRACTION_MARGIN = 0.05        # 5 percentage points headroom above max normal dark fraction
 BRIGHT_FRACTION_MARGIN = 0.05      # 5 percentage points headroom above max normal bright fraction
 GLARE_FRACTION_MARGIN = 0.03       # 3 percentage points headroom above max normal glare fraction
@@ -34,6 +39,28 @@ DARK_INTENSITY_THRESHOLD = 15      # Pixels < 15 considered dark
 BRIGHT_INTENSITY_THRESHOLD = 240   # Pixels > 240 considered bright
 GLARE_V_THRESHOLD = 240            # HSV Value >= 240
 GLARE_S_THRESHOLD = 35             # HSV Saturation <= 35
+
+REQUIRED_THRESHOLD_KEYS = (
+    "blur_thr",
+    "dark_max",
+    "bright_max",
+    "glare_thr",
+    "l_mean_ref",
+    "l_mean_sd",
+    "l_std_ref",
+    "n_fit",
+    "gate_version",
+)
+
+NUMERIC_THRESHOLD_KEYS = (
+    "blur_thr",
+    "dark_max",
+    "bright_max",
+    "glare_thr",
+    "l_mean_ref",
+    "l_mean_sd",
+    "l_std_ref",
+)
 
 
 def validate_standardized_image(image_std: Any) -> None:
@@ -46,6 +73,48 @@ def validate_standardized_image(image_std: Any) -> None:
         raise ValueError(f"Expected 3-channel BGR image, got shape {image_std.shape}")
     if image_std.shape[0] == 0 or image_std.shape[1] == 0 or image_std.size == 0:
         raise ValueError(f"Image has empty dimensions: {image_std.shape}")
+
+
+def validate_thresholds(thresholds: Any) -> None:
+    """
+    Validates that thresholds dictionary contains all required keys with finite numeric values.
+    Raises ValueError naming any missing or non-finite key. Extra keys are tolerated.
+    """
+    if not isinstance(thresholds, dict):
+        raise ValueError(f"Thresholds must be a dict, got {type(thresholds).__name__}")  # noqa: TRY004
+
+    for key in REQUIRED_THRESHOLD_KEYS:
+        if key not in thresholds:
+            raise ValueError(f"Missing required threshold key: '{key}'")
+
+    for key in NUMERIC_THRESHOLD_KEYS:
+        val = thresholds[key]
+        if not isinstance(val, (int, float, np.number)) or isinstance(val, bool):
+            raise ValueError(f"Threshold '{key}' must be numeric, got {type(val).__name__}")  # noqa: TRY004
+        if not math.isfinite(float(val)):
+            raise ValueError(f"Threshold '{key}' must be finite, got {val}")
+
+    n_fit = thresholds["n_fit"]
+    if not isinstance(n_fit, (int, np.integer)) or isinstance(n_fit, bool) or n_fit < 0:
+        raise ValueError(f"Threshold 'n_fit' must be a non-negative integer, got {n_fit}")
+
+    gate_version = thresholds["gate_version"]
+    if not isinstance(gate_version, str) or not gate_version.strip():
+        raise ValueError(f"Threshold 'gate_version' must be a non-empty string, got {gate_version}")
+
+
+def assert_live_ready(thresholds: dict[str, Any]) -> None:
+    """
+    Asserts that the threshold dictionary is valid for production/live deployment.
+    Raises ValueError if gate_version == 'stub', any key is missing, or any numeric value is non-finite.
+
+    Note: Live artifacts must call assert_live_ready at load time.
+    """
+    validate_thresholds(thresholds)
+    if thresholds["gate_version"] == STUB_GATE_VERSION:
+        raise ValueError(
+            f"Gate version is '{STUB_GATE_VERSION}'; stub thresholds cannot be used in a live-ready artifact."
+        )
 
 
 def compute_frame_metrics(image_std: np.ndarray) -> dict[str, float]:
@@ -93,12 +162,13 @@ def fit_gate_thresholds(
     Returns dict matching Section 3 specification:
       blur_thr, dark_max, bright_max, glare_thr,
       l_mean_ref, l_mean_sd (floored at 2.0 L units),
-      l_std_ref (guarded against zero), n_fit, gate_version
+      l_std_ref (guarded against zero), n_fit, gate_version,
+      blur_fit_method ("percentile_1" or "min_small_n")
     """
     if not images_std:
         raise ValueError("Cannot fit gate thresholds from an empty collection of images.")
 
-    if gate_version == "stub":
+    if gate_version == STUB_GATE_VERSION:
         return {
             "blur_thr": 100.0,
             "dark_max": 0.05,
@@ -108,7 +178,8 @@ def fit_gate_thresholds(
             "l_mean_sd": 2.0,
             "l_std_ref": 20.0,
             "n_fit": len(images_std),
-            "gate_version": "stub",
+            "gate_version": STUB_GATE_VERSION,
+            "blur_fit_method": "stub",
         }
 
     blur_vars = []
@@ -127,9 +198,16 @@ def fit_gate_thresholds(
         l_means.append(metrics["l_mean"])
         l_stds.append(metrics["l_std"])
 
-    # Blur threshold: set at 70% of min clean normal variance (min floor 10.0)
-    min_blur = float(np.min(blur_vars))
-    blur_thr = max(10.0, min_blur * BLUR_VARIANCE_SAFETY_RATIO)
+    n_images = len(images_std)
+    # Robust blur threshold fitting: 1st percentile for N >= 20, min for N < 20
+    if n_images >= 20:
+        blur_fit_method = "percentile_1"
+        base_blur = float(np.percentile(blur_vars, BLUR_PERCENTILE))
+    else:
+        blur_fit_method = "min_small_n"
+        base_blur = float(np.min(blur_vars))
+
+    blur_thr = max(10.0, base_blur * BLUR_VARIANCE_SAFETY_RATIO)
 
     # Exposure & glare limits with concrete recorded margins
     dark_max = min(1.0, float(np.max(dark_fracs)) + DARK_FRACTION_MARGIN)
@@ -154,8 +232,9 @@ def fit_gate_thresholds(
         "l_mean_ref": l_mean_ref,
         "l_mean_sd": l_mean_sd,
         "l_std_ref": l_std_ref,
-        "n_fit": len(images_std),
+        "n_fit": n_images,
         "gate_version": gate_version,
+        "blur_fit_method": blur_fit_method,
     }
 
 
@@ -164,7 +243,8 @@ def check_quality(
     thresholds: dict[str, Any],
 ) -> dict[str, Any]:
     """
-    Evaluates standardized image against fitted quality thresholds.
+    Evaluates standardized image against quality thresholds.
+    Validates thresholds dictionary first. Extra keys are tolerated.
 
     Returns dict matching the API QualityGateResult schema:
       status ("PASSED"|"FAILED"), action ("REQUEST_RETAKE"|None), reason (str),
@@ -172,6 +252,7 @@ def check_quality(
       glare_fraction, glare_threshold, l_mean,
       exposure_ok (bool), lighting_shift_detected (bool)
     """
+    validate_thresholds(thresholds)
     metrics = compute_frame_metrics(image_std)
 
     blur_variance = metrics["blur_variance"]
@@ -249,3 +330,79 @@ def check_quality(
         "exposure_ok": exposure_ok,
         "lighting_shift_detected": lighting_shift_detected,
     }
+
+
+def gate_reject_report(
+    images_std: Sequence[np.ndarray],
+    thresholds: dict[str, Any],
+) -> dict[str, Any]:
+    """
+    Evaluates a collection of images against quality thresholds and summarizes rejection rates.
+
+    Pure function, returns:
+      n: total images evaluated
+      n_rejected: number of rejected images (status == 'FAILED')
+      reject_rate: fraction of rejected images
+      per_reason_counts: dict of reason counts {'blur': int, 'dark': int, 'bright': int, 'glare': int}
+      n_lighting_shift: number of images with lighting shift detected
+      lighting_shift_rate: fraction of images with lighting shift detected
+    """
+    validate_thresholds(thresholds)
+    n = len(images_std)
+    if n == 0:
+        return {
+            "n": 0,
+            "n_rejected": 0,
+            "reject_rate": 0.0,
+            "per_reason_counts": {"blur": 0, "dark": 0, "bright": 0, "glare": 0},
+            "n_lighting_shift": 0,
+            "lighting_shift_rate": 0.0,
+        }
+
+    blur_thr = float(thresholds["blur_thr"])
+    dark_max = float(thresholds["dark_max"])
+    bright_max = float(thresholds["bright_max"])
+    glare_thr = float(thresholds["glare_thr"])
+
+    n_rejected = 0
+    n_lighting_shift = 0
+    per_reason_counts = {"blur": 0, "dark": 0, "bright": 0, "glare": 0}
+
+    for img in images_std:
+        res = check_quality(img, thresholds)
+        if res["status"] == "FAILED":
+            n_rejected += 1
+
+        if res["blur_variance"] < blur_thr:
+            per_reason_counts["blur"] += 1
+        if res["dark_fraction"] > dark_max:
+            per_reason_counts["dark"] += 1
+        if res["bright_fraction"] > bright_max:
+            per_reason_counts["bright"] += 1
+        if res["glare_fraction"] > glare_thr:
+            per_reason_counts["glare"] += 1
+
+        if res["lighting_shift_detected"]:
+            n_lighting_shift += 1
+
+    return {
+        "n": n,
+        "n_rejected": n_rejected,
+        "reject_rate": float(n_rejected / n),
+        "per_reason_counts": per_reason_counts,
+        "n_lighting_shift": n_lighting_shift,
+        "lighting_shift_rate": float(n_lighting_shift / n),
+    }
+
+
+def fit_and_report(
+    images_std: Sequence[np.ndarray],
+    gate_version: str = "v1.0",
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """
+    Fits gate thresholds and computes the rejection report over the same development collection.
+    Returns (thresholds, report).
+    """
+    thresholds = fit_gate_thresholds(images_std, gate_version=gate_version)
+    report = gate_reject_report(images_std, thresholds)
+    return thresholds, report

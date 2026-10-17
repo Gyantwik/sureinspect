@@ -12,6 +12,8 @@ Strict rules:
 - Never mutates the input image array.
 - Applied after standardization, once only.
 - Returns (degraded_image, applied_effects_list).
+- Fixed effect execution order is strictly blur, darken, glare.
+- The returned applied list records this exact order: ['blur', 'darken', 'glare'].
 """
 from __future__ import annotations
 
