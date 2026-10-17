@@ -1,10 +1,17 @@
 """
 backend/app_factory.py
-FastAPI application factory implementing all SureInspect v8.1 routes in mock mode,
-strictly adhering to error contracts, session ownership, and feedback semantics.
+FastAPI application factory implementing all SureInspect v8.1 routes:
+- Bounded streaming uploads (10 MiB limit, PNG/JPEG magic check).
+- Decompression bomb protection (OPENCV_IO_MAX_IMAGE_PIXELS=25000000 ceiling, HTTP 413).
+- Bounded async admission queue (max 1 running inference job, max 4 waiting, HTTP 503 on saturation).
+- Bounded storage manager (200 MiB, 100 inspections, 30-min TTL, coherent LRU eviction).
+- Session ownership enforcement and audit feedback idempotency.
+- Allowlisted sample lookup from curated data/samples directory.
 """
 from __future__ import annotations
 
+import os
+from pathlib import Path
 import secrets
 import time
 import uuid
@@ -48,23 +55,29 @@ from backend.mock_service import (
     ALLOWLISTED_SAMPLE_IDS,
     TINY_PNG_BYTES,
 )
+from backend.admission import (
+    read_bounded_upload,
+    decode_and_validate_image,
+    INSPECTION_ADMISSION,
+    OPENCV_MAX_PIXELS,
+)
+from backend.storage import (
+    STORAGE,
+    encode_lossless_png,
+    encode_preview_jpeg,
+)
 
 # ---------------------------------------------------------------------------
-# In-memory Storage & Session Management
+# Session Management & Backward Compatibility Dictionaries
 # ---------------------------------------------------------------------------
 
 SESSION_STORE: Dict[str, Dict[str, float]] = {}  # token -> {"expires_at": float, "last_active": float}
 SESSION_TTL_SECONDS = 1800  # 30-minute idle TTL
 MAX_ACTIVE_SESSIONS = 100   # Bounded active sessions
 
-# Session-bound stores
-# inspection_id -> {"session_token": str, "response": InspectionResponse, "category": str, "decision": str, "created_at": float}
+# Backward-compatibility alias references for existing tests
 STORED_INSPECTIONS: Dict[str, Dict[str, Any]] = {}
-
-# asset_id -> {"session_token": str, "data": bytes, "created_at": float}
 STORED_ASSETS: Dict[str, Dict[str, Any]] = {}
-
-# (session_token, idempotency_key) -> {"inspection_id": str, "user_label": str, "category": str, "created_at": float}
 FEEDBACK_IDEMPOTENCY: Dict[Tuple[str, str], Dict[str, Any]] = {}
 
 
@@ -98,23 +111,19 @@ def verify_session(authorization: Optional[str] = Header(None)) -> str:
             detail={"code": "UNAUTHORIZED", "message": "Missing or malformed Authorization header with Bearer token"},
         )
     token = authorization.split("Bearer ", 1)[1].strip()
-    session = SESSION_STORE.get(token)
-    if not session or time.time() > session["expires_at"]:
-        SESSION_STORE.pop(token, None)
+    now = time.time()
+    purge_expired_sessions()
+    record = SESSION_STORE.get(token)
+    if not record or now > record["expires_at"]:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail={"code": "SESSION_EXPIRED", "message": "Session has expired or is invalid"},
         )
     # Refresh idle TTL on valid request
-    now = time.time()
-    session["expires_at"] = now + SESSION_TTL_SECONDS
-    session["last_active"] = now
+    record["expires_at"] = now + SESSION_TTL_SECONDS
+    record["last_active"] = now
     return token
 
-
-# ---------------------------------------------------------------------------
-# Status Code to Standard Error Code Mapping
-# ---------------------------------------------------------------------------
 
 DEFAULT_ERROR_CODES = {
     400: "BAD_REQUEST",
@@ -131,16 +140,14 @@ DEFAULT_ERROR_CODES = {
 }
 
 
-# ---------------------------------------------------------------------------
-# App Factory
-# ---------------------------------------------------------------------------
-
 def create_app() -> FastAPI:
+    """Factory creating and configuring the SureInspect FastAPI application."""
     app = FastAPI(
         title="SureInspect API",
         version="1.0.0",
         description="Explainable, Risk-Controlled Agentic Quality Inspection System",
         docs_url="/docs",
+        redoc_url="/redoc",
         openapi_url="/openapi.json",
     )
 
@@ -235,8 +242,8 @@ def create_app() -> FastAPI:
                     enabled=False,
                     alpha_pass=0.20,
                     alpha_fail_default=0.05,
-                    alpha_fail_options=[0.02, 0.05, 0.10],
-                    n_calib=150,
+                    alpha_fail_options=[0.01, 0.02, 0.05, 0.10],
+                    n_calib=0,
                     sample_count=0,
                 ),
             ]
@@ -254,6 +261,9 @@ def create_app() -> FastAPI:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail={"code": "NOT_FOUND", "message": f"Sample image '{id}' not found"},
             )
+        sample_path = Path("data/samples") / f"{id}.png"
+        if sample_path.is_file():
+            return Response(content=sample_path.read_bytes(), media_type="image/png")
         return Response(content=TINY_PNG_BYTES, media_type="image/png")
 
     @app.get("/api/calibration/{category}", response_model=CalibrationSummaryResponse)
@@ -289,65 +299,80 @@ def create_app() -> FastAPI:
                 detail={"code": "BAD_REQUEST", "message": "Either 'file' or 'sample_id' must be provided."},
             )
 
-        inspection = generate_mock_inspection(
-            category=category,
-            simulate_blur=simulate_blur,
-            simulate_darken=simulate_darken,
-            simulate_glare=simulate_glare,
-            sample_id=sample_id,
-            alpha_fail=alpha_fail,
-            path=path,
-        )
+        orig_dims = (256, 256)
+        if file:
+            raw_bytes, media_type = await read_bounded_upload(file)
+            decoded_img = decode_and_validate_image(raw_bytes)
+            orig_dims = (decoded_img.shape[1], decoded_img.shape[0])
 
-        now = time.time()
-        # Bind inspection to session
-        STORED_INSPECTIONS[inspection.inspection_id] = {
-            "session_token": session_token,
-            "response": inspection,
-            "category": category,
-            "decision": inspection.decision.value,
-            "created_at": now,
-        }
+        # Acquire bounded admission slot (max 1 running, 4 queued, 503 if saturated)
+        await INSPECTION_ADMISSION.acquire()
+        try:
+            inspection = generate_mock_inspection(
+                category=category,
+                simulate_blur=simulate_blur,
+                simulate_darken=simulate_darken,
+                simulate_glare=simulate_glare,
+                sample_id=sample_id,
+                alpha_fail=alpha_fail,
+                path=path,
+            )
 
-        # Store generated assets bound to this session
-        insp_id = inspection.inspection_id
-        for asset_url in [
-            inspection.assets.input_standardized,
-            inspection.assets.reference_aligned,
-            inspection.assets.anomaly_heatmap,
-            inspection.assets.contour_mask,
-        ]:
-            if asset_url:
-                asset_key = asset_url.split("/api/assets/", 1)[-1]
-                STORED_ASSETS[asset_key] = {
+            # Store generated assets in bounded storage
+            assets_to_store: Dict[str, Tuple[bytes, str]] = {}
+            for asset_url in [
+                inspection.assets.input_standardized,
+                inspection.assets.reference_aligned,
+                inspection.assets.anomaly_heatmap,
+                inspection.assets.contour_mask,
+            ]:
+                if asset_url:
+                    asset_key = asset_url.split("/api/assets/", 1)[-1]
+                    # PNG for masks/inputs, JPEG for heatmaps/references
+                    if "mask" in asset_key or "input" in asset_key:
+                        assets_to_store[asset_key] = (TINY_PNG_BYTES, "image/png")
+                    else:
+                        assets_to_store[asset_key] = (TINY_PNG_BYTES, "image/jpeg")
+
+            STORAGE.store_inspection(
+                session_token=session_token,
+                inspection=inspection,
+                category=category,
+                decision=inspection.decision.value,
+                assets=assets_to_store,
+                orig_dimensions=orig_dims,
+            )
+
+            # Keep backward compatibility dictionaries updated
+            now = time.time()
+            STORED_INSPECTIONS[inspection.inspection_id] = {
+                "session_token": session_token,
+                "response": inspection,
+                "category": category,
+                "decision": inspection.decision.value,
+                "created_at": now,
+            }
+            for a_key, (content, _) in assets_to_store.items():
+                STORED_ASSETS[a_key] = {
                     "session_token": session_token,
-                    "data": TINY_PNG_BYTES,
+                    "data": content,
                     "created_at": now,
                 }
 
-        return inspection
+            return inspection
+        finally:
+            await INSPECTION_ADMISSION.release()
 
     @app.get("/api/trace/{id}", response_model=InspectionResponse)
     def get_trace(id: str, session_token: str = Depends(verify_session)):
         """Protected trace lookup. Non-owned or unknown returns identical 404."""
-        record = STORED_INSPECTIONS.get(id)
-        if not record or record["session_token"] != session_token:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail={"code": "NOT_FOUND", "message": "Inspection not found"},
-            )
-        return record["response"]
+        return STORAGE.get_trace(id, session_token)
 
     @app.get("/api/assets/{id}")
     def get_asset(id: str, session_token: str = Depends(verify_session)):
         """Protected asset lookup. Non-owned or unknown returns identical 404."""
-        record = STORED_ASSETS.get(id)
-        if not record or record["session_token"] != session_token:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail={"code": "NOT_FOUND", "message": "Asset not found"},
-            )
-        return Response(content=record["data"], media_type="image/png")
+        content, media_type = STORAGE.get_asset(id, session_token)
+        return Response(content=content, media_type=media_type)
 
     @app.post("/api/feedback", response_model=FeedbackResponse)
     def submit_feedback(
@@ -362,64 +387,16 @@ def create_app() -> FastAPI:
         - Idempotent: repeated identical key is safe, conflicting reuse is 409.
         - Returns {"status": "LOGGED", "scope": "audit_only", "production_changed": False}.
         """
+        # Retrieve target record to find category
         record = STORED_INSPECTIONS.get(feedback.inspection_id)
-        if not record or record["session_token"] != session_token:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail={"code": "NOT_FOUND", "message": "Inspection not found"},
-            )
+        category = record["category"] if record else "pcb1"
 
-        # Check expired record
-        if time.time() - record["created_at"] > SESSION_TTL_SECONDS:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail={"code": "BAD_REQUEST", "message": "Inspection record has expired"},
-            )
-
-        # Reject RETAKE
-        if record["decision"] == DecisionEnum.RETAKE.value:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail={"code": "BAD_REQUEST", "message": "Cannot submit operator feedback on RETAKE inspection"},
-            )
-
-        category = record["category"]
-        idempotency_key = (session_token, feedback.idempotency_key)
-
-        if idempotency_key in FEEDBACK_IDEMPOTENCY:
-            existing = FEEDBACK_IDEMPOTENCY[idempotency_key]
-            if (
-                existing["inspection_id"] == feedback.inspection_id
-                and existing["user_label"] == feedback.user_label
-            ):
-                # Safe repeat
-                return FeedbackResponse(
-                    status="LOGGED",
-                    scope="audit_only",
-                    production_changed=False,
-                )
-            else:
-                # Conflicting reuse
-                raise HTTPException(
-                    status_code=status.HTTP_409_CONFLICT,
-                    detail={
-                        "code": "CONFLICT",
-                        "message": f"Idempotency key '{feedback.idempotency_key}' reused with conflicting payload",
-                    },
-                )
-
-        # Record new feedback event
-        FEEDBACK_IDEMPOTENCY[idempotency_key] = {
-            "inspection_id": feedback.inspection_id,
-            "user_label": feedback.user_label,
-            "category": category,
-            "created_at": time.time(),
-        }
-
-        return FeedbackResponse(
-            status="LOGGED",
-            scope="audit_only",
-            production_changed=False,
+        return STORAGE.record_feedback(
+            session_token=session_token,
+            inspection_id=feedback.inspection_id,
+            user_label=feedback.user_label.value if hasattr(feedback.user_label, "value") else str(feedback.user_label),
+            category=category,
+            idempotency_key=feedback.idempotency_key,
         )
 
     return app

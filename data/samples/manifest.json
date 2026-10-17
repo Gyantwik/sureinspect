@@ -1,0 +1,50 @@
+{
+  "version": "1.0",
+  "dataset": "Amazon VisA (CC BY 4.0)",
+  "samples": [
+    {
+      "id": "pcb1_good_01",
+      "category": "pcb1",
+      "display_name": "PCB 1 - Clean Board (Normal)",
+      "ground_truth": "good",
+      "attribution": "Amazon VisA Dataset (CC BY 4.0)",
+      "image_file": "pcb1_good_01.png",
+      "image_url": "/api/samples/pcb1_good_01/image",
+      "role": "FAST_PASS",
+      "dimensions": [256, 256, 3]
+    },
+    {
+      "id": "pcb1_bad_missing_01",
+      "category": "pcb1",
+      "display_name": "PCB 1 - Missing IC Component",
+      "ground_truth": "bad",
+      "attribution": "Amazon VisA Dataset (CC BY 4.0)",
+      "image_file": "pcb1_bad_missing_01.png",
+      "image_url": "/api/samples/pcb1_bad_missing_01/image",
+      "role": "AGENT_CONFIRMED",
+      "dimensions": [256, 256, 3]
+    },
+    {
+      "id": "pcb1_bad_scratch_01",
+      "category": "pcb1",
+      "display_name": "PCB 1 - Trace Scratch (Ambiguous)",
+      "ground_truth": "bad",
+      "attribution": "Amazon VisA Dataset (CC BY 4.0)",
+      "image_file": "pcb1_bad_scratch_01.png",
+      "image_url": "/api/samples/pcb1_bad_scratch_01/image",
+      "role": "HUMAN_REVIEW",
+      "dimensions": [256, 256, 3]
+    },
+    {
+      "id": "pcb1_blur_01",
+      "category": "pcb1",
+      "display_name": "PCB 1 - Camera Out-of-Focus (Blur)",
+      "ground_truth": "good",
+      "attribution": "Amazon VisA Dataset (CC BY 4.0)",
+      "image_file": "pcb1_blur_01.png",
+      "image_url": "/api/samples/pcb1_blur_01/image",
+      "role": "QUALITY_REJECTED",
+      "dimensions": [256, 256, 3]
+    }
+  ]
+}
