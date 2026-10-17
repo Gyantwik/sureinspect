@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-P1="Biswabasini90"; P2="Gyantwik"; P3="P3_CONTRIBUTOR"
+P1="Biswabasini90"; P2="Gyantwik"; P3="Khushbu656"
 AUTHOR="${AUTHOR:?}"; BASE="${BASE:?}"; LABELS=",${LABELS:-},"
 case "${AUTHOR,,}" in
   "${P1,,}") OWN='^(core|train|config|data/templates|docs/failure_cases)/' ;;

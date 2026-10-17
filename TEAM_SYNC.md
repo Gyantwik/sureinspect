@@ -11,7 +11,7 @@
 | :--- | :--- | :--- | :--- |
 | **Person 1 (OpenCV & ML Lead)** | `@Biswabasini90` | `feat/core-opencv` | **Ready to start** (scaffolding & data contracts ready) |
 | **Person 2 (Backend & AWS Lead)** | `@Gyantwik` (Owner) | `feat/backend-contract` | **COMPLETED: Day 1 Contract & Mock Engine** (PR open) |
-| **Person 3 (Frontend & Docs Lead)** | Assigned Contributor | `feat/frontend-scaffold` | **Ready to start** (OpenAPI spec & mock API ready) |
+| **Person 3 (Frontend & Docs Lead)** | `@Khushbu656` | `feat/frontend-scaffold` | **Ready to start** (OpenAPI spec & mock API ready) |
 
 ---
 
