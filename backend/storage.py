@@ -135,7 +135,7 @@ class StorageManager:
         incoming_bytes = sum(len(content) for content, _ in assets.values())
         if incoming_bytes > self.max_bytes:
             raise HTTPException(
-                status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                status_code=413,
                 detail={
                     "code": "PAYLOAD_TOO_LARGE",
                     "message": (
@@ -187,6 +187,7 @@ class StorageManager:
         """
         Retrieves stored inspection trace for owning session.
         Returns 404 for unknown, non-owned, or expired inspection.
+        Extends idle TTL on access for inspection and its assets.
         """
         now = time.time()
         with self._lock:
@@ -203,6 +204,13 @@ class StorageManager:
                     status_code=status.HTTP_404_NOT_FOUND,
                     detail={"code": "NOT_FOUND", "message": "Inspection not found"},
                 )
+            # Extend idle TTL on access for inspection and all its child assets
+            new_expiry = now + self.ttl_seconds
+            record["expires_at"] = new_expiry
+            for a_id in record.get("asset_ids", []):
+                if a_id in self._assets:
+                    self._assets[a_id]["expires_at"] = new_expiry
+
             # Move to end for LRU freshness
             self._inspections.move_to_end(inspection_id)
             return record["response"]
@@ -210,7 +218,8 @@ class StorageManager:
     def get_asset(self, asset_id: str, session_token: str) -> tuple[bytes, str]:
         """
         Retrieves stored asset bytes for owning session.
-        Enforces TTL expiration and returns (data_bytes, media_type) or raises 404.
+        Enforces TTL expiration, extends idle TTL on access, and refreshes parent LRU.
+        Returns (data_bytes, media_type) or raises 404.
         """
         now = time.time()
         with self._lock:
@@ -227,6 +236,19 @@ class StorageManager:
                     status_code=status.HTTP_404_NOT_FOUND,
                     detail={"code": "NOT_FOUND", "message": "Asset not found"},
                 )
+
+            # Extend idle TTL on access and refresh LRU on parent inspection
+            new_expiry = now + self.ttl_seconds
+            record["expires_at"] = new_expiry
+            parent_id = record.get("inspection_id")
+            if parent_id and parent_id in self._inspections:
+                parent_rec = self._inspections[parent_id]
+                parent_rec["expires_at"] = new_expiry
+                for a_id in parent_rec.get("asset_ids", []):
+                    if a_id in self._assets:
+                        self._assets[a_id]["expires_at"] = new_expiry
+                self._inspections.move_to_end(parent_id)
+
             return record["data"], record["media_type"]
 
     def record_feedback(
