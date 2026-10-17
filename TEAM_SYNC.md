@@ -9,18 +9,17 @@
 
 | Role | Assigned Developer | Branch | Current Status |
 | :--- | :--- | :--- | :--- |
-| **Person 1 (OpenCV & ML Lead)** | `@Biswabasini90` | `feat/core-opencv` | **Ready to start** (scaffolding is already done) |
-| **Person 2 (Backend & AWS Lead)** | `@Gyantwik` (Owner) | `feat/backend-contract` | **ACTIVE** (building API schemas, mock service & contracts) |
-| **Person 3 (Frontend & Docs Lead)** | Assigned Contributor | `feat/frontend-scaffold` | **Ready to start** (Vite frontend shell) |
+| **Person 1 (OpenCV & ML Lead)** | `@Biswabasini90` | `feat/core-opencv` | **Ready to start** (scaffolding & data contracts ready) |
+| **Person 2 (Backend & AWS Lead)** | `@Gyantwik` (Owner) | `feat/backend-contract` | **COMPLETED: Day 1 Contract & Mock Engine** (PR open) |
+| **Person 3 (Frontend & Docs Lead)** | Assigned Contributor | `feat/frontend-scaffold` | **Ready to start** (OpenAPI spec & mock API ready) |
 
 ---
 
-## 2. COMPLETED: Basic GitHub & Directory Setup (by Person 2 @Gyantwik)
+## 2. Completed Milestones (by Person 2 @Gyantwik)
 
-The entire baseline repository initialization and folder structure has been **fully completed and verified**:
-
-* [x] **GitHub Repository & Main Branch:** Created at `https://github.com/Gyantwik/sureinspect.git` and pushed to `origin/main`.
-* [x] **Complete Directory Setup:** All monorepo folders have been generated with `.gitkeep` and `__init__.py` files:
+### 2.1 Basic GitHub & Monorepo Scaffolding
+* [x] **GitHub Repository & Main Branch:** Created at `https://github.com/Gyantwik/sureinspect.git` and live on `origin/main`.
+* [x] **Complete Directory Setup:** All monorepo folders generated with tracking files:
   * `/core` & `/core/tests`: OpenCV perception, tools, and agent logic.
   * `/backend` & `/backend/tests`: FastAPI application, endpoints, and mock engine.
   * `/train`: Dataset preparation, split freezing, and ONNX export scripts.
@@ -31,11 +30,15 @@ The entire baseline repository initialization and folder structure has been **fu
   * `/deploy`: Multi-stage Dockerfile and AWS EC2 Graviton deployment scripts.
   * `/docs` & `/docs/failure_cases`: Architecture diagrams, technical reports, and failure analysis (PDF research papers moved here).
   * `/.github/workflows` & `/.github/scripts`: Automated CI pipeline with boundary checking.
-* [x] **Configuration & Dependencies:** Added `.gitignore`, `.gitattributes`, `.dockerignore`, `.env.example`, `requirements.txt`, `requirements-dev.txt`, `requirements-train.txt`, `requirements-eval.txt`.
+* [x] **Configuration & Dependencies:** Added `.gitignore`, `.gitattributes`, `.dockerignore`, `.env.example`, `requirements*.txt`.
 * [x] **CI & Ownership Rules:** P1 (`@Biswabasini90`), P2 (`@Gyantwik`), and P3 mapped in `CODEOWNERS` and CI boundary checker.
-* [x] **Initial Tests:** Verified bootstrap tests passing in `core/tests/test_bootstrap.py`.
 
-> **Note to Person 1 & Person 3:** You do **NOT** need to initialize Git, create directories, or set up `.gitignore`. Everything is ready. Just `git clone` and check out your feature branch!
+### 2.2 Day 1 API Contract, Mock Engine & OpenAPI Specification
+* [x] **API Schemas (`backend/schemas.py`):** Pydantic v2 models covering all decision enums (`PASS`, `FAIL`, `HUMAN`, `RETAKE`), 10 decision paths, quality gates, measurements, traces, and feedback.
+* [x] **Mock Engine (`backend/mock_service.py`):** Generates realistic traces and overlays for `pcb1` covering all 4 decision outcomes.
+* [x] **FastAPI App Factory (`backend/app_factory.py`):** Provides cryptographic bearer sessions (`POST /api/session`), mock inspection endpoints, sample listings, and feedback logging.
+* [x] **Exported OpenAPI Contract (`contracts/openapi.json`):** 44.7 KB tracked specification ready for Person 3's TypeScript type generator.
+* [x] **Test Verification (`backend/tests/test_api.py`):** 18/18 tests passing across `core/tests`, `backend/tests`, and `eval/tests`.
 
 ---
 
@@ -63,7 +66,7 @@ To ensure developers never collide or produce merge conflicts, **each person edi
 
 ## 4. Instructions for Person 1 (@Biswabasini90)
 
-Welcome! The repository setup has already been completed by `@Gyantwik`. You do not need to initialize anything.
+Welcome! The repository setup and data contracts have already been completed by `@Gyantwik`.
 
 ### Step 1: Clone the Repo
 Open Git Bash and run:
@@ -84,13 +87,14 @@ python -m pip install -r requirements-train.txt
 1. Run `train/prepare_dataset.py`: Download the VisA dataset and generate frozen, hashed train/calib splits for `pcb1` with fixed seed 42.
 2. Run `train/export_backbone_onnx.py`: Export the WideResNet50 feature extractor to ONNX and verify it loads in OpenCV 5 DNN (`cv.dnn.readNetFromONNX`).
 3. Build the coreset memory bank in `train/build_memory_bank.py`.
-4. Remember: **Never commit `.onnx` or `.npy` files to Git!** Store them locally in `artifacts/`.
+4. Implement OpenCV tools T1-T5 in `core/tools.py`.
+5. Remember: **Never commit `.onnx` or `.npy` files to Git!** Store them locally in `artifacts/`.
 
 ---
 
 ## 5. Instructions for Person 3
 
-Welcome! The repository setup is already done.
+Welcome! The repository setup and backend OpenAPI contracts are already live.
 
 ### Step 1: Clone the Repo
 ```bash
@@ -111,17 +115,8 @@ npm install -D openapi-typescript vitest
 ### Step 3: Your Day 1 Tasks
 1. Configure Tailwind CSS with the Vite plugin.
 2. In `vite.config.ts`, set up the proxy: `"/api": "http://127.0.0.1:8000"`.
-3. Build the 3-panel layout shell (Control Panel, Trace Timeline, Decision Card) using mock data first (`VITE_USE_MOCK=true`).
-4. Person 2 will provide `contracts/openapi.json` within four hours so you can auto-generate TypeScript types using `openapi-typescript`.
-
----
-
-## 6. The Golden Git Rules for All 3 Developers
-1. **Never push directly to `main`.** Always work on your personal feature branch (`feat/...`).
-2. **Never edit files outside your assigned ownership.** CI will automatically reject PRs with out-of-boundary changes.
-3. **Pull `main` frequently:**
+3. Auto-generate TypeScript types directly from the tracked contract:
    ```bash
-   git fetch origin
-   git merge origin/main
+   npx openapi-typescript ../contracts/openapi.json -o src/services/api-types.ts
    ```
-4. **Communicate via PRs:** When a task is ready, push your branch and open a Pull Request for code review.
+4. Build the 3-panel layout shell (Control Panel, Trace Timeline, Decision Card) with full type-safety.
