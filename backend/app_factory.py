@@ -10,75 +10,68 @@ FastAPI application factory implementing all SureInspect v8.1 routes:
 """
 from __future__ import annotations
 
-import os
-from pathlib import Path
 import secrets
 import time
 import uuid
-from typing import Dict, Optional, Tuple, Any
+from pathlib import Path
+from typing import Any
 
 from fastapi import (
-    FastAPI,
-    Header,
-    HTTPException,
     Depends,
-    Request,
-    UploadFile,
+    FastAPI,
     File,
     Form,
+    Header,
+    HTTPException,
+    Request,
+    UploadFile,
     status,
 )
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, Response
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, JSONResponse, Response
+from fastapi.staticfiles import StaticFiles
 
-from backend.schemas import (
-    ErrorResponse,
-    SessionCreateResponse,
-    SessionResetResponse,
-    HealthResponse,
-    CategoriesResponse,
-    CategoryInfo,
-    SamplesResponse,
-    InspectionResponse,
-    FeedbackRequest,
-    FeedbackResponse,
-    CalibrationSummaryResponse,
-    DecisionEnum,
-    DecisionPathEnum,
+from backend.admission import (
+    INSPECTION_ADMISSION,
+    decode_and_validate_image,
+    read_bounded_upload,
 )
 from backend.mock_service import (
-    get_mock_samples,
-    get_mock_calibration,
-    generate_mock_inspection,
-    build_mock_inspection,
     ALLOWLISTED_SAMPLE_IDS,
     TINY_PNG_BYTES,
+    generate_mock_inspection,
+    get_mock_calibration,
+    get_mock_samples,
 )
-from backend.admission import (
-    read_bounded_upload,
-    decode_and_validate_image,
-    INSPECTION_ADMISSION,
-    OPENCV_MAX_PIXELS,
+from backend.schemas import (
+    CalibrationSummaryResponse,
+    CategoriesResponse,
+    CategoryInfo,
+    FeedbackRequest,
+    FeedbackResponse,
+    HealthResponse,
+    InspectionResponse,
+    SamplesResponse,
+    SessionCreateResponse,
+    SessionResetResponse,
 )
 from backend.storage import (
     STORAGE,
-    encode_lossless_png,
-    encode_preview_jpeg,
 )
 
 # ---------------------------------------------------------------------------
 # Session Management & Backward Compatibility Dictionaries
 # ---------------------------------------------------------------------------
 
-SESSION_STORE: Dict[str, Dict[str, float]] = {}  # token -> {"expires_at": float, "last_active": float}
+SESSION_STORE: dict[str, dict[str, float]] = {}  # token -> {"expires_at": float, "last_active": float}
 SESSION_TTL_SECONDS = 1800  # 30-minute idle TTL
 MAX_ACTIVE_SESSIONS = 100   # Bounded active sessions
 
 # Backward-compatibility alias references for existing tests
-STORED_INSPECTIONS: Dict[str, Dict[str, Any]] = {}
-STORED_ASSETS: Dict[str, Dict[str, Any]] = {}
-FEEDBACK_IDEMPOTENCY: Dict[Tuple[str, str], Dict[str, Any]] = {}
+STORED_INSPECTIONS: dict[str, dict[str, Any]] = {}
+STORED_ASSETS: dict[str, dict[str, Any]] = {}
+FEEDBACK_IDEMPOTENCY: dict[tuple[str, str], dict[str, Any]] = {}
 
 
 def purge_expired_sessions() -> None:
@@ -103,7 +96,7 @@ def create_new_session() -> SessionCreateResponse:
     return SessionCreateResponse(session_token=token, expires_at=expires_str)
 
 
-def verify_session(authorization: Optional[str] = Header(None)) -> str:
+def verify_session(authorization: str | None = Header(None)) -> str:
     """Verifies Bearer token, enforces 30-minute idle TTL. Never logs the token."""
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(
@@ -283,14 +276,14 @@ def create_app() -> FastAPI:
 
     @app.post("/api/inspect", response_model=InspectionResponse)
     async def inspect_part(
-        file: Optional[UploadFile] = File(None),
-        sample_id: Optional[str] = Form(None),
+        file: UploadFile | None = File(None),  # noqa: B008
+        sample_id: str | None = Form(None),
         category: str = Form("pcb1"),
         simulate_blur: bool = Form(False),
         simulate_darken: bool = Form(False),
         simulate_glare: bool = Form(False),
         alpha_fail: float = Form(0.05),
-        path: Optional[str] = Form(None),
+        path: str | None = Form(None),
         session_token: str = Depends(verify_session),
     ):
         if not file and not sample_id:
@@ -301,7 +294,7 @@ def create_app() -> FastAPI:
 
         orig_dims = (256, 256)
         if file:
-            raw_bytes, media_type = await read_bounded_upload(file)
+            raw_bytes, _media_type = await read_bounded_upload(file)
             decoded_img = decode_and_validate_image(raw_bytes)
             orig_dims = (decoded_img.shape[1], decoded_img.shape[0])
 
@@ -319,7 +312,7 @@ def create_app() -> FastAPI:
             )
 
             # Store generated assets in bounded storage
-            assets_to_store: Dict[str, Tuple[bytes, str]] = {}
+            assets_to_store: dict[str, tuple[bytes, str]] = {}
             for asset_url in [
                 inspection.assets.input_standardized,
                 inspection.assets.reference_aligned,
@@ -398,5 +391,18 @@ def create_app() -> FastAPI:
             category=category,
             idempotency_key=feedback.idempotency_key,
         )
+
+    # Serve static frontend build if present
+    dist_dir = Path(__file__).resolve().parent.parent / "frontend" / "dist"
+    assets_dir = dist_dir / "assets"
+    if assets_dir.is_dir():
+        app.mount("/assets", StaticFiles(directory=str(assets_dir)), name="static_assets")
+
+    @app.get("/", include_in_schema=False)
+    def serve_root():
+        index_file = dist_dir / "index.html"
+        if index_file.is_file():
+            return FileResponse(index_file)
+        return JSONResponse({"status": "healthy", "service": "SureInspect API", "docs": "/docs"})
 
     return app
