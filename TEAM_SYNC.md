@@ -1,7 +1,7 @@
 # SureInspect: Team Status & Collision Prevention Guide
 > **Repository:** https://github.com/Gyantwik/sureinspect.git  
 > **Project:** SureInspect (OpenCV AI Competition 2026)  
-> **Last Updated:** October 17, 2026  
+> **Last Updated:** October 18, 2026  
 
 ---
 
@@ -9,13 +9,13 @@
 
 | Role | Assigned Developer | Branch | Current Status |
 | :--- | :--- | :--- | :--- |
-| **Person 1 (OpenCV & ML Lead)** | `@Biswabasini90` | `feat/core-opencv` | **Ready to start** (scaffolding & data contracts ready on main) |
-| **Person 2 (Backend & AWS Lead)** | `@Gyantwik` (Owner) | `main` | **COMPLETED: Full P2 Lifecycle (Contracts, Gate, Queue, Storage, Eval, Deploy - PR #1 & PR #2 Merged)** |
-| **Person 3 (Frontend & Docs Lead)** | `@Khushbu656` | `feat/frontend-scaffold` | **Ready to start** (OpenAPI spec, fixtures, and pins verified on main) |
+| **Person 1 (OpenCV & ML Lead)** | `@Biswabasini90` | `main` | **COMPLETED: Preprocessing Pipeline (PR #6 Merged)**. Ready for Tools $T_1 - T_5$ & ONNX backbone. |
+| **Person 2 (Backend & AWS Lead)** | `@Gyantwik` (Owner) | `main` | **COMPLETED: Full P2 Lifecycle & Security Hardening (PR #1, #2, #3, #4 Merged)**. Unblocked for `backend/main.py`. |
+| **Person 3 (Frontend & Docs Lead)** | `@Khushbu656` | `main` | **COMPLETED: 3-Panel Console, Typed API Client & Tests (PR #5 Merged)**. Ready for live integration. |
 
 ---
 
-## 2. Completed Milestones (by Person 2 @Gyantwik)
+## 2. Completed Milestones
 
 ### 2.1 Basic GitHub & Monorepo Scaffolding
 * [x] **GitHub Repository & Main Branch:** Created at `https://github.com/Gyantwik/sureinspect.git` and live on `origin/main`.
@@ -51,9 +51,33 @@
 ### 2.4 Bounded Queue, Storage Engine, Sample Catalog, Eval Suite & AWS Deployment (PR #2 Merged)
 * [x] **Upload Limiter & Decompression Bomb Guard (`backend/admission.py`):** 10 MiB limit while streaming chunks, PNG/JPEG magic bytes, 25 MP ceiling (`OPENCV_IO_MAX_IMAGE_PIXELS=25000000`), bounded async admission queue (max 1 running, 4 queued, HTTP 503 on saturation).
 * [x] **Bounded LRU/TTL Storage Cache (`backend/storage.py`):** 200 MiB byte limit, 100 inspections, 30-min idle TTL, lossless PNG & display JPEG encoding, session ownership protection, feedback idempotency.
-* [x] **Curated Demo Samples (`data/samples/`):** `manifest.json` and 4 sample PCB PNGs covering FAST_PASS, AGENT_CONFIRMED, HUMAN_REVIEW, and QUALITY_REJECTED demo roles with VisA attribution.
+* [x] **Curated Demo Samples (`data/samples/`):** `manifest.json` and 4 sample PCB PNGs covering FAST_PASS, AGENT_CONFIRMED, HUMAN_REVIEW, and QUALITY_REJECTED demo roles.
 * [x] **Evaluation Protocols (`eval/`):** E1 Baseline runner (`run_baseline.py`), E1 Agent runner (`run_agent.py`), E2 Calibration split sensitivity analysis (`run_calibration_splits.py`), E3 Robustness evaluation (`run_corruptions.py`), Wilson 95% CIs and Clopper-Pearson exact bounds.
 * [x] **Docker & AWS Deployment Specifications (`deploy/`, `docs/aws_section.md`):** Multi-stage Dockerfile (Node 24 + Python 3.11), Caddy TLS reverse proxy, Docker Compose, EC2 Graviton setup script, and AWS architecture/security/cost report.
+
+### 2.5 Sample Licensing & Admission/Storage Hardening (PR #3 & PR #4 Merged)
+* [x] **Sample Attribution & Licensing (`data/samples/LICENSE.md`, `manifest.json` - PR #3):** Documented synthetic placeholder samples and added explicit LICENSE.md.
+* [x] **Admission Queue Cancellation Fix (`backend/admission.py` - PR #4):** Promotes tasks to running only after semaphore acquisition; cleanly decrements queued count on cancellation with zero count leaks.
+* [x] **Dimension Bomb Header Pre-Check (`backend/admission.py` - PR #4):** Scans PNG IHDR chunk (bytes 16..24) and JPEG SOF markers (`0xC0`..`0xCF`) to reject $>25\text{ MP}$ images with HTTP 413 before memory allocation.
+* [x] **OpenCV Environment Guard (`backend/admission.py` - PR #4):** Enforces `os.environ["OPENCV_IO_MAX_IMAGE_PIXELS"] = "25000000"` explicitly before `import cv2`.
+* [x] **Storage Engine Hardening (`backend/storage.py` - PR #4):** Implemented asset TTL enforcement, idle TTL extension on read access, parent LRU refresh on asset access, single-payload 413 protection, repeated-ID orphan byte prevention, and bounded feedback idempotency cache.
+
+### 2.6 Day 1 Frontend Scaffolding, 3-Panel Console & Contract Types (PR #5 Merged)
+* [x] **Vite & React 18 Scaffolding (`/frontend` - by `@Khushbu656`):** Production Vite project with Tailwind CSS v4, Lucide icons, and Vitest test runner.
+* [x] **Contract Type Generation (`frontend/src/services/api-types.ts`):** Generated and tracked full TypeScript types directly from `contracts/openapi.json`.
+* [x] **Authenticated API Client (`frontend/src/services/api.ts`, `useAsset.ts`):** 
+  * Implemented secure bearer session management (`POST /api/session`) with transparent token renewal on 401.
+  * Implemented authenticated asset loader using `fetch` with Bearer headers and `URL.createObjectURL` / `URL.revokeObjectURL` cleanup to safely stream protected images (`/api/assets/{id}`) without memory leaks.
+* [x] **3-Panel Operator Console (`frontend/src/components/`):**
+  * **Control Panel (`ControlPanel.tsx`):** Category selector, sample picker, upload dropzone, risk budget selector ($\alpha_{\text{fail}}$), and degradation toggles.
+  * **Visual Evidence Studio (`Compare.tsx`):** Standardized input vs. aligned reference toggle with continuous anomaly heatmap opacity slider (0–100%).
+  * **Decision Card (`DecisionCard.tsx`):** Verdicts (`PASS`, `FAIL`, `HUMAN`, `RETAKE`), 10 decision paths, anomaly score gauge, measurement stats, grounded report, and counterfactual risk matrix.
+  * **Trace Timeline (`TraceTimeline.tsx`):** Tool execution steps ($T_1 - T_5$), duration metrics, and JSON trace export.
+
+### 2.7 Core OpenCV Preprocessing Pipeline (PR #6 Merged)
+* [x] **Aspect-Preserving Standardization (`core/preprocess.py` - by `@Biswabasini90`):** Standardizes images to $\le 1024\text{ px}$ longest side using `cv2.INTER_AREA`, never upscales, validates 3-channel uint8 geometry, and provides exact scale factors (`scale_x`, `scale_y`) matching the API contract.
+* [x] **Network Blob Transformation (`core/preprocess.py`):** Converts BGR to RGB, square resizes, scales to $[0, 1]$, standardizes with ImageNet mean/std, and produces contiguous float32 NCHW tensors.
+* [x] **Unit Test Suite (`core/tests/test_preprocess.py`):** 12 tests verifying boundary retention, box back-projection, determinism, and normalization.
 
 ---
 
