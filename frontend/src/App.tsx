@@ -42,9 +42,13 @@ export default function App() {
       <header className="border-b border-line">
         <div className="mx-auto max-w-[1400px] px-6 h-14 flex items-center justify-between">
           <div className="font-display text-2xl tracking-tight">SureInspect</div>
-          {engine && (
+          {engine ? (
             <span className={`rounded-full px-3 py-1 text-[11px] font-mono tracking-wider ${mock ? "bg-human/15 text-human" : "bg-pass/15 text-pass"}`}>
               {mock ? "MOCK ENGINE" : "REAL ENGINE"}
+            </span>
+          ) : (
+            <span className="rounded-full px-3 py-1 text-[11px] font-mono tracking-wider bg-line/40 text-muted">
+              CONNECTING...
             </span>
           )}
         </div>
@@ -62,6 +66,14 @@ export default function App() {
           <DecisionCard r={result} />
         </div>
       </main>
+
+      <footer className="mt-12 border-t border-line py-6">
+        <div className="mx-auto max-w-[1400px] px-6 text-center text-xs text-muted">
+          <p>
+            Uploads are processed for inspection and audit. Local cache is short-lived; audit records become eligible for automatic deletion after 14 days. Do not upload confidential images.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
