@@ -26,6 +26,13 @@ def test_main_health_endpoint():
     assert data["engine"] == "mock"
 
 
+def test_main_serves_root_spa():
+    """Verify that backend.main:app serves the root SPA page with 200 OK."""
+    client = TestClient(app)
+    response = client.get("/")
+    assert response.status_code == 200
+
+
 def test_parse_args_defaults():
     """Verify parse_args default CLI parameters."""
     args = parse_args([])
