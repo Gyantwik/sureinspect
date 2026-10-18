@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { AlertTriangle } from "lucide-react";
-import { ApiError, getCategories, getHealth, getSamples, inspect } from "./services/api";
+import { AlertTriangle, RefreshCw } from "lucide-react";
+import { ApiError, getCategories, getHealth, getSamples, inspect, resetSession } from "./services/api";
 import type { Category, Inspection, Sample } from "./types";
 import ControlPanel, { type Form } from "./components/ControlPanel";
 import TraceTimeline from "./components/TraceTimeline";
@@ -16,7 +16,9 @@ export default function App() {
   const [result, setResult] = useState<Inspection | null>(null);
   const [engine, setEngine] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [resetting, setResetting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [statusMsg, setStatusMsg] = useState<string | null>(null);
   const set = useCallback((p: Partial<Form>) => setForm((f) => ({ ...f, ...p })), []);
 
   useEffect(() => {
@@ -36,32 +38,68 @@ export default function App() {
     } finally { setBusy(false); }
   };
 
-  const mock = engine === "mock";
-  return (
-    <div className="min-h-screen">
-      <header className="border-b border-line">
-        <div className="mx-auto max-w-[1400px] px-6 h-14 flex items-center justify-between">
-          <div className="font-display text-2xl tracking-tight">SureInspect</div>
-          {engine && (
-            <span className={`rounded-full px-3 py-1 text-[11px] font-mono tracking-wider ${mock ? "bg-human/15 text-human" : "bg-pass/15 text-pass"}`}>
-              {mock ? "MOCK ENGINE" : "REAL ENGINE"}
-            </span>
-          )}
-        </div>
-      </header>
+  const handleReset = async () => {
+    setResetting(true);
+    setError(null);
+    try {
+      const res = await resetSession();
+      setStatusMsg(res.message || "Session reset successfully.");
+      setTimeout(() => setStatusMsg(null), 4000);
+    } catch {
+      setError("Failed to reset session.");
+    } finally {
+      setResetting(false);
+    }
+  };
 
-      <main className="mx-auto max-w-[1400px] px-6 py-6">
-        {error && (
-          <div role="alert" className="mb-5 flex items-start gap-2 rounded-lg border border-fail/40 bg-fail/5 px-4 py-3 text-sm text-fail">
-            <AlertTriangle size={16} className="mt-0.5" /> {error}
+  const mock = engine === "mock" || engine == null;
+  return (
+    <div className="min-h-screen flex flex-col justify-between">
+      <div>
+        <header className="border-b border-line">
+          <div className="mx-auto max-w-[1400px] px-6 h-14 flex items-center justify-between">
+            <div className="font-display text-2xl tracking-tight">SureInspect</div>
+            <div className="flex items-center gap-3">
+              <span className={`rounded-full px-3 py-1 text-[11px] font-mono tracking-wider ${mock ? "bg-human/15 text-human" : "bg-pass/15 text-pass"}`}>
+                {mock ? "MOCK ENGINE (Synthetic Evaluation)" : "LIVE OPENCV INFERENCE"}
+              </span>
+              <button
+                type="button"
+                onClick={handleReset}
+                disabled={busy || resetting}
+                title="Reset session shadow state"
+                className="flex items-center gap-1.5 rounded border border-line bg-surface/50 px-2.5 py-1 text-xs text-muted hover:text-fg hover:border-line-hover transition-colors disabled:opacity-50 cursor-pointer"
+              >
+                <RefreshCw size={12} className={resetting ? "animate-spin" : ""} />
+                <span>Reset Session</span>
+              </button>
+            </div>
           </div>
-        )}
-        <div className="grid gap-5 lg:grid-cols-[300px_minmax(0,1fr)_340px] items-start">
-          <ControlPanel cats={cats} samples={samples} form={form} set={set} busy={busy} onRun={run} />
-          <div className="flex flex-col gap-5"><Compare r={result} /><TraceTimeline r={result} /></div>
-          <DecisionCard r={result} />
-        </div>
-      </main>
+        </header>
+
+        <main className="mx-auto max-w-[1400px] px-6 py-6">
+          {error && (
+            <div role="alert" className="mb-5 flex items-start gap-2 rounded-lg border border-fail/40 bg-fail/5 px-4 py-3 text-sm text-fail">
+              <AlertTriangle size={16} className="mt-0.5" /> {error}
+            </div>
+          )}
+          {statusMsg && (
+            <div role="status" className="mb-5 flex items-start gap-2 rounded-lg border border-pass/40 bg-pass/5 px-4 py-3 text-sm text-pass">
+              {statusMsg}
+            </div>
+          )}
+          <div className="grid gap-5 lg:grid-cols-[300px_minmax(0,1fr)_340px] items-start">
+            <ControlPanel cats={cats} samples={samples} form={form} set={set} busy={busy} onRun={run} />
+            <div className="flex flex-col gap-5"><Compare r={result} /><TraceTimeline r={result} /></div>
+            <DecisionCard r={result} />
+          </div>
+        </main>
+      </div>
+
+      <footer className="mt-12 border-t border-line py-4 text-center text-xs text-muted">
+        Uploads are processed for inspection and audit. Local cache is short-lived; audit records become eligible for automatic deletion after 14 days. Do not upload confidential images.
+      </footer>
     </div>
   );
 }
+

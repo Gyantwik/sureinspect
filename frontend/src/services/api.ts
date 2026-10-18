@@ -66,3 +66,9 @@ export async function downloadTrace(id: string) {
   Object.assign(document.createElement("a"), { href: u, download: `trace-${id}.json` }).click();
   URL.revokeObjectURL(u);
 }
+
+export async function resetSession(): Promise<{ status: string; message: string; snapshot_id: string }> {
+  const r = await authed("/api/session/reset", { method: "POST" });
+  return r.json();
+}
+
