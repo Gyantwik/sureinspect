@@ -140,7 +140,7 @@ async def read_bounded_upload(file: UploadFile) -> tuple[bytes, str]:
         # Size limit check (413) runs before magic-byte check (415)
         if total_bytes > MAX_UPLOAD_BYTES:
             raise HTTPException(
-                status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                status_code=413,
                 detail={
                     "code": "PAYLOAD_TOO_LARGE",
                     "message": f"Upload exceeds maximum compressed size of {MAX_UPLOAD_BYTES} bytes (10 MiB).",
@@ -263,7 +263,7 @@ def decode_and_validate_image(raw_bytes: bytes) -> np.ndarray:
         width, height = header_dims
         if width * height > OPENCV_MAX_PIXELS:
             raise HTTPException(
-                status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                status_code=413,
                 detail={
                     "code": "PIXEL_LIMIT_EXCEEDED",
                     "message": f"Image dimensions ({width}x{height} = {width * height} pixels) exceed 25 MP ceiling.",
@@ -302,7 +302,7 @@ def decode_and_validate_image(raw_bytes: bytes) -> np.ndarray:
     h, w = img.shape[:2]
     if h * w > OPENCV_MAX_PIXELS:
         raise HTTPException(
-            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            status_code=413,
             detail={
                 "code": "PIXEL_LIMIT_EXCEEDED",
                 "message": f"Image resolution {w}x{h} ({w * h} pixels) exceeds the 25 MP limit.",
