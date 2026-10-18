@@ -10,7 +10,7 @@
 | Role | Assigned Developer | Branch | Current Status |
 | :--- | :--- | :--- | :--- |
 | **Person 1 (OpenCV & ML Lead)** | `@Biswabasini90` | `main` | **COMPLETED: Preprocessing Pipeline (PR #6 Merged)**. Ready for Tools $T_1 - T_5$ & ONNX backbone. |
-| **Person 2 (Backend & AWS Lead)** | `@Gyantwik` (Owner) | `main` | **COMPLETED: Runtime Entrypoint & 413 Clean Logs (PR #1, #2, #3, #4, #7 Merged)**. Ready for live engine executor & AWS deployment. |
+| **Person 2 (Backend & AWS Lead)** | `@Gyantwik` (Owner) | `main` | **COMPLETED: Full P2 Lifecycle & Security Hardening (PR #1, #2, #3, #4 Merged)**. Unblocked for `backend/main.py`. |
 | **Person 3 (Frontend & Docs Lead)** | `@Khushbu656` | `main` | **COMPLETED: 3-Panel Console, Typed API Client & Tests (PR #5 Merged)**. Ready for live integration. |
 
 ---
@@ -78,17 +78,6 @@
 * [x] **Aspect-Preserving Standardization (`core/preprocess.py` - by `@Biswabasini90`):** Standardizes images to $\le 1024\text{ px}$ longest side using `cv2.INTER_AREA`, never upscales, validates 3-channel uint8 geometry, and provides exact scale factors (`scale_x`, `scale_y`) matching the API contract.
 * [x] **Network Blob Transformation (`core/preprocess.py`):** Converts BGR to RGB, square resizes, scales to $[0, 1]$, standardizes with ImageNet mean/std, and produces contiguous float32 NCHW tensors.
 * [x] **Unit Test Suite (`core/tests/test_preprocess.py`):** 12 tests verifying boundary retention, box back-projection, determinism, and normalization.
-
-### 2.8 Backend Runtime Entrypoint & Warning Cleanup (PR #7 Merged)
-* [x] **FastAPI Runtime Entrypoint (`backend/main.py` - by `@Gyantwik`):**
-  * Configured ASGI module export `backend.main:app` for production Uvicorn deployment.
-  * Direct CLI execution support: `python -m backend.main --host 127.0.0.1 --port 8000 --workers 1`.
-  * Pre-initialization environment enforcement: `OPENCV_IO_MAX_IMAGE_PIXELS=25000000` and thread caps (`OMP_NUM_THREADS`, `OPENBLAS_NUM_THREADS`, `MKL_NUM_THREADS`, `NUMEXPR_NUM_THREADS`).
-  * Proxy header support (`--forwarded-allow-ips`) for reverse-proxy deployment with Caddy.
-* [x] **Starlette 413 Deprecation Warning Cleanup (`backend/admission.py`):**
-  * Replaced deprecated `status.HTTP_413_REQUEST_ENTITY_TOO_LARGE` with integer `413` across streaming admission and dimension bomb guards.
-* [x] **Unit & Integration Tests (`backend/tests/test_main.py`):**
-  * Verified FastAPI instance, `/api/health` response schema, CLI argument parsing defaults/custom values, and environment variable initialization. (Total test suite now at 93 passing tests with 0 failures).
 
 ---
 
