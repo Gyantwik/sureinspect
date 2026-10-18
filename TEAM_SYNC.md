@@ -90,15 +90,6 @@
 * [x] **Unit & Integration Tests (`backend/tests/test_main.py`):**
   * Verified FastAPI instance, `/api/health` response schema, CLI argument parsing defaults/custom values, and environment variable initialization. (Total test suite now at 93 passing tests with 0 failures).
 
-### 2.9 Single-Origin Static SPA Mounting & Docker Entrypoint (PR #8 Merged)
-* [x] **Production Single-Origin Frontend Serving (`backend/app_factory.py` - by `@Gyantwik`):**
-  * Mounted compiled frontend assets at `/assets` and served `index.html` at `/` when `frontend/dist` exists.
-  * Resolved 404 on base URL without intercepting dynamically added routes or `/api/*`.
-* [x] **Production Dockerfile Entrypoint Alignment (`deploy/Dockerfile`):**
-  * Updated CMD to execute `python -m backend.main` with single-worker proxy header configuration.
-* [x] **Unit & Integration Tests (`backend/tests/test_main.py`):**
-  * Added `test_main_serves_root_spa` verifying 200 OK root SPA delivery. (Total test suite at 93 passing tests).
-
 ---
 
 ## 3. Strict File Ownership Matrix (Zero Collision Rules)
