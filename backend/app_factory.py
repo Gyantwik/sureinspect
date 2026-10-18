@@ -37,10 +37,10 @@ from backend.admission import (
     decode_and_validate_image,
     read_bounded_upload,
 )
+from backend.executor import EXECUTOR
 from backend.mock_service import (
     ALLOWLISTED_SAMPLE_IDS,
     TINY_PNG_BYTES,
-    generate_mock_inspection,
     get_mock_calibration,
     get_mock_samples,
 )
@@ -205,8 +205,8 @@ def create_app() -> FastAPI:
     def health_check():
         return HealthResponse(
             status="healthy",
-            engine="mock",
-            model_version="wrn50_v1_frozen",
+            engine=EXECUTOR.get_engine_mode(),
+            model_version=EXECUTOR.model_version,
             enabled_categories=["pcb1"],
             loaded_categories=["pcb1"],
         )
@@ -301,31 +301,18 @@ def create_app() -> FastAPI:
         # Acquire bounded admission slot (max 1 running, 4 queued, 503 if saturated)
         await INSPECTION_ADMISSION.acquire()
         try:
-            inspection = generate_mock_inspection(
+            inspection, assets_to_store = EXECUTOR.inspect(
                 category=category,
+                sample_id=sample_id,
+                image_bytes=raw_bytes if file else None,
+                decoded_img=decoded_img if file else None,
                 simulate_blur=simulate_blur,
                 simulate_darken=simulate_darken,
                 simulate_glare=simulate_glare,
-                sample_id=sample_id,
                 alpha_fail=alpha_fail,
                 path=path,
+                orig_dimensions=orig_dims,
             )
-
-            # Store generated assets in bounded storage
-            assets_to_store: dict[str, tuple[bytes, str]] = {}
-            for asset_url in [
-                inspection.assets.input_standardized,
-                inspection.assets.reference_aligned,
-                inspection.assets.anomaly_heatmap,
-                inspection.assets.contour_mask,
-            ]:
-                if asset_url:
-                    asset_key = asset_url.split("/api/assets/", 1)[-1]
-                    # PNG for masks/inputs, JPEG for heatmaps/references
-                    if "mask" in asset_key or "input" in asset_key:
-                        assets_to_store[asset_key] = (TINY_PNG_BYTES, "image/png")
-                    else:
-                        assets_to_store[asset_key] = (TINY_PNG_BYTES, "image/jpeg")
 
             STORAGE.store_inspection(
                 session_token=session_token,
