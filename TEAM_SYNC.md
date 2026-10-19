@@ -1,7 +1,7 @@
 # SureInspect: Team Status & Collision Prevention Guide
 > **Repository:** https://github.com/Gyantwik/sureinspect.git  
 > **Project:** SureInspect (OpenCV AI Competition 2026)  
-> **Last Updated:** October 18, 2026  
+> **Last Updated:** October 19, 2026  
 
 ---
 
@@ -9,9 +9,10 @@
 
 | Role | Assigned Developer | Branch | Current Status |
 | :--- | :--- | :--- | :--- |
-| **Person 1 (OpenCV & ML Lead)** | `@Biswabasini90` | `main` | **COMPLETED: Preprocessing Pipeline (PR #6 Merged)**. Ready for Tools $T_1 - T_5$ & ONNX backbone. |
-| **Person 2 (Backend & AWS Lead)** | `@Gyantwik` (Owner) | `main` | **COMPLETED: Runtime Entrypoint & 413 Clean Logs (PR #1, #2, #3, #4, #7 Merged)**. Ready for live engine executor & AWS deployment. |
-| **Person 3 (Frontend & Docs Lead)** | `@Khushbu656` | `main` | **COMPLETED: 3-Panel Console, Typed API Client & Tests (PR #5 Merged)**. Ready for live integration. |
+| **Person 1 (OpenCV & ML Lead)** | `@Biswabasini90` | `main` | **COMPLETED: Full OpenCV 5 DNN Perception, Memory Bank, Calibration & Tools $T_1 - T_5$ (PR #6, #10, #14 Merged)**. Ready for Agent state machine. |
+| **Person 2 (Backend & AWS Lead)** | `@Gyantwik` (Owner) | `main` | **COMPLETED: Pluggable Engine Executor & Static Mounting (PR #1, #2, #3, #4, #7, #8, #12 Merged)**. Ready for live evaluation experiments. |
+| **Person 3 (Frontend & Docs Lead)** | `@Khushbu656` | `main` | **COMPLETED: 3-Panel Console, Audit Notice & Session Reset (PR #5, #13 Merged)**. Ready for technical report & video. |
+
 
 ---
 
@@ -98,6 +99,43 @@
   * Updated CMD to execute `python -m backend.main` with single-worker proxy header configuration.
 * [x] **Unit & Integration Tests (`backend/tests/test_main.py`):**
   * Added `test_main_serves_root_spa` verifying 200 OK root SPA delivery. (Total test suite at 93 passing tests).
+
+### 2.10 Shared Interfaces & Dataset Splits (PR #10 Merged)
+* [x] **Pipeline Interface Contract (`core/interfaces.py` - by `@Biswabasini90`):**
+  * Type-safe dataclasses covering `Point2D`, `BoundingBox`, `QualityAssessment`, `ROIComparison`, `ROIMeasurement`, `ToolExecutionStep`, `CounterfactualOutcome`, and `InspectionRecord`.
+* [x] **VisA `pcb1` Split Freeze (`train/prepare_dataset.py`):**
+  * Deterministic seed 42, SHA-256 image/mask hashing, near-duplicate group allocation, and leakage checks.
+
+### 2.11 Pluggable Inspection Executor (PR #12 Merged)
+* [x] **Inspection Executor (`backend/executor.py` - by `@Gyantwik`):**
+  * Pluggable execution architecture supporting `SUREINSPECT_ENGINE` ("auto", "mock", "live").
+  * Automatic detection of model artifacts on disk and dynamic `/api/health` status reporting.
+  * Programmatic hook `register_live_runner` and unit test suite in `backend/tests/test_executor.py` (7 tests, all passing).
+
+### 2.12 Frontend Compliance Notice & Session Reset (PR #13 Merged)
+* [x] **14-Day Audit Notice & Session Reset (`frontend/src/App.tsx`, `api.ts` - by `@Khushbu656`):**
+  * Added mandatory 14-day data retention and audit storage notice in console footer.
+  * Implemented `resetSession` API call and "Reset Session" button in top navigation ribbon.
+  * Refined engine badge for clear MOCK vs LIVE indicators.
+
+### 2.13 Full OpenCV 5 DNN Perception, Memory Bank, Calibration & Tools T1-T5 (PR #14 Merged)
+* [x] **WideResNet-50 ONNX Export (`train/export_backbone_onnx.py` - by `@Biswabasini90`):**
+  * Truncated WideResNet-50-2 feature extractor exported to ONNX (opset 17) with verified numerical parity in OpenCV 5 DNN (`cv2.dnn.readNetFromONNX`).
+* [x] **PatchCore Memory Bank & Perception (`train/build_memory_bank.py`, `core/perception.py`):**
+  * Extracted patch descriptors, greedy k-Center coreset selection (10,240 patches), nearest-neighbor patch scoring, 2D anomaly heatmap generation, and bounding-box ROI extraction.
+* [x] **Conformal Calibration Engine (`core/calibration.py`, `train/fit_calibration.py`):**
+  * Exact split-conformal calibration thresholds ($t_{\text{pass}} = 2.0405$, $t_{\text{fail}} = 2.2863$ at $\alpha=0.05$).
+* [x] **Complete OpenCV Evidence Tools $T_1 - T_5$ (`core/tools.py`):**
+  * $T_1$: `ALIGN_REFERENCE` (ORB + RANSAC homography + perspective warp).
+  * $T_2$: `ROI_COMPARE` (residual pixel differences vs aligned reference).
+  * $T_3$: `ROI_ZOOM_MEASURE` (`cv2.minAreaRect`, area %, elongation, edge distance).
+  * $T_4$: `LIGHT_NORMALIZE` (CLAHE in CIELAB color space).
+  * $T_5$: `NEXT_ROI` (iterate to next candidate defect region).
+* [x] **Curated Golden Reference Templates (`data/templates/pcb1/`):**
+  * 5 reference templates (`template_00.png` through `template_04.png`) and `templates.json`.
+* [x] **Comprehensive Test Suite (`core/tests/`):**
+  * 74 passing tests across `test_perception.py`, `test_calibration.py`, `test_tools.py`, `test_onnx_parity.py`, and `test_evidence_scripts.py` (total test suite at 136 passing tests).
+
 
 ---
 
