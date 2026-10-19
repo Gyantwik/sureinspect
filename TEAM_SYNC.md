@@ -10,7 +10,7 @@
 | Role | Assigned Developer | Branch | Current Status |
 | :--- | :--- | :--- | :--- |
 | **Person 1 (OpenCV & ML Lead)** | `@Biswabasini90` | `main` | **COMPLETED: Full OpenCV 5 DNN Perception, Memory Bank, Calibration & Tools $T_1 - T_5$ (PR #6, #10, #14 Merged)**. Ready for Agent state machine. |
-| **Person 2 (Backend & AWS Lead)** | `@Gyantwik` (Owner) | `main` | **COMPLETED: Pluggable Engine Executor & Static Mounting (PR #1, #2, #3, #4, #7, #8, #12 Merged)**. Ready for live evaluation experiments. |
+| **Person 2 (Backend & AWS Lead)** | `@Gyantwik` (Owner) | `main` | **COMPLETED: Full Live OpenCV 5 DNN & Agentic Pipeline Integration (PR #1, #2, #3, #4, #7, #8, #12, #16 Merged)**. Ready for technical report benchmark tables. |
 | **Person 3 (Frontend & Docs Lead)** | `@Khushbu656` | `main` | **COMPLETED: 3-Panel Console, Audit Notice & Session Reset (PR #5, #13 Merged)**. Ready for technical report & video. |
 
 
@@ -135,6 +135,22 @@
   * 5 reference templates (`template_00.png` through `template_04.png`) and `templates.json`.
 * [x] **Comprehensive Test Suite (`core/tests/`):**
   * 74 passing tests across `test_perception.py`, `test_calibration.py`, `test_tools.py`, `test_onnx_parity.py`, and `test_evidence_scripts.py` (total test suite at 136 passing tests).
+
+### 2.14 Full Live OpenCV 5 DNN & Agentic Pipeline Integration (PR #16 Merged)
+* [x] **Live Pipeline Runner (`backend/live_runner.py` - by `@Gyantwik`):**
+  * Pluggable live inference engine directly connecting `InspectionExecutor` to `artifacts/snapshots/*/model.onnx` and `bank.npz`.
+  * Fully orchestrated industrial inspection lifecycle:
+    1. Focus, exposure, glare, and lighting-shift validation via `core/quality_gate.py`.
+    2. Aspect-preserving standardization and preprocessing via `core/preprocess.py`.
+    3. OpenCV 5 DNN backbone inference and 10,240 coreset nearest-neighbor scoring via `core/perception.py`.
+    4. Exact split-conformal calibration evaluation ($t_{\text{pass}} = 2.0405, t_{\text{fail}} = 2.2863$ at $\alpha=0.05$) via `core/calibration.py`.
+    5. 2D Gaussian-blurred heatmap generation and connected-component defect ROI extraction.
+    6. Agentic evidence tools $T_1 - T_5$ (ORB template alignment, ROI residual comparison, rotated-rect geometric measurement) via `core/tools.py`.
+    7. Multi-asset generation and Bearer streaming: input PNG, aligned reference JPEG, blended JET heatmap JPEG, and binary contour mask PNG.
+* [x] **Pluggable Executor Dynamic Mode (`backend/executor.py`):**
+  * Auto-detects local model snapshots and switches dynamically to `engine: "live"` with snapshot model versioning.
+* [x] **Unit & Integration Test Suite (`backend/tests/`):**
+  * Full test suite passing (137 tests passing, 0 failures, 0 OpenAPI drift).
 
 
 ---
