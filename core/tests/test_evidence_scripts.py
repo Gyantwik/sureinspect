@@ -143,3 +143,34 @@ def test_fit_evidence_accepts_another_metric(pipeline):
                               "--templates", str(out), "--input", "64", "--metric", "raw_mean_m",
                               "--out", str(res)]) == 0
     assert json.loads(res.read_text())["metric"] == "raw_mean_m"
+
+
+def _rows(rng, n_norm=200, n_anom=20):
+    def row(label):
+        base = rng.gamma(4, 0.05) + (0.25 if label else 0.0)
+        return {"aligned": True, "quality": 0.9, "roi1_source": "threshold", "score": 1.0,
+                "metrics": {m: base for m in ("raw_mean", "raw_p95", "raw_mean_m", "raw_p95_m",
+                                              "clahe_mean", "clahe_p95", "clahe_mean_m", "clahe_p95_m")},
+                "path": "x", "template_id": "t", "reason": None}
+    return {"normal": [row(0) for _ in range(n_norm)], "anomaly": [row(1) for _ in range(n_anom)]}
+
+
+def test_analyze_evidence_sweeps_and_writes_final_thresholds(tmp_path, capsys):
+    from train import analyze_evidence
+
+    rng = np.random.default_rng(0)
+    ev = tmp_path / "ev.json"
+    ev.write_text(json.dumps({"category": "pcb1", "input_size": 256, "thresholds": {"q_min": 0.5},
+                              "rows": _rows(rng), "templates": ["a"], "constants": {},
+                              "calibration_sha256": "c", "splits_sha256": "s"}))
+    assert analyze_evidence.main(["--evidence", str(ev), "--metric", "raw_p95"]) == 0
+    assert "normals above" in capsys.readouterr().out
+    out = tmp_path / "final.json"
+    assert analyze_evidence.main(["--evidence", str(ev), "--metric", "raw_p95", "--r-low-pct", "90",
+                                  "--r-high-pct", "95", "--write", str(out)]) == 0
+    f = json.loads(out.read_text())
+    assert f["thresholds"]["r_low"] < f["thresholds"]["r_high"]
+    assert f["percentiles"] == {"r_low_pct": 90.0, "r_high_pct": 95.0}
+    assert f["clahe_metric"] == "clahe_p95" and len(f["source_evidence_sha256"]) == 64
+    assert analyze_evidence.main(["--evidence", str(ev), "--metric", "raw_p95", "--r-low-pct", "99",
+                                  "--r-high-pct", "90", "--write", str(out)]) == 2      # order enforced

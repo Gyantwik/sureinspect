@@ -117,7 +117,7 @@ def _pct(values, q):
     return float(np.percentile(np.asarray(values, dtype=np.float64), q))
 
 
-def fit(rows_normal: list[dict], rows_anom: list[dict]) -> dict:
+def fit(rows_normal: list[dict], rows_anom: list[dict], r_low_pct: float = 90.0, r_high_pct: float = 99.0) -> dict:
     qual = [r["quality"] for r in rows_normal if r["aligned"] and r["quality"] is not None]
     if len(qual) < 10:
         raise SystemExit(f"ERROR: only {len(qual)} development normals aligned; cannot fit q_min. "
@@ -130,8 +130,9 @@ def fit(rows_normal: list[dict], rows_anom: list[dict]) -> dict:
         raise SystemExit("ERROR: too few usable development-normal residuals to fit r_low/r_high.")
     out = {
         "q_min": q_min,
-        "r_low": _pct(res, 90), "r_high": _pct(res, 99),
-        "clahe_r_low": _pct(res_c, 90), "clahe_r_high": _pct(res_c, 99),
+        "r_low": _pct(res, r_low_pct), "r_high": _pct(res, r_high_pct),
+        "clahe_r_low": _pct(res_c, r_low_pct), "clahe_r_high": _pct(res_c, r_high_pct),
+        "r_low_pct": r_low_pct, "r_high_pct": r_high_pct,
         "n_normals": len(rows_normal),
         "normals_aligned_valid": int(sum(r["aligned"] for r in rows_normal)),
         "alignment_failure_fraction_normals": float(1 - np.mean([r["aligned"] for r in rows_normal])),
@@ -164,6 +165,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--engine", choices=("auto", "new", "classic"), default="auto")
     ap.add_argument("--metric", choices=METRICS, default="raw_mean",
                     help="residual statistic used for r_low/r_high (see the printed diagnostics table)")
+    ap.add_argument("--r-low-pct", type=float, default=90.0, help="percentile of normal residuals for r_low")
+    ap.add_argument("--r-high-pct", type=float, default=99.0, help="percentile of normal residuals for r_high")
     ap.add_argument("--limit", type=int, default=None, help="at most N images per class (quick test)")
     ap.add_argument("--out", default=None)
     args = ap.parse_args(argv)
@@ -202,7 +205,7 @@ def main(argv: list[str] | None = None) -> int:
                 print(f"  {kind}: {i + 1}/{len(items)}", flush=True)
 
     select_metric(rows, args.metric)
-    fitted = fit(rows["normal"], rows["anomaly"])
+    fitted = fit(rows["normal"], rows["anomaly"], args.r_low_pct, args.r_high_pct)
     diag = diagnostics(rows, fitted["q_min"])
     unalignable = [{"path": r["path"], "quality": r["quality"], "reason": r["reason"], "template": r["template_id"],
                     "score": r["score"]} for r in rows["anomaly"] if not (r["aligned"] and r["quality"] >= fitted["q_min"])]
@@ -211,6 +214,7 @@ def main(argv: list[str] | None = None) -> int:
         "fitted_on": "development normals (dev_gate_fit + dev_eval) and development anomalies only",
         "thresholds": {k: fitted[k] for k in ("q_min", "r_low", "r_high", "clahe_r_low", "clahe_r_high")},
         "report": {k: v for k, v in fitted.items() if k not in ("q_min", "r_low", "r_high", "clahe_r_low", "clahe_r_high")},
+        "percentiles": {"r_low_pct": args.r_low_pct, "r_high_pct": args.r_high_pct},
         "constants": {"orb_features": T.ORB_FEATURES, "ratio": T.RATIO, "ransac_px": T.RANSAC_THRESH,
                       "scale_range": list(T.SCALE_RANGE), "max_rot_deg": T.MAX_ROT_DEG, "min_overlap": T.MIN_OVERLAP,
                       "blur": [T.BLUR_KSIZE, T.BLUR_SIGMA], "clahe": [T.CLAHE_CLIP, T.CLAHE_TILE],
