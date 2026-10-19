@@ -8,7 +8,7 @@ case "${AUTHOR,,}" in
   "${P3,,}") OWN='^(frontend|docs)/' ;;
   *) echo "Unknown author: $AUTHOR"; exit 1 ;;
 esac
-SHARED='^(README\.md|requirements[^/]*\.txt|\.gitignore|\.gitattributes|\.dockerignore|\.env\.example)$|^\.github/'
+SHARED='^(README\.md|TEAM_SYNC\.md|requirements[^/]*\.txt|\.gitignore|\.gitattributes|\.dockerignore|\.env\.example)$|^\.github/'
 CONTRACT='^contracts/|^backend/schemas\.py$|^core/interfaces\.py$'
 BAD=0
 while IFS= read -r -d '' f; do

@@ -65,4 +65,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
 EXPOSE 8000
 
 # Run single uvicorn worker bound to localhost (reverse-proxied by Caddy)
-CMD ["python", "-m", "uvicorn", "backend.app_factory:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--forwarded-allow-ips=*"]
+CMD ["python", "-m", "backend.main", "--host", "0.0.0.0", "--port", "8000", "--forwarded-allow-ips=*"]
