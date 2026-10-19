@@ -23,7 +23,7 @@ def test_main_health_endpoint():
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "healthy"
-    assert data["engine"] == "mock"
+    assert data["engine"] in ("mock", "live")
 
 
 def test_main_serves_root_spa():

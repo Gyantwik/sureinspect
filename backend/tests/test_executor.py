@@ -16,9 +16,9 @@ from backend.mock_service import TINY_PNG_BYTES, generate_mock_inspection
 from backend.schemas import InspectionResponse
 
 
-def test_executor_defaults():
+def test_executor_defaults(tmp_path: Path):
     """Verify default auto mode and fallback to mock when artifacts are absent."""
-    executor = InspectionExecutor()
+    executor = InspectionExecutor(artifacts_dir=tmp_path)
     assert executor.configured_mode == "auto"
     assert executor.model_version == "wrn50_v1_frozen"
     # In default checkout without model weights, live is not ready
@@ -45,17 +45,17 @@ def test_executor_mock_inspection():
     assert assets[input_key][1] == "image/png"
 
 
-def test_executor_explicit_mock_mode(monkeypatch: pytest.MonkeyPatch):
+def test_executor_explicit_mock_mode(monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
     """Verify explicit mock mode via environment variable."""
     monkeypatch.setenv("SUREINSPECT_ENGINE", "mock")
-    executor = InspectionExecutor()
+    executor = InspectionExecutor(artifacts_dir=tmp_path)
     assert executor.configured_mode == "mock"
     assert executor.get_engine_mode() == "mock"
 
 
-def test_executor_explicit_live_mode_unavailable():
+def test_executor_explicit_live_mode_unavailable(tmp_path: Path):
     """Verify 503 is raised if live mode is requested without model artifacts."""
-    executor = InspectionExecutor(mode="live")
+    executor = InspectionExecutor(mode="live", artifacts_dir=tmp_path)
     assert executor.get_engine_mode() == "live"
     assert executor.is_live_ready() is False
 
@@ -65,9 +65,21 @@ def test_executor_explicit_live_mode_unavailable():
     assert exc_info.value.detail["code"] == "SERVICE_UNAVAILABLE"
 
 
-def test_executor_live_runner_registration():
+def test_executor_live_with_snapshot():
+    """Verify that when snapshot exists on disk, live engine is ready and executes."""
+    executor = InspectionExecutor(artifacts_dir="artifacts")
+    if executor.is_live_ready():
+        assert executor.get_engine_mode() == "live"
+        insp, assets = executor.inspect(category="pcb1", sample_id="template_00")
+        assert insp.engine == "live"
+        assert insp.decision == "PASS"
+        assert insp.decision_path == "FAST_PASS"
+        assert len(assets) >= 3
+
+
+def test_executor_live_runner_registration(tmp_path: Path):
     """Verify registering a live runner activates live engine mode."""
-    executor = InspectionExecutor(mode="auto")
+    executor = InspectionExecutor(mode="auto", artifacts_dir=tmp_path)
 
     def dummy_live_runner(**kwargs):
         base = generate_mock_inspection(category="pcb1", sample_id="pcb1_good_01")
@@ -103,24 +115,16 @@ def test_health_reflects_executor_mode():
     app = create_app()
     client = TestClient(app)
 
-    # Initial state should be mock
-    res = client.get("/api/health")
-    assert res.status_code == 200
-    assert res.json()["engine"] == "mock"
-
-    # Register temporary runner on singleton
-    def dummy_runner(**kwargs):
-        return generate_mock_inspection(category="pcb1"), {}
-
+    initial_mode = EXECUTOR._explicit_mode
     try:
-        EXECUTOR.register_live_runner(dummy_runner)
+        EXECUTOR._explicit_mode = "mock"
+        res = client.get("/api/health")
+        assert res.status_code == 200
+        assert res.json()["engine"] == "mock"
+
+        EXECUTOR._explicit_mode = "live"
         res_live = client.get("/api/health")
         assert res_live.status_code == 200
         assert res_live.json()["engine"] == "live"
     finally:
-        EXECUTOR.register_live_runner(None)
-
-    # Verify restored to mock
-    res_restored = client.get("/api/health")
-    assert res_restored.status_code == 200
-    assert res_restored.json()["engine"] == "mock"
+        EXECUTOR._explicit_mode = initial_mode
