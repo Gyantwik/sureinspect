@@ -116,6 +116,8 @@ def test_fit_evidence_end_to_end(pipeline):
     assert th["q_min"] > 0.5                                             # textured variants align well
     assert r["report"]["alignment_failure_fraction_normals"] < 0.2
     assert r["report"]["anomalies"]["n"] == 4 and "final" not in r["fitted_on"]
+    assert r["metric"] == "raw_mean" and set(r["diagnostics"]) <= {"raw_mean", "raw_p95", "raw_mean_m", "raw_p95_m"}
+    assert "unalignable_anomalies" in r and "roi1_fallback_fraction_anomalies" in r
     assert len(r["rows"]["normal"]) == r["report"]["n_normals"]
 
 
@@ -126,3 +128,18 @@ def test_fit_refuses_when_too_few_normals_align():
              "roi1_source": "threshold"}] * 20
     with pytest.raises(SystemExit, match="cannot fit q_min"):
         fit(rows, [])
+
+
+def test_fit_evidence_accepts_another_metric(pipeline):
+    from train import fit_evidence, select_templates
+
+    p = pipeline
+    out = p["tmp"] / "templates"
+    select_templates.main(["--root", str(p["root"]), "--category", "pcb1", "--splits", str(p["splits"]),
+                           "--onnx", str(p["tiny"]), "--input", "64", "--count", "3", "--out-dir", str(out)])
+    res = p["tmp"] / "evidence_m.json"
+    assert fit_evidence.main(["--root", str(p["root"]), "--category", "pcb1", "--splits", str(p["splits"]),
+                              "--onnx", str(p["tiny"]), "--bank", str(p["bank"]), "--calibration", str(p["cal"]),
+                              "--templates", str(out), "--input", "64", "--metric", "raw_mean_m",
+                              "--out", str(res)]) == 0
+    assert json.loads(res.read_text())["metric"] == "raw_mean_m"

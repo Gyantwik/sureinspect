@@ -285,11 +285,25 @@ class Comparison:
     valid: np.ndarray      # bool validity mask (padding excluded)
 
 
-def prepare_comparison(test_cmp_gray: np.ndarray, ref_cmp_gray: np.ndarray, m: np.ndarray) -> Comparison:
-    """Warp the reference with M and build the residual image. Inputs may be CLAHE copies (T4)."""
+def prepare_comparison(test_cmp_gray: np.ndarray, ref_cmp_gray: np.ndarray, m: np.ndarray,
+                       match: bool = False) -> Comparison:
+    """Warp the reference with M and build the residual image. Inputs may be CLAHE copies (T4).
+
+    match=True first matches the warped reference's mean/std to the test image over the valid
+    overlap (a global gain/offset), so an exposure difference between two photos does not swamp
+    a small local defect. It is applied identically when fitting and at runtime.
+    """
     warped, valid = warp_reference(ref_cmp_gray, m, test_cmp_gray.shape)
-    diff = np.abs(_blur(test_cmp_gray).astype(np.float32) - _blur(warped).astype(np.float32)) / 255.0
-    return Comparison(diff=diff, valid=valid > 0)
+    tb = _blur(test_cmp_gray).astype(np.float32)
+    rb = _blur(warped).astype(np.float32)
+    if match:
+        v = valid > 0
+        if int(v.sum()) >= MIN_VALID_PX:
+            mt, st = float(tb[v].mean()), float(tb[v].std())
+            mr, sr = float(rb[v].mean()), float(rb[v].std())
+            if sr > 1e-6:
+                rb = np.clip((rb - mr) * (st / sr) + mt, 0.0, 255.0)
+    return Comparison(diff=np.abs(tb - rb) / 255.0, valid=valid > 0)
 
 
 def roi_residual(cmp: Comparison, roi) -> dict:

@@ -41,6 +41,22 @@ def sha256_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+METRICS = ("raw_mean", "raw_p95", "raw_mean_m", "raw_p95_m")      # *_m = photometric matching
+
+
+def _variants(test_gray, ref_gray, m, roi) -> dict:
+    """ROI1 residual under every candidate statistic (raw and CLAHE copies, with/without matching)."""
+    out = {}
+    pairs = {"raw": (test_gray, ref_gray),
+             "clahe": (T.normalize_lighting(test_gray), T.normalize_lighting(ref_gray))}
+    for prefix, (tg, rg) in pairs.items():
+        for match, suffix in ((False, ""), (True, "_m")):
+            r = T.roi_residual(T.prepare_comparison(tg, rg, m, match=match), roi)
+            out[f"{prefix}_mean{suffix}"] = r.get("residual_mean") if r["available"] else None
+            out[f"{prefix}_p95{suffix}"] = r.get("residual_p95") if r["available"] else None
+    return out
+
+
 def evaluate_image(net, bank, size, templates, patch_thr, img_bgr) -> dict:
     """Run the agent's evidence path for ONE image (no thresholds applied)."""
     std = standardize(img_bgr)
@@ -60,12 +76,41 @@ def evaluate_image(net, bank, size, templates, patch_thr, img_bgr) -> dict:
     if not al.valid:
         return row
     ref_gray = next(t["gray"] for t in templates["items"] if t["id"] == al.template_id)
-    raw = T.roi_residual(T.prepare_comparison(test_gray, ref_gray, al.M), rois[0]["box"])
-    cl = T.roi_residual(T.prepare_comparison(T.normalize_lighting(test_gray), T.normalize_lighting(ref_gray), al.M),
-                        rois[0]["box"])
-    row["residual"] = raw.get("residual_mean") if raw["available"] else None
-    row["residual_clahe"] = cl.get("residual_mean") if cl["available"] else None
+    row["metrics"] = _variants(test_gray, ref_gray, al.M, rois[0]["box"])
     return row
+
+
+def select_metric(rows: dict, metric: str) -> None:
+    """Copy the chosen statistic into row['residual'] / row['residual_clahe'] (CLAHE uses the same statistic)."""
+    clahe = metric.replace("raw_", "clahe_", 1)
+    for kind in rows.values():
+        for r in kind:
+            m = r.get("metrics")
+            r["residual"] = m.get(metric) if m else None
+            r["residual_clahe"] = m.get(clahe) if m else None
+
+
+def diagnostics(rows: dict, q_min: float) -> dict:
+    """Which residual statistic separates development anomalies from normals best? (informational)"""
+    out = {}
+    for metric in METRICS:
+        n = [r["metrics"][metric] for r in rows["normal"]
+             if r.get("metrics") and r["quality"] >= q_min and r["metrics"].get(metric) is not None]
+        a = [r["metrics"][metric] for r in rows["anomaly"]
+             if r.get("metrics") and r["quality"] >= q_min and r["metrics"].get(metric) is not None]
+        if len(n) < 10 or len(a) < 3:
+            continue
+        entry = {"n_normals": len(n), "n_anomalies": len(a),
+                 "normal_median": float(np.median(n)), "anomaly_median": float(np.median(a)),
+                 "anomalies_above_normal_p90": float(np.mean(np.array(a) > np.percentile(n, 90))),
+                 "anomalies_above_normal_p99": float(np.mean(np.array(a) > np.percentile(n, 99)))}
+        try:
+            from sklearn.metrics import roc_auc_score
+            entry["auroc"] = float(roc_auc_score([0] * len(n) + [1] * len(a), n + a))
+        except Exception:
+            entry["auroc"] = None
+        out[metric] = entry
+    return out
 
 
 def _pct(values, q):
@@ -117,6 +162,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--templates", default=None, help="default data/templates/<category>")
     ap.add_argument("--input", type=int, default=256)
     ap.add_argument("--engine", choices=("auto", "new", "classic"), default="auto")
+    ap.add_argument("--metric", choices=METRICS, default="raw_mean",
+                    help="residual statistic used for r_low/r_high (see the printed diagnostics table)")
     ap.add_argument("--limit", type=int, default=None, help="at most N images per class (quick test)")
     ap.add_argument("--out", default=None)
     args = ap.parse_args(argv)
@@ -154,7 +201,11 @@ def main(argv: list[str] | None = None) -> int:
             if (i + 1) % 50 == 0:
                 print(f"  {kind}: {i + 1}/{len(items)}", flush=True)
 
+    select_metric(rows, args.metric)
     fitted = fit(rows["normal"], rows["anomaly"])
+    diag = diagnostics(rows, fitted["q_min"])
+    unalignable = [{"path": r["path"], "quality": r["quality"], "reason": r["reason"], "template": r["template_id"],
+                    "score": r["score"]} for r in rows["anomaly"] if not (r["aligned"] and r["quality"] >= fitted["q_min"])]
     result = {
         "category": args.category, "input_size": args.input,
         "fitted_on": "development normals (dev_gate_fit + dev_eval) and development anomalies only",
@@ -164,6 +215,11 @@ def main(argv: list[str] | None = None) -> int:
                       "scale_range": list(T.SCALE_RANGE), "max_rot_deg": T.MAX_ROT_DEG, "min_overlap": T.MIN_OVERLAP,
                       "blur": [T.BLUR_KSIZE, T.BLUR_SIGMA], "clahe": [T.CLAHE_CLIP, T.CLAHE_TILE],
                       "elongated_ratio": T.ELONGATED_RATIO, "compact_ratio": T.COMPACT_RATIO},
+        "metric": args.metric,
+        "diagnostics": diag,
+        "unalignable_anomalies": unalignable,
+        "roi1_fallback_fraction_anomalies": float(np.mean([r["roi1_source"] == "peak_fallback" for r in rows["anomaly"]]))
+        if rows["anomaly"] else None,
         "templates": [t["id"] for t in templates["items"]],
         "calibration_sha256": sha256_file(Path(args.calibration)),
         "splits_sha256": sha256_file(splits_path),
@@ -180,6 +236,21 @@ def main(argv: list[str] | None = None) -> int:
           f"CLAHE r_low {th['clahe_r_low']:.4f} r_high {th['clahe_r_high']:.4f}")
     print(f"dev normals: alignment failures {rp['alignment_failure_fraction_normals']:.3f}, "
           f"below q_min {rp['normals_below_q_min_fraction']:.3f}, ROI1 fallbacks {rp['roi1_fallback_fraction_normals']:.3f}")
+    print(f"metric used: {args.metric}")
+    if diag:
+        print("\nResidual statistic diagnostics (aligned dev images; higher AUROC = better separation):")
+        print(f"  {'metric':12s} {'AUROC':>6s} {'normal med':>11s} {'anomaly med':>12s} {'anom>p90':>9s} {'anom>p99':>9s}")
+        for k, v in diag.items():
+            au = f"{v['auroc']:.3f}" if v["auroc"] is not None else "  n/a"
+            print(f"  {k:12s} {au:>6s} {v['normal_median']:11.4f} {v['anomaly_median']:12.4f} "
+                  f"{v['anomalies_above_normal_p90']:9.2f} {v['anomalies_above_normal_p99']:9.2f}")
+    if unalignable:
+        print(f"\nDevelopment anomalies that could not be aligned ({len(unalignable)}):")
+        for u in unalignable:
+            q = f"{u['quality']:.3f}" if u["quality"] is not None else "n/a"
+            print(f"  {u['path']}  quality {q}  score {u['score']:.2f}  {u['reason']}")
+    if result["roi1_fallback_fraction_anomalies"] is not None:
+        print(f"ROI1 is a peak fallback box for {result['roi1_fallback_fraction_anomalies']:.2f} of development anomalies")
     a = rp.get("anomalies")
     if a:
         print(f"dev anomalies: {a['n']} | not alignable {a['alignment_failed_or_below_q_min']} | "

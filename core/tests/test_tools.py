@@ -211,3 +211,15 @@ def test_nearest_order_and_template_loading(tmp_path):
     assert [x["id"] for x in t["items"]] == ["t0", "t1", "t2"] and t["items"][0]["gray"].ndim == 2
     assert T.nearest_order(np.array([6.0, 0.0], np.float32), t["embeddings"]) == [1, 2, 0]
     assert T.nearest_order(np.array([5.0, 0.0], np.float32), np.array([[5.0, 0], [5.0, 0]], np.float32)) == [0, 1]
+
+
+def test_photometric_matching_removes_an_exposure_difference_but_keeps_a_defect():
+    ref = textured()
+    test = np.clip(ref.astype(np.float32) * 0.75 + 25, 0, 255).astype(np.uint8)       # darker, offset photo
+    plain = T.roi_residual(T.prepare_comparison(test, ref, np.eye(3)), (100, 100, 120, 120))
+    matched = T.roi_residual(T.prepare_comparison(test, ref, np.eye(3), match=True), (100, 100, 120, 120))
+    assert plain["residual_mean"] > 0.05 and matched["residual_mean"] < 0.02
+    test2 = test.copy()
+    cv2.rectangle(test2, (140, 140), (180, 180), 255, -1)
+    d = T.roi_residual(T.prepare_comparison(test2, ref, np.eye(3), match=True), (120, 120, 80, 80))
+    assert d["residual_mean"] > 4 * matched["residual_mean"]
