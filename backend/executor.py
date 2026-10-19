@@ -44,6 +44,13 @@ class InspectionExecutor:
         self.artifacts_dir = Path(artifacts_dir or "artifacts")
         self.live_runner = live_runner
         self.model_version = model_version
+        try:
+            from backend.live_runner import find_snapshot_dir
+            snap = find_snapshot_dir(self.artifacts_dir)
+            if snap is not None:
+                self.model_version = snap.name
+        except Exception:
+            pass
 
     @property
     def configured_mode(self) -> str:
@@ -55,26 +62,26 @@ class InspectionExecutor:
         """
         Returns True if live inference prerequisites are satisfied:
         - A live runner callable has been explicitly registered, OR
-        - Model artifacts (backbone.onnx or memory_bank.npy) exist on disk AND
-          a live pipeline in core.perception / core.agent can be resolved.
+        - Model artifacts (snapshots or backbone.onnx) exist on disk AND
+          a live pipeline in backend.live_runner / core.perception can be resolved.
         """
         if self.live_runner is not None:
             return True
 
-        # Check for model weights on disk
+        from backend.live_runner import find_snapshot_dir
         has_artifacts = (
-            (self.artifacts_dir / "backbone.onnx").is_file()
+            find_snapshot_dir(self.artifacts_dir) is not None
+            or (self.artifacts_dir / "backbone.onnx").is_file()
             or (self.artifacts_dir / "memory_bank.npy").is_file()
         )
         if not has_artifacts:
             return False
 
-        # Check if live pipeline module exists in core
         try:
             import importlib.util
             perception_spec = importlib.util.find_spec("core.perception")
-            agent_spec = importlib.util.find_spec("core.agent")
-            return perception_spec is not None or agent_spec is not None
+            live_runner_spec = importlib.util.find_spec("backend.live_runner")
+            return perception_spec is not None or live_runner_spec is not None
         except (ImportError, AttributeError, ValueError):
             return False
 
@@ -214,6 +221,32 @@ class InspectionExecutor:
                 orig_dimensions=orig_dimensions,
             )
 
+        # Execute through backend.live_runner
+        try:
+            from backend.live_runner import get_live_engine
+            engine = get_live_engine(self.artifacts_dir)
+            if engine is not None:
+                return engine.inspect(
+                    category=category,
+                    sample_id=sample_id,
+                    image_bytes=image_bytes,
+                    decoded_img=decoded_img,
+                    simulate_blur=simulate_blur,
+                    simulate_darken=simulate_darken,
+                    simulate_glare=simulate_glare,
+                    alpha_fail=alpha_fail,
+                    path=path,
+                    orig_dimensions=orig_dimensions,
+                )
+        except Exception as exc:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail={
+                    "code": "INTERNAL_SERVER_ERROR",
+                    "message": f"Failed executing live pipeline: {exc}",
+                },
+            ) from exc
+
         # Fallback to importing core.agent if available
         try:
             import importlib
@@ -230,14 +263,8 @@ class InspectionExecutor:
                     alpha_fail=alpha_fail,
                     orig_dimensions=orig_dimensions,
                 )
-        except Exception as exc:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail={
-                    "code": "INTERNAL_SERVER_ERROR",
-                    "message": f"Failed executing live pipeline: {exc}",
-                },
-            ) from exc
+        except Exception:
+            pass
 
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
