@@ -162,6 +162,7 @@ class ScoreResult:
     score: float                 # max raw patch distance
     patch_map: np.ndarray        # (h, w) float32 raw patch distances
     grid: tuple[int, int]        # (h, w)
+    embedding: np.ndarray | None = None   # mean patch descriptor (global image embedding)
 
 
 def score_image(net, image_std: np.ndarray, bank: np.ndarray, size: int) -> ScoreResult:
@@ -169,7 +170,7 @@ def score_image(net, image_std: np.ndarray, bank: np.ndarray, size: int) -> Scor
     feats, grid = extract_patch_features(net, blob)
     d = nn_distances(feats, bank)
     pm = d.reshape(grid).astype(np.float32)
-    return ScoreResult(score=float(pm.max()), patch_map=pm, grid=grid)
+    return ScoreResult(score=float(pm.max()), patch_map=pm, grid=grid, embedding=feats.mean(axis=0))
 
 
 def make_heatmap(patch_map: np.ndarray, std_size: tuple[int, int]) -> np.ndarray:

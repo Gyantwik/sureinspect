@@ -1,0 +1,74 @@
+{
+  "category": "pcb1",
+  "selection": "deterministic farthest-point on mean patch-descriptor embeddings; start = nearest to the mean",
+  "eligible": "bank_normals only",
+  "input_size": 256,
+  "onnx": "wide_resnet50_2_256.onnx",
+  "templates": [
+    {
+      "id": "pcb1-t00",
+      "file": "template_00.png",
+      "embedding_row": 0,
+      "source_path": "pcb1/train/good/0211.JPG",
+      "source_sha256": "c25e23443cdad747636bd3e94c2901654c7f17ad8c13b217f26b7b7e26464f87",
+      "png_sha256": "17b045520e644a71b70121efea1b9bb35d56fe610840bccf3211d7364a6b76ea",
+      "standardized_size": [
+        1024,
+        780
+      ],
+      "png_mb": 1.54
+    },
+    {
+      "id": "pcb1-t01",
+      "file": "template_01.png",
+      "embedding_row": 1,
+      "source_path": "pcb1/train/good/0636.JPG",
+      "source_sha256": "035412e9b5095986c4d7355e618cc9549e784617a12687d2b6509e3f216e4bf2",
+      "png_sha256": "3493ccd0bcb00a1997efbfd2ec2c48e3687367531f57223087982d9934006d03",
+      "standardized_size": [
+        1024,
+        780
+      ],
+      "png_mb": 1.53
+    },
+    {
+      "id": "pcb1-t02",
+      "file": "template_02.png",
+      "embedding_row": 2,
+      "source_path": "pcb1/train/good/0662.JPG",
+      "source_sha256": "17dde8ab59245d6d735ae6cf113ba29b9bf9bc833418c24ba135fdb113a53ca7",
+      "png_sha256": "16d5d13736357c144e374c526f8ae11bfb5f4e11f01e6cf007e482b457f4d759",
+      "standardized_size": [
+        1024,
+        780
+      ],
+      "png_mb": 1.57
+    },
+    {
+      "id": "pcb1-t03",
+      "file": "template_03.png",
+      "embedding_row": 3,
+      "source_path": "pcb1/train/good/0137.JPG",
+      "source_sha256": "dc4b8fd827bca57f8062613424807daaba73816a221085788c9fcbceed4e69eb",
+      "png_sha256": "b023e98718e3062fd9de6e72caf3731fe7b545ba765de1554224d1f3c4fd5e46",
+      "standardized_size": [
+        1024,
+        780
+      ],
+      "png_mb": 1.43
+    },
+    {
+      "id": "pcb1-t04",
+      "file": "template_04.png",
+      "embedding_row": 4,
+      "source_path": "pcb1/train/good/0283.JPG",
+      "source_sha256": "53c2834f6a5236100f83a20101485fdc7077235d9eb3067c50fbff823874e1e2",
+      "png_sha256": "4e54e6c402d47ab7339b012a8e8233aaad9344569a15ee7283eae5a8fed94cd6",
+      "standardized_size": [
+        1024,
+        780
+      ],
+      "png_mb": 1.47
+    }
+  ]
+}
