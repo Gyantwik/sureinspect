@@ -8,11 +8,11 @@
       "category": "pcb1",
       "display_name": "PCB 1 - Clean Board (Normal)",
       "ground_truth": "good",
-      "attribution": "Synthetic placeholder generated with OpenCV for UI testing (not from VisA)",
+      "attribution": "Amazon VisA Dataset pcb1 (CC BY 4.0)",
       "image_file": "pcb1_good_01.png",
       "image_url": "/api/samples/pcb1_good_01/image",
       "role": "FAST_PASS",
-      "dimensions": [256, 256, 3]
+      "dimensions": [1024, 780, 3]
     },
     {
       "id": "pcb1_bad_missing_01",
