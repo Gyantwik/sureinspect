@@ -101,6 +101,12 @@ def test_inspect_standardized_quality_failure():
 
 def test_run_inspection_live_mock_sample():
     """Verify run_inspection end-to-end execution on a sample board."""
+    try:
+        from core.agent import find_default_snapshot
+        find_default_snapshot("pcb1")
+    except FileNotFoundError:
+        pytest.skip("No published snapshot found in artifacts/snapshots; skipping live snapshot test in clean CI environment")
+
     resp, assets = run_inspection(sample_id="pcb1_good_01", alpha_fail=0.05)
     assert resp.engine == "live"
     assert resp.category == "pcb1"
@@ -108,3 +114,4 @@ def test_run_inspection_live_mock_sample():
     assert len(assets) >= 1
     # Standardized input asset is encoded as PNG
     assert any(k.endswith("_input.png") for k in assets)
+
