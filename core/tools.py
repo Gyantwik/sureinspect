@@ -379,20 +379,35 @@ def normalize_lighting(gray: np.ndarray) -> np.ndarray:
 # ------------------------------------------------------------------ templates
 
 def load_templates(directory: str | Path) -> dict:
-    """Read data/templates/<category>/ -> {"items": [{id, gray, bgr, embedding}], "embeddings": (k, D)}."""
+    """Read data/templates/<category>/ -> {"items": [{id, gray, bgr, embedding}], "embeddings": (k, D) | None}."""
     d = Path(directory)
     meta = json.loads((d / "templates.json").read_text(encoding="utf-8"))
-    emb = np.load(d / "embeddings.npz")["embeddings"].astype(np.float32)
+    emb_path = d / "embeddings.npz"
+    emb = None
+    if emb_path.is_file():
+        try:
+            emb = np.load(emb_path)["embeddings"].astype(np.float32)
+        except Exception:
+            emb = None
+
     items = []
     for i, t in enumerate(meta["templates"]):
         bgr = cv2.imread(str(d / t["file"]))
         if bgr is None:
             raise FileNotFoundError(f"missing template image {d / t['file']}")
-        items.append({"id": t["id"], "bgr": bgr, "gray": to_gray(bgr), "embedding": emb[t["embedding_row"]]})
+        emb_val = None
+        if emb is not None and "embedding_row" in t:
+            row_idx = t["embedding_row"]
+            if 0 <= row_idx < len(emb):
+                emb_val = emb[row_idx]
+        items.append({"id": t["id"], "bgr": bgr, "gray": to_gray(bgr), "embedding": emb_val})
     return {"items": items, "embeddings": emb, "meta": meta}
 
 
-def nearest_order(embedding: np.ndarray, embeddings: np.ndarray) -> list[int]:
-    """Template indices ordered by embedding distance (ties by index)."""
+def nearest_order(embedding: np.ndarray | None, embeddings: np.ndarray | None, n_items: int = 0) -> list[int]:
+    """Template indices ordered by embedding distance (ties by index). Falls back to sequential [0, 1, ...] if missing."""
+    if embedding is None or embeddings is None:
+        count = n_items if n_items > 0 else (len(embeddings) if embeddings is not None else 0)
+        return list(range(count))
     d = np.sqrt(((embeddings - embedding[None, :]) ** 2).sum(axis=1))
     return [int(i) for i in np.lexsort((np.arange(len(d)), d))]

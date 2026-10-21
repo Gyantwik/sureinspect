@@ -203,13 +203,18 @@ _TEMPLATES_CACHE: dict[str, dict[str, Any]] = {}
 
 
 def find_default_snapshot(category: str = "pcb1", root_dir: Path | str = "artifacts") -> Path:
-    """Finds the published snapshot directory for category."""
+    """Finds the published snapshot directory for category, verifying weight files exist."""
     snaps_dir = Path(root_dir) / "snapshots"
     if snaps_dir.is_dir():
-        for d in snaps_dir.iterdir():
-            if d.is_dir() and d.name.startswith(f"{category}-"):
+        for d in sorted(snaps_dir.iterdir()):
+            if (
+                d.is_dir()
+                and d.name.startswith(f"{category}-")
+                and (d / "model.onnx").is_file()
+                and (d / "bank.npz").is_file()
+            ):
                 return d
-    raise FileNotFoundError(f"No published snapshot found for category '{category}' in {snaps_dir}")
+    raise FileNotFoundError(f"No published snapshot with weights found for category '{category}' in {snaps_dir}")
 
 
 def load_snapshot_bundle(snapshot_path: Path | str) -> dict[str, Any]:
@@ -443,7 +448,8 @@ def inspect_standardized(
     if templates_bundle is not None:
         t0 = time.time()
         test_gray = cv2.cvtColor(image_std, cv2.COLOR_BGR2GRAY)
-        order = nearest_order(feats.mean(axis=0), templates_bundle["embeddings"])
+        feat_mean = feats.mean(axis=0) if feats is not None else None
+        order = nearest_order(feat_mean, templates_bundle.get("embeddings"), len(templates_bundle["items"]))
         align_res, tried = align_to_templates(test_gray, templates_bundle["items"], order, q_min=q_min)
         t1_duration = (time.time() - t0) * 1000.0
         steps_used += 1
