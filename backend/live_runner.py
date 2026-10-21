@@ -368,7 +368,7 @@ class LiveEngine:
                         q_min=0.60,
                         rotation_deg=round(float(align_res.rotation_deg or 0.0), 2),
                     )
-                    warped_ref, _ = cv2.warpAffine(
+                    warped_ref = cv2.warpAffine(
                         ref_template["bgr"],
                         align_res.M[:2],
                         (std_w, std_h),
@@ -396,7 +396,7 @@ class LiveEngine:
             # Ambiguous zone: t_pass < score <= t_fail -> Agent tools T1-T5
             if not self.templates:
                 decision = DecisionEnum.HUMAN
-                decision_path = DecisionPathEnum.HUMAN_REVIEW
+                decision_path = DecisionPathEnum.INCONCLUSIVE
             else:
                 ref_template = self.templates[0]
                 steps_used += 1
@@ -494,7 +494,7 @@ class LiveEngine:
                         decision_path = DecisionPathEnum.AGENT_CLEARED
                     else:
                         decision = DecisionEnum.HUMAN
-                        decision_path = DecisionPathEnum.HUMAN_REVIEW
+                        decision_path = DecisionPathEnum.INCONCLUSIVE
 
         t_tools_ms = (time.perf_counter() - t_tools_start) * 1000.0
 
