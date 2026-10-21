@@ -1,5 +1,6 @@
 """Tests for core/tools.py (evidence tools). Synthetic images only; no model needed."""
 import json
+from pathlib import Path
 
 import cv2
 import numpy as np
@@ -223,3 +224,21 @@ def test_photometric_matching_removes_an_exposure_difference_but_keeps_a_defect(
     cv2.rectangle(test2, (140, 140), (180, 180), 255, -1)
     d = T.roi_residual(T.prepare_comparison(test2, ref, np.eye(3), match=True), (120, 120, 80, 80))
     assert d["residual_mean"] > 4 * matched["residual_mean"]
+
+
+def test_180_degree_board_orientation_pairwise_alignment():
+    """Verify robust pairwise alignment between upright templates and 180-deg templates (A5)."""
+    t_dir = Path("data/templates/pcb1")
+    if not (t_dir / "template_00.png").is_file() or not (t_dir / "template_01.png").is_file():
+        pytest.skip("Template files not available for alignment test")
+
+    t00 = cv2.imread(str(t_dir / "template_00.png"), cv2.IMREAD_GRAYSCALE)
+    t01 = cv2.imread(str(t_dir / "template_01.png"), cv2.IMREAD_GRAYSCALE)
+
+    res = T.align(t00, t01)
+    assert res.valid is True
+    assert res.method == "orb_ransac"
+    assert res.quality is not None and res.quality >= 0.65
+    rot = abs(res.rotation_deg)
+    assert abs(rot - 180.0) < 10.0 or rot < 10.0
+

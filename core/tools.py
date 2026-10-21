@@ -149,7 +149,7 @@ class AlignResult:
         return (float(self.M[0, 2]), float(self.M[1, 2]))
 
 
-def _finalize(m, test_gray, ref_gray, method, **extra) -> AlignResult:
+def _finalize(m, test_gray, ref_gray, method, q_min: float | None = 0.50, **extra) -> AlignResult:
     """Validate a candidate transform: finite, plausible scale/rotation, overlap, quality."""
     res = AlignResult(M=None, method=method, valid=False, **extra)
     if m is None:
@@ -165,12 +165,15 @@ def _finalize(m, test_gray, ref_gray, method, **extra) -> AlignResult:
     warped, valid = warp_reference(ref_gray, m, test_gray.shape)
     res.overlap = float((valid > 0).mean())
     res.quality = alignment_quality(test_gray, warped, valid)
+    rot_diff = min(abs(rot), abs(abs(rot) - 180.0))
     if not (SCALE_RANGE[0] <= scale <= SCALE_RANGE[1]):
         res.reason = f"implausible scale {scale:.3f}"
-    elif abs(rot) > MAX_ROT_DEG:
+    elif rot_diff > MAX_ROT_DEG:
         res.reason = f"implausible rotation {rot:.1f} deg"
     elif res.overlap < MIN_OVERLAP:
         res.reason = f"low overlap {res.overlap:.2f}"
+    elif q_min is not None and res.quality < q_min:
+        res.reason = f"low quality {res.quality:.3f} < {q_min:.2f}"
     else:
         res.valid = True
     return res
