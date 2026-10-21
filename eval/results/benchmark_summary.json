@@ -1,0 +1,298 @@
+{
+  "benchmark_timestamp": "2026-10-21T08:24:20Z",
+  "dataset": "Amazon VisA pcb1",
+  "snapshot_id": "pcb1",
+  "e1_decision_benchmark": {
+    "t_pass": 2.0405399799346924,
+    "t_fail": 2.2862818241119385,
+    "n_normals": 297,
+    "n_anomalies": 26,
+    "baseline": {
+      "n_total": 323,
+      "n_normal": 297,
+      "n_defective": 26,
+      "counts": {
+        "normal_pass": 284,
+        "normal_fail": 13,
+        "defective_pass": 3,
+        "defective_fail": 23
+      },
+      "coverage": {
+        "rate": 1.0,
+        "ci_95": [
+          0.9882467211027792,
+          1.0
+        ]
+      },
+      "defect_escapes": {
+        "rate": 0.11538461538461539,
+        "numerator": 3,
+        "denominator": 26,
+        "ci_95": [
+          0.04003244623610615,
+          0.2897590321171364
+        ]
+      },
+      "defect_recall": {
+        "rate": 0.8846153846153846,
+        "numerator": 23,
+        "denominator": 26,
+        "ci_95": [
+          0.7102409678828635,
+          0.9599675537638938
+        ]
+      },
+      "false_fail": {
+        "rate": 0.04377104377104377,
+        "numerator": 13,
+        "denominator": 297,
+        "ci_95": [
+          0.02575576411084962,
+          0.07343754168441335
+        ]
+      },
+      "selective_accuracy": {
+        "rate": 0.9504643962848297,
+        "numerator": 307,
+        "denominator": 323,
+        "ci_95": [
+          0.9210577897482052,
+          0.9692821354558466
+        ]
+      }
+    },
+    "agent": {
+      "n_total": 323,
+      "n_normal": 297,
+      "n_defective": 26,
+      "counts": {
+        "normal_pass_fast": 236,
+        "normal_pass_cleared": 49,
+        "normal_fail": 0,
+        "normal_human": 12,
+        "normal_retake": 0,
+        "defective_pass_fast": 0,
+        "defective_pass_cleared": 0,
+        "defective_fail": 23,
+        "defective_human": 3,
+        "defective_retake": 0
+      },
+      "coverage": {
+        "rate": 0.9535603715170279,
+        "numerator": 308,
+        "denominator": 323,
+        "ci_95": [
+          0.9248011914521759,
+          0.9716579084955463
+        ]
+      },
+      "defect_escapes": {
+        "rate": 0.0,
+        "numerator": 0,
+        "denominator": 26,
+        "fast_pass_escapes": 0,
+        "agent_cleared_escapes": 0,
+        "ci_95": [
+          0.0,
+          0.1287289218592153
+        ],
+        "exact_ci": [
+          0.0,
+          0.13227460449775408
+        ]
+      },
+      "defect_recall": {
+        "rate": 0.8846153846153846,
+        "numerator": 23,
+        "denominator": 26,
+        "ci_95": [
+          0.7102409678828635,
+          0.9599675537638938
+        ]
+      },
+      "false_fail": {
+        "rate": 0.0,
+        "numerator": 0,
+        "denominator": 297,
+        "ci_95": [
+          0.0,
+          0.012769047310675656
+        ]
+      },
+      "review_burden": {
+        "rate": 0.04643962848297214,
+        "numerator": 15,
+        "denominator": 323,
+        "ci_95": [
+          0.028342091504453597,
+          0.0751988085478241
+        ]
+      },
+      "retake_rate": {
+        "rate": 0.0,
+        "numerator": 0,
+        "denominator": 323,
+        "ci_95": [
+          0.0,
+          0.011753278897220798
+        ]
+      },
+      "selective_accuracy": {
+        "rate": 1.0,
+        "numerator": 308,
+        "denominator": 308,
+        "ci_95": [
+          0.9876813723382979,
+          0.9999999999999999
+        ]
+      }
+    },
+    "false_alarm_reduction_pct": 100.0
+  },
+  "e2_calibration_sensitivity": {
+    "n_calib": 200,
+    "n_test": 100,
+    "alpha_evaluations": {
+      "alpha_0.01": {
+        "nominal_alpha": 0.01,
+        "threshold": 2.747483253479004,
+        "n_calib": 200,
+        "n_test": 100,
+        "exceedances": 0,
+        "empirical_exceedance_rate": 0.0,
+        "wilson_ci_95": [
+          3.469446951953614e-18,
+          0.03699349820698568
+        ],
+        "clopper_pearson_ci": [
+          0.0,
+          0.03621669264517641
+        ]
+      },
+      "alpha_0.02": {
+        "nominal_alpha": 0.02,
+        "threshold": 2.55885910987854,
+        "n_calib": 200,
+        "n_test": 100,
+        "exceedances": 0,
+        "empirical_exceedance_rate": 0.0,
+        "wilson_ci_95": [
+          3.469446951953614e-18,
+          0.03699349820698568
+        ],
+        "clopper_pearson_ci": [
+          0.0,
+          0.03621669264517641
+        ]
+      },
+      "alpha_0.05": {
+        "nominal_alpha": 0.05,
+        "threshold": 2.3485465049743652,
+        "n_calib": 200,
+        "n_test": 100,
+        "exceedances": 0,
+        "empirical_exceedance_rate": 0.0,
+        "wilson_ci_95": [
+          3.469446951953614e-18,
+          0.03699349820698568
+        ],
+        "clopper_pearson_ci": [
+          0.0,
+          0.03621669264517641
+        ]
+      },
+      "alpha_0.10": {
+        "nominal_alpha": 0.1,
+        "threshold": 2.141263246536255,
+        "n_calib": 200,
+        "n_test": 100,
+        "exceedances": 6,
+        "empirical_exceedance_rate": 0.06,
+        "wilson_ci_95": [
+          0.027786123963188192,
+          0.1247681544589592
+        ],
+        "clopper_pearson_ci": [
+          0.022334886071316385,
+          0.12602993458082298
+        ]
+      }
+    }
+  },
+  "e3_corruption_robustness": {
+    "n_original_images": 5,
+    "clean_baseline": {
+      "reject_count": 0,
+      "reject_rate": 0.0,
+      "wilson_ci_95": [
+        0.0,
+        0.43448246478317476
+      ]
+    },
+    "individual_corruptions": {
+      "blur": {
+        "reject_count": 5,
+        "reject_rate": 1.0,
+        "wilson_ci_95": [
+          0.5655175352168251,
+          1.0
+        ]
+      },
+      "darken": {
+        "reject_count": 5,
+        "reject_rate": 1.0,
+        "wilson_ci_95": [
+          0.5655175352168251,
+          1.0
+        ]
+      },
+      "glare": {
+        "reject_count": 5,
+        "reject_rate": 1.0,
+        "wilson_ci_95": [
+          0.5655175352168251,
+          1.0
+        ]
+      }
+    },
+    "joint_corruptions": {
+      "reject_count": 5,
+      "reject_rate": 1.0,
+      "wilson_ci_95": [
+        0.5655175352168251,
+        1.0
+      ]
+    }
+  },
+  "e4_latency_profiling": {
+    "iterations": 10,
+    "quality_gate": {
+      "mean_ms": 72.14,
+      "p50_ms": 71.33,
+      "p90_ms": 77.71,
+      "p95_ms": 79.17,
+      "max_ms": 80.64
+    },
+    "perception": {
+      "mean_ms": 908.49,
+      "p50_ms": 887.49,
+      "p90_ms": 960.21,
+      "p95_ms": 1010.82,
+      "max_ms": 1061.43
+    },
+    "tools": {
+      "mean_ms": 0.01,
+      "p50_ms": 0.01,
+      "p90_ms": 0.01,
+      "p95_ms": 0.01,
+      "max_ms": 0.01
+    },
+    "total_inspection": {
+      "mean_ms": 1351.39,
+      "p50_ms": 1322.38,
+      "p90_ms": 1416.6,
+      "p95_ms": 1464.92,
+      "max_ms": 1513.25
+    }
+  }
+}
