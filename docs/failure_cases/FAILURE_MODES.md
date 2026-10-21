@@ -107,7 +107,7 @@ This document analyzes the 6 primary non-pass decision paths and failure recover
 * **Trigger:** Step counter reaches `step_budget` (4 steps) before reaching an automated clear/confirm condition.
 * **Root Cause:** Complex multi-defect board where successive ROIs require iterative alignment attempts without resolving confidence.
 * **Agent Handling:**
-  * Halts processing to enforce latency ceilings ($<200\text{ ms}$).
+  * Halts processing to enforce operational CPU latency bounds (mean ~582 ms multi-tool path, 2.0 s hard watchdog ceiling).
   * Verdict: `HUMAN`.
 
 ---

@@ -79,12 +79,16 @@ def decide(
     if isinstance(budget_state, dict):
         steps = budget_state.get("steps", 0)
         budget = budget_state.get("budget", 4)
-        is_exhausted = budget_state.get("exhausted", False) or (budget > 0 and steps >= budget and not evidence)
+        is_exhausted = (
+            budget_state.get("exhausted", False)
+            or budget_state.get("timed_out", False)
+            or (budget > 0 and steps >= budget and not evidence)
+        )
         if is_exhausted:
             return DecisionResult(
                 decision="HUMAN",
                 decision_path="BUDGET_EXHAUSTED",
-                reason=f"Step budget ({budget}) exhausted before reaching a conclusive automated verdict",
+                reason=f"Processing budget ({budget} steps or latency ceiling) exhausted before reaching a conclusive automated verdict",
                 suggested_decision=None,
             )
 
@@ -138,10 +142,10 @@ def decide(
 
     # 4. Resolve active residual thresholds (CLAHE copy thresholds under lighting shift)
     if lighting_shift:
-        r_low = float(evidence.get("clahe_r_low", evidence.get("r_low", 0.38)))
+        r_low = float(evidence.get("clahe_r_low", evidence.get("r_low", 0.30)))
         r_high = float(evidence.get("clahe_r_high", evidence.get("r_high", 0.48)))
     else:
-        r_low = float(evidence.get("r_low", 0.38))
+        r_low = float(evidence.get("r_low", 0.30))
         r_high = float(evidence.get("r_high", 0.48))
 
     r_val = float(evidence.get("residual_p95", evidence.get("residual_mean", 0.0)))
@@ -175,14 +179,29 @@ def decide(
         )
 
     # 7. Low residual branch (r_val <= r_low across all checked ROIs)
-    # Check 3rd ROI rule: when 3 contour-derived ROIs exist and only 2 were checked, force INCONCLUSIVE
-    if rois_total >= 3 and rois_checked < rois_total:
+    # Check unchecked candidate ROIs: if candidate ROIs exist and not all were checked, force INCONCLUSIVE
+    if rois_total > 1 and rois_checked < rois_total:
         return DecisionResult(
             decision="HUMAN",
             decision_path="INCONCLUSIVE",
             reason=f"Checked {rois_checked} of {rois_total} candidate defect ROIs; remaining unchecked region requires operator review",
             suggested_decision=None,
         )
+
+    # Physical contour anomaly guard: if T3 detected a prominent defect contour (area >= 0.20% or elongation >= 10.0)
+    if isinstance(evidence, dict):
+        meas = evidence.get("measure") or {}
+        if isinstance(meas, dict) and meas.get("available", False):
+            area_pct = float(meas.get("area_pct") or 0.0)
+            elongation = float(meas.get("elongation") or 0.0)
+            shape_class = meas.get("shape_class")
+            if area_pct >= 0.20 or (shape_class == "elongated" and elongation >= 10.0):
+                return DecisionResult(
+                    decision="HUMAN",
+                    decision_path="SUSPECTED_DEFECT",
+                    reason=f"Residual {r_val:.4f} <= r_low ({r_low:.4f}), but physical anomaly contour (area={area_pct:.3f}%, shape={shape_class}, elongation={elongation:.2f}) requires operator review",
+                    suggested_decision="FAIL",
+                )
 
     if score > t_fail:
         return DecisionResult(
@@ -297,7 +316,7 @@ def get_evidence_thresholds(category: str = "pcb1") -> dict[str, Any]:
     return {
         "thresholds": {
             "q_min": 0.74,
-            "r_low": 0.38,
+            "r_low": 0.30,
             "r_high": 0.48,
         }
     }
@@ -394,7 +413,7 @@ def inspect_standardized(
     perc_duration = (time.time() - t0) * 1000.0
 
     # Resolve conformal calibration thresholds
-    t_pass = float(calib["t_pass"]["threshold"])
+    t_pass = min(float(calib["t_pass"]["threshold"]), 2.00)
     alpha_key = f"{alpha_fail:g}"
     if alpha_key in calib.get("t_fail_options", {}):
         t_fail = float(calib["t_fail_options"][alpha_key]["threshold"])
@@ -460,7 +479,7 @@ def inspect_standardized(
     evidence_thresholds = get_evidence_thresholds(category)
     th = evidence_thresholds.get("thresholds", {})
     q_min = float(th.get("q_min", 0.65))
-    r_low = float(th.get("r_low", 0.38))
+    r_low = float(th.get("r_low", 0.30))
     r_high = float(th.get("r_high", 0.48))
     clahe_r_low = float(th.get("clahe_r_low", r_low))
     clahe_r_high = float(th.get("clahe_r_high", r_high))
@@ -469,6 +488,7 @@ def inspect_standardized(
     measurements_info = None
     evidence_payload: dict[str, Any] = {}
     warped_ref = default_ref_bgr
+    rois_checked = 0
 
     test_gray = cv2.cvtColor(image_std, cv2.COLOR_BGR2GRAY)
     if is_lighting_shift:
@@ -636,7 +656,14 @@ def inspect_standardized(
     tools_duration = (time.time() - t_tools_start) * 1000.0
 
     # 7. Final Decision via decide()
-    budget_state = {"steps": steps_used, "budget": 4}
+    budget_exhausted = (steps_used >= 4) or ((time.time() - t_start) >= 2.0)
+    has_unchecked_rois = (rois_checked < len(rois)) if rois else False
+    budget_state = {
+        "steps": steps_used,
+        "budget": 4,
+        "exhausted": budget_exhausted and has_unchecked_rois,
+        "timed_out": ((time.time() - t_start) >= 2.0) and has_unchecked_rois,
+    }
     dec_res = decide(score, is_lighting_shift, evidence_payload, t_pass, t_fail, budget_state)
 
     total_duration = (time.time() - t_start) * 1000.0

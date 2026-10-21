@@ -38,7 +38,24 @@
                └─────────────────────────────────────┘
 ```
 
-The SureInspect runtime is deployed on AWS utilizing energy-efficient **AWS Graviton (ARM64)** compute, paired with a local Caddy reverse proxy and an isolated private Amazon S3 bucket for immutable artifact loading and audit retention.
+The SureInspect runtime is designed for deployment on AWS utilizing energy-efficient **AWS Graviton (ARM64)** compute, paired with a local Caddy reverse proxy and an isolated private Amazon S3 bucket for immutable artifact loading and audit retention.
+
+### 1.1 Implementation Status: Implemented vs. Proposed Architecture
+
+To maintain complete transparency and reproducibility for competition judging, the following table clearly distinguishes what is implemented and locally verified versus what is an architectural production design:
+
+| Capability / Component | Status | Details / Evidence |
+| :--- | :--- | :--- |
+| **Backend Containerization** | **Implemented & Verified** | Multi-stage `deploy/Dockerfile` bundling OpenCV headless 5.0.0.93, FastAPI, and uvicorn. |
+| **Admission Queue & Concurrency** | **Implemented & Verified** | Single active inference semaphore + 4 queued requests with HTTP 503 saturation guard (`backend/admission_queue.py`). |
+| **Memory & Decompression Guard** | **Implemented & Verified** | `OPENCV_IO_MAX_IMAGE_PIXELS=25000000` decomp bomb guard; bounded 200 MiB LRU/TTL cache (`backend/storage.py`). |
+| **Reverse Proxy Configuration** | **Implemented & Verified** | `deploy/Caddyfile` with edge 10 MiB body limit, automatic TLS termination, and health check forwarding. |
+| **EC2 Bootstrap Script** | **Implemented & Verified** | `deploy/setup_ec2.sh` for automated Ubuntu 22.04 Graviton initialization and Docker compose launch. |
+| **Local Cache Storage** | **Implemented & Verified** | In-memory thread-safe LRU cache with TTL eviction (`backend/storage.py`). |
+| **Live EC2 Cloud Host** | *Proposed Architecture* | Target design `t4g.small` (ARM64); no live cloud instance launched to ensure evaluation reproducibility without network dependence. |
+| **Direct S3 Bucket Sync** | *Proposed Architecture* | Target design for multi-region audit backup via `boto3`; current local runtime stores audit logs in bounded memory. |
+| **CloudWatch Metric Alarms** | *Proposed Architecture* | Design specifications provided in Section 6 ($10 billing alert threshold). |
+| **Public HTTPS DNS** | *Proposed Architecture* | Domain allocation and live public TLS cert routing. |
 
 ---
 

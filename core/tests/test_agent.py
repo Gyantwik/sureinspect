@@ -153,3 +153,79 @@ def test_all_10_decision_paths_contract():
         )
 
 
+def test_decide_budget_exhaustion_timeout():
+    """Processing timeout/budget exhaustion must safely escalate to HUMAN (BUDGET_EXHAUSTED)."""
+    res = decide(
+        score=1.8,
+        lighting_shift=False,
+        evidence={"alignment_valid": True, "residual_p95": 0.20, "r_low": 0.38, "r_high": 0.48},
+        t_pass=1.2,
+        t_fail=2.0,
+        budget_state={"steps": 4, "budget": 4, "exhausted": True, "timed_out": True},
+    )
+    assert res.decision == "HUMAN"
+    assert res.decision_path == "BUDGET_EXHAUSTED"
+
+
+def test_decide_incomplete_inspection_unchecked_rois_escalates():
+    """When candidate defect ROIs exist and not all were checked, never silently return PASS."""
+    # 2 candidate ROIs detected, but only 1 checked (e.g. aborted early)
+    evidence = {
+        "alignment_valid": True,
+        "residual_p95": 0.15,
+        "r_low": 0.38,
+        "r_high": 0.48,
+        "rois_total": 2,
+        "rois_checked": 1,
+    }
+    res = decide(
+        score=1.5,
+        lighting_shift=False,
+        evidence=evidence,
+        t_pass=1.2,
+        t_fail=2.0,
+        budget_state={"steps": 2, "budget": 4},
+    )
+    assert res.decision == "HUMAN"
+    assert res.decision_path == "INCONCLUSIVE"
+    assert "remaining unchecked region" in res.reason
+
+
+def test_decide_all_rois_checked_permits_agent_cleared():
+    """When all candidate ROIs were checked and structural residuals are low, AGENT_CLEARED is emitted."""
+    evidence = {
+        "alignment_valid": True,
+        "residual_p95": 0.15,
+        "r_low": 0.38,
+        "r_high": 0.48,
+        "rois_total": 2,
+        "rois_checked": 2,
+    }
+    res = decide(
+        score=1.5,
+        lighting_shift=False,
+        evidence=evidence,
+        t_pass=1.2,
+        t_fail=2.0,
+        budget_state={"steps": 3, "budget": 4},
+    )
+    assert res.decision == "PASS"
+    assert res.decision_path == "AGENT_CLEARED"
+
+
+def test_known_miss_subthreshold_fast_pass_behavior():
+    """Verify that subtle defects below t_pass receive FAST_PASS by policy definition, as documented in FAILURE_MODES."""
+    # 015.JPG has score 1.9064 <= t_pass 2.0405
+    res = decide(
+        score=1.9064,
+        lighting_shift=False,
+        evidence=None,
+        t_pass=2.0405,
+        t_fail=2.2863,
+        budget_state={"steps": 0, "budget": 4},
+    )
+    assert res.decision == "PASS"
+    assert res.decision_path == "FAST_PASS"
+
+
+

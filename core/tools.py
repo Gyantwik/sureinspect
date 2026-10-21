@@ -34,7 +34,7 @@ import cv2
 import numpy as np
 
 # ---- fixed, documented constants -------------------------------------------------
-ORB_FEATURES = 2000
+ORB_FEATURES = 1000
 RATIO = 0.75
 MIN_GOOD_MATCHES = 12
 MIN_INLIERS = 10
@@ -179,10 +179,21 @@ def _finalize(m, test_gray, ref_gray, method, q_min: float | None = 0.50, **extr
     return res
 
 
-def _align_orb(test_gray, ref_gray) -> AlignResult:
-    orb = cv2.ORB_create(ORB_FEATURES)
-    kt, dt = orb.detectAndCompute(test_gray, None)
-    kr, dr = orb.detectAndCompute(ref_gray, None)
+def _align_orb(test_gray, ref_gray, test_features=None, ref_features=None) -> AlignResult:
+    orb = None
+    if test_features is not None:
+        kt, dt = test_features
+    else:
+        orb = cv2.ORB_create(ORB_FEATURES)
+        kt, dt = orb.detectAndCompute(test_gray, None)
+
+    if ref_features is not None:
+        kr, dr = ref_features
+    else:
+        if orb is None:
+            orb = cv2.ORB_create(ORB_FEATURES)
+        kr, dr = orb.detectAndCompute(ref_gray, None)
+
     if dt is None or dr is None or len(kt) < 8 or len(kr) < 8:
         return _finalize(None, test_gray, ref_gray, "orb_ransac", reason="too few ORB features")
     pairs = cv2.BFMatcher(cv2.NORM_HAMMING).knnMatch(dr, dt, k=2)
@@ -254,10 +265,10 @@ def _align_rotation_ecc(test_gray, ref_gray) -> AlignResult:
     return res
 
 
-def align(test_gray: np.ndarray, ref_gray: np.ndarray) -> AlignResult:
+def align(test_gray: np.ndarray, ref_gray: np.ndarray, test_features=None, ref_features=None) -> AlignResult:
     """T1: ORB + RANSAC first; deterministic rotation search + ECC as fallback."""
     t0 = time.time()
-    a = _align_orb(test_gray, ref_gray)
+    a = _align_orb(test_gray, ref_gray, test_features=test_features, ref_features=ref_features)
     if a.valid:
         a.ms = (time.time() - t0) * 1000
         return a
@@ -271,10 +282,20 @@ def align(test_gray: np.ndarray, ref_gray: np.ndarray) -> AlignResult:
 
 def align_to_templates(test_gray, templates, order, q_min: float | None = None, max_templates: int = 2):
     """Try up to `max_templates` nearest templates; accept the first valid one with quality >= q_min."""
+    orb = cv2.ORB_create(ORB_FEATURES)
+    kt, dt = orb.detectAndCompute(test_gray, None)
+    test_feat = (kt, dt) if (dt is not None and len(kt) >= 8) else None
+
     best, tried = None, []
     for idx in list(order)[:max_templates]:
         t = templates[idx]
-        r = align(test_gray, t["gray"])
+        ref_feat = (t.get("orb_kp"), t.get("orb_desc"))
+        if ref_feat[0] is None or ref_feat[1] is None:
+            kr, dr = orb.detectAndCompute(t["gray"], None)
+            t["orb_kp"], t["orb_desc"] = kr, dr
+            ref_feat = (kr, dr)
+
+        r = align(test_gray, t["gray"], test_features=test_feat, ref_features=ref_feat)
         r.template_id = t["id"]
         tried.append({"template_id": t["id"], "valid": r.valid, "quality": r.quality, "reason": r.reason})
         ok = r.valid and (q_min is None or (r.quality is not None and r.quality >= q_min))
@@ -394,6 +415,7 @@ def load_templates(directory: str | Path) -> dict:
             emb = None
 
     items = []
+    orb = cv2.ORB_create(ORB_FEATURES)
     for i, t in enumerate(meta["templates"]):
         bgr = cv2.imread(str(d / t["file"]))
         if bgr is None:
@@ -403,7 +425,16 @@ def load_templates(directory: str | Path) -> dict:
             row_idx = t["embedding_row"]
             if 0 <= row_idx < len(emb):
                 emb_val = emb[row_idx]
-        items.append({"id": t["id"], "bgr": bgr, "gray": to_gray(bgr), "embedding": emb_val})
+        g = to_gray(bgr)
+        kr, dr = orb.detectAndCompute(g, None)
+        items.append({
+            "id": t["id"],
+            "bgr": bgr,
+            "gray": g,
+            "embedding": emb_val,
+            "orb_kp": kr,
+            "orb_desc": dr,
+        })
     return {"items": items, "embeddings": emb, "meta": meta}
 
 
