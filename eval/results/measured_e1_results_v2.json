@@ -1,0 +1,517 @@
+{
+  "benchmark_type": "measured_real_images",
+  "pipeline_version": "v2_unified",
+  "commit": "6b3c28b35b350eaf4fef0e26876f57cda35580fd",
+  "timestamp": "2026-10-21T16:48:32Z",
+  "thresholds": {
+    "t_pass": 2.0405399799346924,
+    "t_fail": 2.2862818241119385
+  },
+  "dev_split": {
+    "n_normals": 297,
+    "n_anomalies": 26,
+    "baseline": {
+      "n_total": 323,
+      "n_normal": 297,
+      "n_defective": 26,
+      "counts": {
+        "normal_pass": 284,
+        "normal_fail": 13,
+        "defective_pass": 5,
+        "defective_fail": 21
+      },
+      "coverage": {
+        "rate": 1.0,
+        "ci_95": [
+          0.9882467211027792,
+          1.0
+        ]
+      },
+      "defect_escapes": {
+        "rate": 0.19230769230769232,
+        "numerator": 5,
+        "denominator": 26,
+        "ci_95": [
+          0.0850706114894241,
+          0.3787625711931699
+        ]
+      },
+      "defect_recall": {
+        "rate": 0.8076923076923077,
+        "numerator": 21,
+        "denominator": 26,
+        "ci_95": [
+          0.6212374288068301,
+          0.9149293885105758
+        ]
+      },
+      "false_fail": {
+        "rate": 0.04377104377104377,
+        "numerator": 13,
+        "denominator": 297,
+        "ci_95": [
+          0.02575576411084962,
+          0.07343754168441335
+        ]
+      },
+      "selective_accuracy": {
+        "rate": 0.9442724458204335,
+        "numerator": 305,
+        "denominator": 323,
+        "ci_95": [
+          0.9136392416218903,
+          0.9644623340948207
+        ]
+      }
+    },
+    "baseline_t_fail": {
+      "n_total": 323,
+      "n_normal": 297,
+      "n_defective": 26,
+      "counts": {
+        "normal_pass": 284,
+        "normal_fail": 13,
+        "defective_pass": 5,
+        "defective_fail": 21
+      },
+      "coverage": {
+        "rate": 1.0,
+        "ci_95": [
+          0.9882467211027792,
+          1.0
+        ]
+      },
+      "defect_escapes": {
+        "rate": 0.19230769230769232,
+        "numerator": 5,
+        "denominator": 26,
+        "ci_95": [
+          0.0850706114894241,
+          0.3787625711931699
+        ]
+      },
+      "defect_recall": {
+        "rate": 0.8076923076923077,
+        "numerator": 21,
+        "denominator": 26,
+        "ci_95": [
+          0.6212374288068301,
+          0.9149293885105758
+        ]
+      },
+      "false_fail": {
+        "rate": 0.04377104377104377,
+        "numerator": 13,
+        "denominator": 297,
+        "ci_95": [
+          0.02575576411084962,
+          0.07343754168441335
+        ]
+      },
+      "selective_accuracy": {
+        "rate": 0.9442724458204335,
+        "numerator": 305,
+        "denominator": 323,
+        "ci_95": [
+          0.9136392416218903,
+          0.9644623340948207
+        ]
+      }
+    },
+    "baseline_t_pass": {
+      "n_total": 323,
+      "n_normal": 297,
+      "n_defective": 26,
+      "counts": {
+        "normal_pass": 237,
+        "normal_fail": 60,
+        "defective_pass": 2,
+        "defective_fail": 24
+      },
+      "coverage": {
+        "rate": 1.0,
+        "ci_95": [
+          0.9882467211027792,
+          1.0
+        ]
+      },
+      "defect_escapes": {
+        "rate": 0.07692307692307693,
+        "numerator": 2,
+        "denominator": 26,
+        "ci_95": [
+          0.0213550884722762,
+          0.2414155377162906
+        ]
+      },
+      "defect_recall": {
+        "rate": 0.9230769230769231,
+        "numerator": 24,
+        "denominator": 26,
+        "ci_95": [
+          0.7585844622837095,
+          0.9786449115277238
+        ]
+      },
+      "false_fail": {
+        "rate": 0.20202020202020202,
+        "numerator": 60,
+        "denominator": 297,
+        "ci_95": [
+          0.16029545409745002,
+          0.2513547862190132
+        ]
+      },
+      "selective_accuracy": {
+        "rate": 0.8080495356037152,
+        "numerator": 261,
+        "denominator": 323,
+        "ci_95": [
+          0.7615791279249985,
+          0.8472787590702121
+        ]
+      }
+    },
+    "agent": {
+      "n_total": 323,
+      "n_normal": 297,
+      "n_defective": 26,
+      "counts": {
+        "normal_pass_fast": 235,
+        "normal_pass_cleared": 45,
+        "normal_fail": 0,
+        "normal_human": 16,
+        "normal_retake": 1,
+        "defective_pass_fast": 0,
+        "defective_pass_cleared": 1,
+        "defective_fail": 4,
+        "defective_human": 19,
+        "defective_retake": 2
+      },
+      "coverage": {
+        "rate": 0.8823529411764706,
+        "numerator": 285,
+        "denominator": 323,
+        "ci_95": [
+          0.8426417336345201,
+          0.9130763472087816
+        ]
+      },
+      "defect_escapes": {
+        "rate": 0.038461538461538464,
+        "numerator": 1,
+        "denominator": 26,
+        "fast_pass_escapes": 0,
+        "agent_cleared_escapes": 1,
+        "ci_95": [
+          0.006821984993543487,
+          0.18892778903034757
+        ],
+        "exact_ci": [
+          0.0009732878933350311,
+          0.19636964676253896
+        ]
+      },
+      "defect_recall": {
+        "rate": 0.15384615384615385,
+        "numerator": 4,
+        "denominator": 26,
+        "ci_95": [
+          0.06150033723578355,
+          0.3353119932821348
+        ]
+      },
+      "false_fail": {
+        "rate": 0.0,
+        "numerator": 0,
+        "denominator": 297,
+        "ci_95": [
+          0.0,
+          0.012769047310675656
+        ]
+      },
+      "review_burden": {
+        "rate": 0.10835913312693499,
+        "numerator": 35,
+        "denominator": 323,
+        "ci_95": [
+          0.07895102549247413,
+          0.14697336943321274
+        ]
+      },
+      "retake_rate": {
+        "rate": 0.009287925696594427,
+        "numerator": 3,
+        "denominator": 323,
+        "ci_95": [
+          0.003163662593668728,
+          0.02694714053456345
+        ]
+      },
+      "selective_accuracy": {
+        "rate": 0.9964912280701754,
+        "numerator": 284,
+        "denominator": 285,
+        "ci_95": [
+          0.9803958984204054,
+          0.9993803468438859
+        ]
+      }
+    },
+    "false_alarm_reduction_pct": 100.0
+  },
+  "final_test_split": {
+    "n_normals": 100,
+    "n_anomalies": 70,
+    "label": "re-run after fixes; split previously seen; not a clean hold-out",
+    "baseline": {
+      "n_total": 170,
+      "n_normal": 100,
+      "n_defective": 70,
+      "counts": {
+        "normal_pass": 91,
+        "normal_fail": 9,
+        "defective_pass": 20,
+        "defective_fail": 50
+      },
+      "coverage": {
+        "rate": 1.0,
+        "ci_95": [
+          0.9779025161963444,
+          0.9999999999999998
+        ]
+      },
+      "defect_escapes": {
+        "rate": 0.2857142857142857,
+        "numerator": 20,
+        "denominator": 70,
+        "ci_95": [
+          0.19322220378719757,
+          0.40050196581720254
+        ]
+      },
+      "defect_recall": {
+        "rate": 0.7142857142857143,
+        "numerator": 50,
+        "denominator": 70,
+        "ci_95": [
+          0.5994980341827975,
+          0.8067777962128025
+        ]
+      },
+      "false_fail": {
+        "rate": 0.09,
+        "numerator": 9,
+        "denominator": 100,
+        "ci_95": [
+          0.04807254000256516,
+          0.1622621285271631
+        ]
+      },
+      "selective_accuracy": {
+        "rate": 0.8294117647058824,
+        "numerator": 141,
+        "denominator": 170,
+        "ci_95": [
+          0.7657454259342207,
+          0.8785197612069005
+        ]
+      }
+    },
+    "baseline_t_fail": {
+      "n_total": 170,
+      "n_normal": 100,
+      "n_defective": 70,
+      "counts": {
+        "normal_pass": 91,
+        "normal_fail": 9,
+        "defective_pass": 20,
+        "defective_fail": 50
+      },
+      "coverage": {
+        "rate": 1.0,
+        "ci_95": [
+          0.9779025161963444,
+          0.9999999999999998
+        ]
+      },
+      "defect_escapes": {
+        "rate": 0.2857142857142857,
+        "numerator": 20,
+        "denominator": 70,
+        "ci_95": [
+          0.19322220378719757,
+          0.40050196581720254
+        ]
+      },
+      "defect_recall": {
+        "rate": 0.7142857142857143,
+        "numerator": 50,
+        "denominator": 70,
+        "ci_95": [
+          0.5994980341827975,
+          0.8067777962128025
+        ]
+      },
+      "false_fail": {
+        "rate": 0.09,
+        "numerator": 9,
+        "denominator": 100,
+        "ci_95": [
+          0.04807254000256516,
+          0.1622621285271631
+        ]
+      },
+      "selective_accuracy": {
+        "rate": 0.8294117647058824,
+        "numerator": 141,
+        "denominator": 170,
+        "ci_95": [
+          0.7657454259342207,
+          0.8785197612069005
+        ]
+      }
+    },
+    "baseline_t_pass": {
+      "n_total": 170,
+      "n_normal": 100,
+      "n_defective": 70,
+      "counts": {
+        "normal_pass": 73,
+        "normal_fail": 27,
+        "defective_pass": 5,
+        "defective_fail": 65
+      },
+      "coverage": {
+        "rate": 1.0,
+        "ci_95": [
+          0.9779025161963444,
+          0.9999999999999998
+        ]
+      },
+      "defect_escapes": {
+        "rate": 0.07142857142857142,
+        "numerator": 5,
+        "denominator": 70,
+        "ci_95": [
+          0.03089421703784702,
+          0.1565541221709532
+        ]
+      },
+      "defect_recall": {
+        "rate": 0.9285714285714286,
+        "numerator": 65,
+        "denominator": 70,
+        "ci_95": [
+          0.8434458778290468,
+          0.969105782962153
+        ]
+      },
+      "false_fail": {
+        "rate": 0.27,
+        "numerator": 27,
+        "denominator": 100,
+        "ci_95": [
+          0.1926958414957634,
+          0.36432116767944994
+        ]
+      },
+      "selective_accuracy": {
+        "rate": 0.8117647058823529,
+        "numerator": 138,
+        "denominator": 170,
+        "ci_95": [
+          0.7463603813080039,
+          0.8633905993791285
+        ]
+      }
+    },
+    "agent": {
+      "n_total": 170,
+      "n_normal": 100,
+      "n_defective": 70,
+      "counts": {
+        "normal_pass_fast": 73,
+        "normal_pass_cleared": 15,
+        "normal_fail": 0,
+        "normal_human": 12,
+        "normal_retake": 0,
+        "defective_pass_fast": 3,
+        "defective_pass_cleared": 5,
+        "defective_fail": 11,
+        "defective_human": 50,
+        "defective_retake": 1
+      },
+      "coverage": {
+        "rate": 0.6294117647058823,
+        "numerator": 107,
+        "denominator": 170,
+        "ci_95": [
+          0.5547017376450134,
+          0.6984024430175699
+        ]
+      },
+      "defect_escapes": {
+        "rate": 0.11428571428571428,
+        "numerator": 8,
+        "denominator": 70,
+        "fast_pass_escapes": 3,
+        "agent_cleared_escapes": 5,
+        "ci_95": [
+          0.059061289466376454,
+          0.20964221582154374
+        ],
+        "exact_ci": [
+          0.05065219879035647,
+          0.21282804216909035
+        ]
+      },
+      "defect_recall": {
+        "rate": 0.15714285714285714,
+        "numerator": 11,
+        "denominator": 70,
+        "ci_95": [
+          0.09007620559861788,
+          0.2598824657684222
+        ]
+      },
+      "false_fail": {
+        "rate": 0.0,
+        "numerator": 0,
+        "denominator": 100,
+        "ci_95": [
+          3.469446951953614e-18,
+          0.03699349820698568
+        ]
+      },
+      "review_burden": {
+        "rate": 0.36470588235294116,
+        "numerator": 62,
+        "denominator": 170,
+        "ci_95": [
+          0.29607972201746413,
+          0.4393113618352896
+        ]
+      },
+      "retake_rate": {
+        "rate": 0.0058823529411764705,
+        "numerator": 1,
+        "denominator": 170,
+        "ci_95": [
+          0.0010391355302600373,
+          0.03256308375805829
+        ]
+      },
+      "selective_accuracy": {
+        "rate": 0.9252336448598131,
+        "numerator": 99,
+        "denominator": 107,
+        "ci_95": [
+          0.8593625455360884,
+          0.9616298968965648
+        ]
+      }
+    },
+    "false_alarm_reduction_pct": 100.0
+  }
+}

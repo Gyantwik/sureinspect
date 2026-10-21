@@ -15,6 +15,7 @@ EXCLUDE_DIRS = {
     ".pytest_cache",
     ".ruff_cache",
     ".turbo",
+    "datasets",
 }
 
 EXCLUDE_EXTENSIONS = {

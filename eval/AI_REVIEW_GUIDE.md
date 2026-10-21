@@ -18,10 +18,11 @@ SureInspect is a **statistically rigorous, agentic visual inspection system** bu
   $$s \le t_{\text{pass}} \implies \text{FAST\_PASS}$$
   $$s > t_{\text{fail}} \implies \text{AGENT\_CONFIRMED}$$
   $$s \in (t_{\text{pass}}, t_{\text{fail}}] \implies \text{EVIDENCE\_TOOLS} \rightarrow \text{ESCALATION}$$
-* **100% False Alarm Reduction:** Eliminates false alarm scrap on held-out normal boards by escalating borderline ambiguity to human review or multi-tool clearance rather than blindly rejecting.
-* **0.00% Defect Escapes:** Guarantees zero missed defects within the statistical confidence band ($1 - \alpha$).
-* **Commodity CPU Inference:** Runs sub-second inference ($\approx 48\text{ ms}$ feature extraction + coreset nearest neighbor search) on standard Intel/AMD or AWS Graviton CPUs without expensive GPU hardware.
-* **Industrial Admission Quality Gate:** Rejects optical blur, specular glare, and lighting shifts in $22\text{ ms}$ before neural inference.
+* **100% False Alarm Scrap Elimination:** Eliminates automated false alarm scrap (`Normal` $\to$ `FAIL`) to **0.00%** on both dev and test splits by escalating borderline ambiguity to human review or multi-tool clearance rather than blindly rejecting.
+* **Defect Escape Suppression:** On the final test split (*re-run after fixes; split previously seen; not a clean hold-out*), agentic multi-tool routing reduces defect escapes by **60.0% relative to the baseline** (from 28.57% down to 11.43%), intercepting 87.14% of all defects (and reducing escapes to 3.85% [1/26] on the development split).
+* **Dual OpenCV DNN + Vector Architecture:** Deep layer-2 and layer-3 embedding extraction in C++ via `cv2.dnn.readNetFromONNX`, followed by vectorized Euclidean nearest-neighbor memory bank search in NumPy.
+* **Commodity CPU Inference:** Runs entirely on standard Intel/AMD or AWS Graviton CPUs without requiring GPU hardware (~21 ms quality gate, ~300–900 ms perception, ~0.4–1.35s total FAST_PASS).
+* **Industrial Admission Quality Gate:** Rejects optical blur, specular glare, and lighting shifts in ~21 ms before neural inference using the shipped calibration parameters. Real captures with camera degradations (e.g. `043.JPG`, `050.JPG`) are safely intercepted as `RETAKE` prior to neural evaluation.
 
 ---
 
@@ -114,19 +115,30 @@ This tests:
 
 ---
 
-## 4. Key Quantitative Results
+## 4. Key Quantitative Results (Empirically Measured Across 493 Authentic VisA Images)
 
-| Experiment | Metric | Baseline (Single Threshold) | SureInspect (Our System) | Advantage |
+| Experiment | Metric | Baseline (Single Threshold $t_{\text{fail}}$) | SureInspect v2 (Unified Agent) | Advantage / Evidence |
 | :--- | :--- | :--- | :--- | :--- |
-| **E1** | False Alarm Scrap Rate | **4.38%** (13 scrapped clean boards) | **0.00%** (0 false scrap) | **100% scrap reduction** |
-| **E1** | Defect Escape Rate | **11.54%** (3 missed defects $< t$) | **0.00%** (0 escapes) | **Zero escaped defects** |
-| **E1** | Automated Coverage | 100% (uncalibrated) | **82.35%** (provably safe) | Safe triage |
-| **E2** | $\alpha=0.05$ Empirical Coverage | N/A | **96.00%** ($CI_{95}$: [90.07%, 98.90%]) | Conformal guarantee holds |
-| **E3** | Motion Blur Rejection | 0.0% (Runs inference blindly) | **100.0%** Rejected by Quality Gate | Complete noise immunity |
-| **E3** | Specular Glare Rejection | 0.0% (Triggers false positive) | **100.0%** Rejected by Quality Gate | Glare immunity |
-| **E4** | Admission Gate Latency | N/A | **2.4 ms** | Sub-3ms safety triage |
-| **E4** | PatchCore Inference Latency | Requires GPU | **48.4 ms (CPU)** | Real-time commodity CPU |
-| **E4** | Evidence Tools ($T_1-T_3$) | N/A | **3.7 ms** | Microsecond geometry |
+| **E1 (Dev Split)** | Normal False Alarm (Scrap) | **4.38%** (13/297 false scrap) | **0.00%** (0/297 false scrap) | **100% scrap reduction** (95% CI: [0.00%, 1.23%]) |
+| **E1 (Dev Split)** | Total Normal False Alarm | 4.38% (13/297) | **5.39%** (16/297 FAIL+HUMAN) | Controlled human triage on ambiguous boards |
+| **E1 (Dev Split)** | Defect Escape Rate | **19.23%** (5/26 missed defects) | **3.85%** (1/26 escapes) | **-80.0% relative reduction in escapes** (95% CI: [0.10%, 19.64%]) |
+| **E1 (Dev Split)** | Defect Interception Rate | 80.77% (21/26) | **88.46%** (23/26 FAIL+HUMAN) | Intercepts 23 of 26 defects (and 2 camera RETAKEs) |
+| **E1 (Dev Split)** | Automated Coverage | 100.0% (forced binary) | **88.24%** (285/323) | 88.2% automation; 35 boards escalated to human review |
+| **E1 (Dev Split)** | Admission Gate RETAKE | 0.00% (No gate) | **0.93%** (3/323) | Intercepts 1 normal blur + 2 camera-degraded defects |
+| **E1 (Final Test\*)** | Normal False Alarm (Scrap) | **9.00%** (9/100 false scrap) | **0.00%** (0/100 false scrap) | **100% scrap reduction** (95% CI: [0.00%, 3.62%]) |
+| **E1 (Final Test\*)** | Total Normal False Alarm | 9.00% (9/100) | **12.00%** (12/100 FAIL+HUMAN) | 12 borderline normal boards escalated to review |
+| **E1 (Final Test\*)** | Defect Escape Rate | **28.57%** (20/70 missed defects) | **11.43%** (8/70 escapes) | **-60.0% relative reduction in escapes** (95% CI: [5.07%, 21.28%]) |
+| **E1 (Final Test\*)** | Defect Interception Rate | 71.43% (50/70) | **87.14%** (61/70 FAIL+HUMAN) | Intercepts 61 of 70 defects (and 1 camera RETAKE) |
+| **E1 (Final Test\*)** | Automated Coverage | 100.0% (forced binary) | **62.94%** (107/170) | 62.9% automation; 62 boards escalated to human review |
+| **E1 (Final Test\*)** | Admission Gate RETAKE | 0.00% (No gate) | **0.59%** (1/170) | Intercepts 1 camera-degraded capture |
+| **E2** | $\alpha=0.10$ Empirical Coverage | N/A | **94.00%** (6/100 exceedances) | Conformal bound holds ($1 - \alpha \ge 90\%$) |
+| **E3** | Motion Blur Rejection | 0.0% (Runs inference blindly) | **100.0%** Rejected by Quality Gate | Shipped gate eliminates focus noise |
+| **E3** | Specular Glare Rejection | 0.0% (Triggers false positive) | **100.0%** Rejected by Quality Gate | Shipped gate eliminates glare artifacts |
+| **E4** | Admission Gate Latency | N/A | **21.0 ms (CPU)** | Fast pre-inference filter |
+| **E4** | PatchCore Scorer Latency | Requires GPU | **~290–900 ms (CPU)** | OpenCV DNN + NumPy coreset on commodity CPU |
+| **E4** | End-to-End FAST_PASS | N/A | **~395 ms – 1.35 s (CPU)** | Full inspection without cloud GPUs |
+
+*\*Note on Final Test Split: re-run after fixes; split previously seen; not a clean hold-out. Thresholds were frozen and never fitted on this split.*
 
 ---
 
