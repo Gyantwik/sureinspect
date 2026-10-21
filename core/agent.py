@@ -82,7 +82,7 @@ def decide(
                 decision="HUMAN",
                 decision_path="BUDGET_EXHAUSTED",
                 reason=f"Step budget ({budget}) exhausted before reaching a conclusive automated verdict",
-                suggested_decision="HUMAN",
+                suggested_decision=None,
             )
 
     # 2. Fast pass zone: score <= t_pass
@@ -122,7 +122,7 @@ def decide(
                     decision="HUMAN",
                     decision_path="ALIGN_FAILED",
                     reason=f"Perception score {score:.3f} exceeds fail threshold {t_fail:.3f}, but template alignment failed ({evidence.get('reason', 'unaligned')})",
-                    suggested_decision="FAIL",
+                    suggested_decision=None,
                 )
 
             r_p95 = evidence.get("residual_p95", 0.0)
@@ -141,7 +141,7 @@ def decide(
                     decision="HUMAN",
                     decision_path="EVIDENCE_CONFLICT",
                     reason=f"Perception score {score:.3f} > t_fail ({t_fail:.3f}), but structural residual {r_p95:.3f} < r_low ({r_low:.3f}) contradicts defect",
-                    suggested_decision="HUMAN",
+                    suggested_decision=None,
                 )
 
     # 4. Ambiguous zone: t_pass < score <= t_fail
@@ -150,7 +150,7 @@ def decide(
             decision="HUMAN",
             decision_path="INCONCLUSIVE",
             reason=f"Perception score {score:.3f} is in ambiguous range ({t_pass:.3f}, {t_fail:.3f}] with no secondary evidence",
-            suggested_decision="HUMAN",
+            suggested_decision=None,
         )
 
     if isinstance(evidence, dict):
@@ -159,7 +159,7 @@ def decide(
                 decision="HUMAN",
                 decision_path="ALIGN_FAILED",
                 reason=f"Ambiguous score ({score:.3f}) and template alignment failed ({evidence.get('reason', 'unaligned')})",
-                suggested_decision="HUMAN",
+                suggested_decision=None,
             )
 
         r_p95 = evidence.get("residual_p95", 0.0)
@@ -183,14 +183,14 @@ def decide(
                 decision="HUMAN",
                 decision_path="INCONCLUSIVE",
                 reason=f"Ambiguous score {score:.3f} and structural residual {r_p95:.3f} is in gray zone ({r_low:.3f}, {r_high:.3f})",
-                suggested_decision="HUMAN",
+                suggested_decision=None,
             )
 
     return DecisionResult(
         decision="HUMAN",
         decision_path="INCONCLUSIVE",
         reason="Secondary evidence is inconclusive",
-        suggested_decision="HUMAN",
+        suggested_decision=None,
     )
 
 
@@ -462,12 +462,10 @@ def inspect_standardized(
         if align_res is not None and align_res.valid:
             alignment_info = {
                 "template_id": align_res.template_id,
-                "quality": float(align_res.quality) if align_res.quality is not None else None,
+                "quality": round(float(align_res.quality), 4) if align_res.quality is not None else None,
+                "q_min": float(q_min),
                 "method": align_res.method,
-                "scale": float(align_res.scale) if align_res.scale is not None else 1.0,
-                "rotation_deg": float(align_res.rotation_deg) if align_res.rotation_deg is not None else 0.0,
-                "translation_px": [float(v) for v in align_res.translation_px] if align_res.translation_px else [0.0, 0.0],
-                "valid": True,
+                "rotation_deg": round(float(align_res.rotation_deg), 2) if align_res.rotation_deg is not None else 0.0,
             }
 
             # T2: ROI Compare
@@ -495,13 +493,33 @@ def inspect_standardized(
             t3_duration = (time.time() - t0) * 1000.0
             steps_used += 1
 
-            if meas_dict.get("available"):
+            if meas_dict.get("available") and meas_dict.get("area_pct") is not None:
                 measurements_info = {
-                    "area_px": float(meas_dict["area_px"]),
-                    "area_pct": float(meas_dict["area_pct"]),
-                    "elongation": float(meas_dict["elongation"]),
-                    "shape_class": str(meas_dict["shape_class"]),
-                    "contour_bbox": [int(v) for v in meas_dict["contour_bbox"]],
+                    "roi_bbox": [int(v) for v in (meas_dict.get("contour_bbox") or primary_roi)],
+                    "roi_source": "peak_fallback",
+                    "rois_checked": 1,
+                    "rois_total": 1,
+                    "residual_mean": round(float(res_dict.get("residual_mean", res_dict.get("residual_p95", 0.0))), 4),
+                    "r_low": float(r_low),
+                    "r_high": float(r_high),
+                    "area_pct": round(float(meas_dict["area_pct"]), 4),
+                    "area_denominator": "image",
+                    "elongation": round(float(meas_dict["elongation"]), 2) if meas_dict.get("elongation") is not None else None,
+                    "shape_class": str(meas_dict["shape_class"]) if meas_dict.get("shape_class") is not None else None,
+                }
+            else:
+                measurements_info = {
+                    "roi_bbox": [int(v) for v in primary_roi],
+                    "roi_source": "peak_fallback",
+                    "rois_checked": 1,
+                    "rois_total": 1,
+                    "residual_mean": round(float(res_dict.get("residual_mean", res_dict.get("residual_p95", 0.0))), 4),
+                    "r_low": float(r_low),
+                    "r_high": float(r_high),
+                    "area_pct": None,
+                    "area_denominator": "image",
+                    "elongation": None,
+                    "shape_class": None,
                 }
 
             trace.append({
@@ -711,23 +729,27 @@ def run_inspection(
         al = res["alignment"]
         alignment_obj = AlignmentInfo(
             template_id=al["template_id"],
-            quality=al.get("quality"),
             method=al.get("method", "orb_ecc"),
-            scale=al.get("scale", 1.0),
-            rotation_deg=al.get("rotation_deg", 0.0),
-            translation_px=tuple(al.get("translation_px", [0.0, 0.0])),  # type: ignore[arg-type]
-            valid=al.get("valid", True),
+            quality=al.get("quality"),
+            q_min=float(al.get("q_min", 0.65)),
+            rotation_deg=float(al.get("rotation_deg", 0.0)),
         )
 
     measurements_obj = None
     if res.get("measurements"):
         ms = res["measurements"]
         measurements_obj = MeasurementStats(
-            area_px=ms["area_px"],
-            area_pct=ms["area_pct"],
-            elongation=ms["elongation"],
-            shape_class=ms["shape_class"],
-            contour_bbox=tuple(ms["contour_bbox"]),  # type: ignore[arg-type]
+            roi_bbox=tuple(ms.get("roi_bbox", [0, 0, 0, 0])),
+            roi_source=ms.get("roi_source", "peak_fallback"),
+            rois_checked=int(ms.get("rois_checked", 1)),
+            rois_total=int(ms.get("rois_total", 1)),
+            residual_mean=float(ms.get("residual_mean", 0.0)),
+            r_low=float(ms.get("r_low", 0.04)),
+            r_high=float(ms.get("r_high", 0.12)),
+            area_pct=float(ms["area_pct"]) if ms.get("area_pct") is not None else None,
+            area_denominator=ms.get("area_denominator", "image"),
+            elongation=float(ms["elongation"]) if ms.get("elongation") is not None else None,
+            shape_class=ms.get("shape_class"),
         )
 
     th = res.get("thresholds", {})
@@ -755,7 +777,7 @@ def run_inspection(
         ),
         decision=DecisionEnum(res["decision"]),
         decision_path=DecisionPathEnum(res["decision_path"]),
-        suggested_decision=DecisionEnum(res["suggested_decision"]) if res.get("suggested_decision") else None,
+        suggested_decision=res.get("suggested_decision"),
         anomaly_score=res.get("score"),
         thresholds=ThresholdsInfo(
             t_pass=t_pass_val,
