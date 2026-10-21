@@ -23,6 +23,9 @@ if str(ROOT) not in sys.path:
 from backend.live_runner import get_live_engine
 from eval.run_agent import evaluate_agent
 from eval.run_baseline import evaluate_baseline
+from core.preprocess import standardize
+from core.perception import score_image
+import cv2
 
 CACHE_PATH = Path("eval/results/cached_e1_predictions.json")
 
@@ -91,16 +94,42 @@ def evaluate_image_split(
             score = entry["score"]
             dec = entry["decision"]
             path_val = entry["decision_path"]
+            # Fix: Never coerce RETAKE scores to 0.0 for perception baselines
+            if dec == "RETAKE" and (score == 0.0 or score is None):
+                img_bgr = cv2.imread(str(img_path))
+                std_img = standardize(img_bgr, 1024).image
+                bundle = engine.bundle
+                pc_res = score_image(bundle["net"], std_img, bundle["bank"], bundle.get("input_size", 256))
+                score = float(pc_res.score)
+                entry["score"] = score
+                entry["raw_score"] = score
         else:
             resp, _ = engine.inspect(category="pcb1", image_bytes=img_path.read_bytes())
-            score = float(resp.anomaly_score) if resp.anomaly_score is not None else 0.0
             dec = resp.decision.value  # PASS, FAIL, HUMAN, RETAKE
             path_val = resp.decision_path.value if resp.decision_path else "UNKNOWN"
+            if resp.anomaly_score is not None:
+                score = float(resp.anomaly_score)
+            else:
+                # RETAKE image: single-threshold perception baseline has no quality gate,
+                # so compute true PatchCore score on standardized frame
+                img_bgr = cv2.imread(str(img_path))
+                std_img = standardize(img_bgr, 1024).image
+                bundle = engine.bundle
+                pc_res = score_image(bundle["net"], std_img, bundle["bank"], bundle.get("input_size", 256))
+                score = float(pc_res.score)
+
             cache[rel_p] = {
                 "score": score,
+                "raw_score": score,
                 "decision": dec,
                 "decision_path": path_val,
                 "ground_truth": true_label,
+                "alignment_quality": resp.alignment.quality if resp.alignment else None,
+                "alignment_method": resp.alignment.method if resp.alignment else None,
+                "residual_mean": resp.measurements.residual_mean if resp.measurements else None,
+                "rois_checked": resp.measurements.rois_checked if resp.measurements else 0,
+                "rois_total": resp.measurements.rois_total if resp.measurements else 0,
+                "timing_ms": resp.timing_ms.dict() if resp.timing_ms else None,
             }
             if (i + 1) % 10 == 0:
                 save_cache(cache, commit_hash)
