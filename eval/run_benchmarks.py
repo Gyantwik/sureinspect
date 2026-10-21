@@ -482,7 +482,7 @@ def generate_markdown_report(summary: Dict[str, Any]) -> str:
         "",
         "---",
         "",
-        "> **Key Operational Finding:** On a seen test split, the evidence tools cut good-board review from 27% to 12% and eliminated auto-scrap, with defect escapes of 8/70 against 5/70 for the cautious baseline (CIs overlap). Interception assumes human reviewers catch flagged defects.",
+        "> **Key Operational Finding:** On a seen test split, the evidence tools cut good-board review from 27% to 12% and eliminated auto-scrap, with defect escapes of 8/70 against 4/70 for the cautious baseline (CIs overlap). Interception assumes human reviewers catch flagged defects.",
         "",
         "---",
         "",
