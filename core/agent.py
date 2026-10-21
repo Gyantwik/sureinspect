@@ -597,9 +597,11 @@ def inspect_standardized(
 
             r_p95_val = float(active_res.get("residual_p95", 0.0))
             r_mean_val = float(active_res.get("residual_mean", r_p95_val))
+            raw_shape = meas_dict.get("shape_class")
+            valid_shape = raw_shape if raw_shape in ("elongated", "compact", "irregular") else None
             measurements_info = {
                 "roi_bbox": [int(v) for v in (meas_dict.get("contour_bbox") or active_roi)],
-                "roi_source": "contour" if rois else "peak_fallback",
+                "roi_source": "threshold" if rois else "peak_fallback",
                 "rois_checked": rois_checked,
                 "rois_total": len(rois) if rois else 1,
                 "residual_mean": round(r_mean_val, 4),
@@ -608,7 +610,7 @@ def inspect_standardized(
                 "area_pct": round(float(meas_dict["area_pct"]), 4) if meas_dict.get("area_pct") is not None else None,
                 "area_denominator": "image",
                 "elongation": round(float(meas_dict["elongation"]), 2) if meas_dict.get("elongation") is not None else None,
-                "shape_class": str(meas_dict["shape_class"]) if meas_dict.get("shape_class") is not None else None,
+                "shape_class": valid_shape,
             }
 
             evidence_payload = {
