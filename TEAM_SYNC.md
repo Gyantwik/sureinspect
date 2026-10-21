@@ -9,7 +9,7 @@
 
 | Role | Assigned Developer | Branch | Current Status |
 | :--- | :--- | :--- | :--- |
-| **Person 1 (OpenCV & ML Lead)** | `@Biswabasini90` | `main` | **COMPLETED: Full OpenCV 5 DNN Perception, Memory Bank, Calibration & Tools $T_1 - T_5$ (PR #6, #10, #14 Merged)**. Ready for Agent state machine. |
+| **Person 1 (OpenCV & ML Lead)** | `@Biswabasini90` | `main` | **COMPLETED: Full Perception, Tools $T_1 - T_5$, Agent State Machine & Failure Cases (PR #6, #10, #14, #18 Merged)**. All ML milestones complete! |
 | **Person 2 (Backend & AWS Lead)** | `@Gyantwik` (Owner) | `main` | **COMPLETED: Full Live OpenCV 5 DNN & Agentic Pipeline Integration (PR #1, #2, #3, #4, #7, #8, #12, #16 Merged)**. Ready for technical report benchmark tables. |
 | **Person 3 (Frontend & Docs Lead)** | `@Khushbu656` | `main` | **COMPLETED: 3-Panel Console, Audit Notice & Session Reset (PR #5, #13 Merged)**. Ready for technical report & video. |
 
@@ -151,6 +151,18 @@
   * Auto-detects local model snapshots and switches dynamically to `engine: "live"` with snapshot model versioning.
 * [x] **Unit & Integration Test Suite (`backend/tests/`):**
   * Full test suite passing (137 tests passing, 0 failures, 0 OpenAPI drift).
+
+### 2.15 Agent State Machine, Complete Decision Policy & Failure Modes (PR #18 Merged)
+* [x] **Agent State Machine & Pure Policy (`core/agent.py` - by `@Biswabasini90`):**
+  * `decide()`: Deterministic decision engine mapping distance scores, factory illumination shifts, and tool residuals to all 10 frozen decision paths.
+  * `inspect_standardized()`: Complete end-to-end inspection pipeline taking standardized inputs, evaluating quality gates, running PatchCore inference, executing evidence tools $T_1 - T_5$, and returning structured inspection records.
+  * `AgentRunner`: Stateful agent orchestration session management with budget tracking (max 4 steps).
+* [x] **Agent Unit Test Suite (`core/tests/test_agent.py`):**
+  * 11 comprehensive unit tests verifying all 10 decision paths, evidence conflicts, budget exhaustion, lighting-shift triage, and alignment failure handling.
+* [x] **Failure Modes & Escalation Documentation (`docs/failure_cases/FAILURE_MODES.md`):**
+  * Comprehensive failure analysis documenting 6 industrial failure modes (`QUALITY_REJECTED`, `LIGHTING_SHIFT_REVIEW`, `ALIGN_FAILED`, `EVIDENCE_CONFLICT`, `INCONCLUSIVE`, `BUDGET_EXHAUSTED`), statistical implications, and human escalation procedures.
+* [x] **Total Repository Test Suite:**
+  * 147 passing tests, 5 skipped, 0 failures across the monorepo.
 
 
 ---
