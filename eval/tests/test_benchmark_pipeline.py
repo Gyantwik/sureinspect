@@ -22,6 +22,11 @@ def test_load_calibration_data():
     assert len(calib["sorted_calibration_scores"]) > 0
 
 
+def test_load_calibration_data_explicit_missing():
+    with pytest.raises(FileNotFoundError):
+        load_calibration_data("non_existent_snapshot_path_987", fallback_on_missing=False)
+
+
 def test_run_e1_decision_benchmark():
     calib = load_calibration_data()
     e1 = run_e1_decision_benchmark(calib)
