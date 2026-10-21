@@ -388,9 +388,13 @@ class LiveEngine:
         measurement_stats = None
         if res.get("measurements"):
             ms = res["measurements"]
+            roi_src = ms.get("roi_source", "threshold")
+            valid_roi_src = roi_src if roi_src in ("threshold", "peak_fallback") else "threshold"
+            raw_shape = ms.get("shape_class")
+            valid_shape = raw_shape if raw_shape in ("elongated", "compact", "irregular") else None
             measurement_stats = MeasurementStats(
                 roi_bbox=tuple(ms.get("roi_bbox", (0, 0, 0, 0))),
-                roi_source=ms.get("roi_source", "peak_fallback"),
+                roi_source=valid_roi_src,
                 rois_checked=int(ms.get("rois_checked", 1)),
                 rois_total=int(ms.get("rois_total", 1)),
                 residual_mean=float(ms.get("residual_mean", 0.0)),
@@ -399,7 +403,7 @@ class LiveEngine:
                 area_pct=float(ms["area_pct"]) if ms.get("area_pct") is not None else None,
                 area_denominator=ms.get("area_denominator", "image"),
                 elongation=float(ms["elongation"]) if ms.get("elongation") is not None else None,
-                shape_class=ms.get("shape_class"),
+                shape_class=valid_shape,
             )
 
         score = float(res.get("score") or 0.0)
