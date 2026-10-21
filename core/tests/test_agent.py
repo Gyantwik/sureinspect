@@ -115,3 +115,41 @@ def test_run_inspection_live_mock_sample():
     # Standardized input asset is encoded as PNG
     assert any(k.endswith("_input.png") for k in assets)
 
+
+def test_all_10_decision_paths_contract():
+    """Verify all 10 frozen decision paths produce exact contract tuples (decision, path, suggested)."""
+    expected = {
+        "QUALITY_REJECTED": ("RETAKE", "QUALITY_REJECTED", None),
+        "BUDGET_EXHAUSTED": ("HUMAN", "BUDGET_EXHAUSTED", None),
+        "FAST_PASS": ("PASS", "FAST_PASS", None),
+        "ALIGN_FAILED": ("HUMAN", "ALIGN_FAILED", None),
+        "AGENT_CLEARED": ("PASS", "AGENT_CLEARED", None),
+        "AGENT_CONFIRMED": ("FAIL", "AGENT_CONFIRMED", None),
+        "SUSPECTED_DEFECT": ("HUMAN", "SUSPECTED_DEFECT", "FAIL"),
+        "EVIDENCE_CONFLICT": ("HUMAN", "EVIDENCE_CONFLICT", None),
+        "LIGHTING_SHIFT_REVIEW": ("HUMAN", "LIGHTING_SHIFT_REVIEW", "PASS"),
+        "INCONCLUSIVE": ("HUMAN", "INCONCLUSIVE", None),
+    }
+
+    b0 = {"steps": 0, "budget": 4}
+    results = {
+        "QUALITY_REJECTED": decide(score=None, lighting_shift=False, evidence=None, t_pass=1.2, t_fail=2.0, budget_state=b0),
+        "BUDGET_EXHAUSTED": decide(score=1.5, lighting_shift=False, evidence=None, t_pass=1.2, t_fail=2.0, budget_state={"steps": 4, "budget": 4, "exhausted": True}),
+        "FAST_PASS": decide(score=1.0, lighting_shift=False, evidence=None, t_pass=1.2, t_fail=2.0, budget_state=b0),
+        "ALIGN_FAILED": decide(score=1.5, lighting_shift=False, evidence={"alignment_valid": False, "reason": "No inliers"}, t_pass=1.2, t_fail=2.0, budget_state=b0),
+        "AGENT_CLEARED": decide(score=1.5, lighting_shift=False, evidence={"alignment_valid": True, "residual_p95": 0.20, "r_low": 0.38, "r_high": 0.48}, t_pass=1.2, t_fail=2.0, budget_state=b0),
+        "AGENT_CONFIRMED": decide(score=2.2, lighting_shift=False, evidence={"alignment_valid": True, "residual_p95": 0.55, "r_low": 0.38, "r_high": 0.48}, t_pass=1.2, t_fail=2.0, budget_state=b0),
+        "SUSPECTED_DEFECT": decide(score=1.5, lighting_shift=False, evidence={"alignment_valid": True, "residual_p95": 0.55, "r_low": 0.38, "r_high": 0.48}, t_pass=1.2, t_fail=2.0, budget_state=b0),
+        "EVIDENCE_CONFLICT": decide(score=2.2, lighting_shift=False, evidence={"alignment_valid": True, "residual_p95": 0.20, "r_low": 0.38, "r_high": 0.48}, t_pass=1.2, t_fail=2.0, budget_state=b0),
+        "LIGHTING_SHIFT_REVIEW": decide(score=1.5, lighting_shift=True, evidence={"alignment_valid": True, "residual_p95": 0.20, "r_low": 0.38, "r_high": 0.48}, t_pass=1.2, t_fail=2.0, budget_state=b0),
+        "INCONCLUSIVE": decide(score=1.5, lighting_shift=False, evidence={"alignment_valid": True, "residual_p95": 0.42, "r_low": 0.38, "r_high": 0.48}, t_pass=1.2, t_fail=2.0, budget_state=b0),
+    }
+
+    assert len(results) == 10
+    for path_key, exp in expected.items():
+        res = results[path_key]
+        assert (res.decision, res.decision_path, res.suggested_decision) == exp, (
+            f"Mismatch on {path_key}: got {(res.decision, res.decision_path, res.suggested_decision)}, expected {exp}"
+        )
+
+
