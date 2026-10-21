@@ -58,17 +58,28 @@ def test_agent_evaluation_metrics():
 
 
 def test_conformal_threshold_computation():
+    from core.calibration import conformal_threshold
     calib = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
-    thr_01 = compute_conformal_threshold(calib, alpha=0.10)
-    assert thr_01 >= 0.9
+    for alpha in [0.05, 0.10, 0.20]:
+        eval_thr = compute_conformal_threshold(calib, alpha=alpha)
+        core_res = conformal_threshold(calib, alpha=alpha)
+        core_thr = core_res["threshold"] if core_res else None
+        assert eval_thr == core_thr, f"Parity mismatch for alpha={alpha}: {eval_thr} vs {core_thr}"
+
+    # When k > n (e.g. n=10, alpha=0.01 -> (10+1)*0.99 = 10.89 -> k=11 > 10), returns None
+    assert compute_conformal_threshold(calib, alpha=0.01) is None
+    assert conformal_threshold(calib, alpha=0.01) is None
 
 
 def test_calibration_split_evaluation():
     calib = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
     test_normals = [0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95, 1.05]
-    res = evaluate_calibration_split(calib, test_normals, alphas=[0.10, 0.20])
+    # alpha=0.01 is omitted because n=10 cannot guarantee alpha=0.01
+    res = evaluate_calibration_split(calib, test_normals, alphas=[0.01, 0.10, 0.20])
     assert "alpha_0.10" in res["alpha_evaluations"]
     assert "alpha_0.20" in res["alpha_evaluations"]
+    assert 0.01 in res["omitted_alphas"]
+    assert "alpha_0.01" not in res["alpha_evaluations"]
 
 
 def test_corruption_robustness_evaluation():
