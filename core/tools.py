@@ -141,6 +141,13 @@ class AlignResult:
         d["M"] = None if self.M is None else [[float(x) for x in row] for row in self.M]
         return d
 
+    @property
+    def translation_px(self) -> tuple[float, float]:
+        """Translation (tx, ty) extracted from affine matrix M."""
+        if self.M is None:
+            return (0.0, 0.0)
+        return (float(self.M[0, 2]), float(self.M[1, 2]))
+
 
 def _finalize(m, test_gray, ref_gray, method, **extra) -> AlignResult:
     """Validate a candidate transform: finite, plausible scale/rotation, overlap, quality."""

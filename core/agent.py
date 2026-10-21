@@ -473,7 +473,7 @@ def inspect_standardized(
             # T2: ROI Compare
             t0 = time.time()
             ref_item = next(t for t in templates_bundle["items"] if t["id"] == align_res.template_id)
-            cmp = prepare_comparison(test_gray, ref_item["gray"], align_res.m, match=True)
+            cmp = prepare_comparison(test_gray, ref_item["gray"], align_res.M, match=True)
             res_dict = roi_residual(cmp, primary_roi)
             t2_duration = (time.time() - t0) * 1000.0
             steps_used += 1
