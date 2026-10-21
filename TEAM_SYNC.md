@@ -10,7 +10,7 @@
 | Role | Assigned Developer | Branch | Current Status |
 | :--- | :--- | :--- | :--- |
 | **Person 1 (OpenCV & ML Lead)** | `@Biswabasini90` | `main` | **COMPLETED: Full Perception, Tools $T_1 - T_5$, Agent State Machine & Failure Cases (PR #6, #10, #14, #18 Merged)**. All ML milestones complete! |
-| **Person 2 (Backend & AWS Lead)** | `@Gyantwik` (Owner) | `main` | **COMPLETED: Full Live OpenCV 5 DNN & Agentic Pipeline Integration (PR #1, #2, #3, #4, #7, #8, #12, #16 Merged)**. Ready for technical report benchmark tables. |
+| **Person 2 (Backend & AWS Lead)** | `@Gyantwik` (Owner) | `main` | **COMPLETED: 100% of Person 2 Scope Delivered!** (Live OpenCV 5 Runner, Bounded Queue, Storage Engine, Curated Samples, Full Docker/AWS Deployment, Master Evaluation Suite E1-E4, and Publication Benchmark Tables - PR #1, #2, #3, #4, #7, #8, #12, #16, #21 Merged). Ready for Person 3 Technical Report Integration! |
 | **Person 3 (Frontend & Docs Lead)** | `@Khushbu656` | `main` | **COMPLETED: 3-Panel Console, Audit Notice & Session Reset (PR #5, #13 Merged)**. Ready for technical report & video. |
 
 
@@ -161,8 +161,21 @@
   * 11 comprehensive unit tests verifying all 10 decision paths, evidence conflicts, budget exhaustion, lighting-shift triage, and alignment failure handling.
 * [x] **Failure Modes & Escalation Documentation (`docs/failure_cases/FAILURE_MODES.md`):**
   * Comprehensive failure analysis documenting 6 industrial failure modes (`QUALITY_REJECTED`, `LIGHTING_SHIFT_REVIEW`, `ALIGN_FAILED`, `EVIDENCE_CONFLICT`, `INCONCLUSIVE`, `BUDGET_EXHAUSTED`), statistical implications, and human escalation procedures.
+
+### 2.16 Master Evaluation Runner, Empirical Benchmarks & Publication Tables (PR #21 Merged)
+* [x] **Master Benchmark Runner (`eval/run_benchmarks.py` - by `@Gyantwik`):**
+  * Executable master orchestrator running experiments $E_1$ through $E_4$:
+    * **$E_1$ (Decision Policy vs. Baseline):** Proves 100% false-alarm scrap reduction on Amazon VisA normal boards and 0.00% defect escapes by routing ambiguous scores to operator review.
+    * **$E_2$ (Split-Conformal Sensitivity):** Validates empirical coverage against theoretical targets across $\alpha \in \{0.01, 0.02, 0.05, 0.10\}$ with Clopper-Pearson exact binomial confidence bounds.
+    * **$E_3$ (Environmental Corruption Robustness):** Demonstrates 100% pre-inference rejection of out-of-focus blur and specular glare corruptions by the Admission Quality Gate.
+    * **$E_4$ (Empirical Latency & Component Throughput):** Microsecond-level component latency profiling across admission quality gate, OpenCV DNN PatchCore perception, and geometric evidence tools.
+* [x] **Empirical Benchmark Deliverables (`eval/results/`):**
+  * `eval/results/benchmark_summary.json`: Structured, machine-readable JSON metrics for all experiments.
+  * `eval/results/BENCHMARK_REPORT.md`: Publication-grade Markdown tables with Wilson and Clopper-Pearson confidence intervals, ready for Person 3's final Technical Report.
+* [x] **Headless CI Reference Data Guard (`eval/reference_calibration.json`, `eval/tests/test_benchmark_pipeline.py`):**
+  * Zero-dependency reference calibration data and fallback mechanisms allowing complete pipeline testing in model-weight-free headless CI environments.
 * [x] **Total Repository Test Suite:**
-  * 147 passing tests, 5 skipped, 0 failures across the monorepo.
+  * 153 passing tests, 5 skipped, 0 failures across the monorepo. All Person 2 milestones 100% complete!
 
 
 ---
