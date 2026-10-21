@@ -128,3 +128,14 @@ def test_health_reflects_executor_mode():
         assert res_live.json()["engine"] == "live"
     finally:
         EXECUTOR._explicit_mode = initial_mode
+
+
+def test_executor_all_10_paths_schema_parity():
+    """Verify that all 10 frozen decision paths execute and validate through InspectionExecutor."""
+    from backend.schemas import DecisionPathEnum
+    executor = InspectionExecutor(artifacts_dir="artifacts")
+    for path_enum in DecisionPathEnum:
+        insp, assets = executor.inspect(category="pcb1", sample_id="pcb1_good_01", path=path_enum.value)
+        assert insp.decision_path == path_enum
+        assert isinstance(insp, InspectionResponse)
+        assert len(assets) >= 1
