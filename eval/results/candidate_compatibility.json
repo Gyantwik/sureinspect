@@ -1,13 +1,20 @@
 {
   "schema_version": "sureinspect.candidate-compatibility.v1",
-  "measured_inference_commit": "536618b43ee52d1369011f868a722f5a4fcdb214",
-  "candidate_commit": "501845519edbe168527c0d2c3a584605cd300afc",
+  "measured_inference_commit": "d749f32d70ecf53cbc7fdd5f07c91f644a52efad",
+  "candidate_commit": "d749f32d70ecf53cbc7fdd5f07c91f644a52efad",
   "critical_scopes": [
     "core",
     "artifacts/snapshots/pcb1-wide_resnet50_2-256-edc526f4da11"
   ],
   "critical_files_changed": [],
-  "uncommitted_critical_files_changed": [],
+  "uncommitted_critical_files_changed": [
+    "core/agent.py",
+    "core/tests/test_agent.py",
+    "core/tests/test_tools.py",
+    "core/tools.py"
+  ],
+  "measured_pipeline_fingerprint": "a241045168624da082502a1b36d78e6588902afad264f3cbe166ef6e3cbc8094",
+  "candidate_pipeline_fingerprint": "a241045168624da082502a1b36d78e6588902afad264f3cbe166ef6e3cbc8094",
   "compatible": true,
-  "interpretation": "Cached measured inference is candidate-compatible only when no inference-critical file changed."
+  "interpretation": "Measured inference is candidate-compatible only when the content hash of inference code, snapshot artifacts, and templates exactly matches; uncommitted changes are included."
 }

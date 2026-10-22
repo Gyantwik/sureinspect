@@ -50,10 +50,18 @@ export default function DecisionCard({ r }: { r: Inspection | null }) {
       <Row k="Area %" v={m ? f(m.area_pct, 2) : "not measured"} />
       <Row k="Shape" v={m?.shape_class ?? "not measured"} />
       <Row k="Alignment" v={r.alignment ? `${f(r.alignment.quality, 2)} (min ${f(r.alignment.q_min, 2)})` : "not measured"} />
+      <Row k="Recovered geometry" v={r.alignment?.scale != null ? `${f(r.alignment.scale, 3)}× scale · ${f(r.alignment.overlap, 2)} overlap` : "not measured"} />
 
       <p className="text-xs text-muted mt-4 leading-relaxed"><span className="label block mb-1">Calibration · {r.calibration.status.replace(/_/g, " ")}</span>{r.calibration.assumptions}</p>
       <p className="text-sm leading-relaxed mt-4">{r.grounded_report}</p>
-      <p className="mt-4 rounded-lg border border-line bg-white p-3 text-sm"><span className="label block mb-1">Next action</span>{next[r.decision]}</p>
+      <div className="mt-4 rounded-lg border border-line bg-white p-3 text-sm">
+        <span className="label block mb-1">Next action · {r.next_action?.action?.replace(/_/g, " ") ?? r.decision}</span>
+        <p>{r.next_action?.reason ?? next[r.decision]}</p>
+        <p className="mt-2 text-xs text-muted">
+          {r.next_action?.requires_human_confirmation ? "Human confirmation required" : "No confirmation required"}
+          {" · "}Recommendation only · No external actuation
+        </p>
+      </div>
 
       {r.counterfactuals.length > 0 && (
         <div className="mt-4"><span className="label">Counterfactual α</span>

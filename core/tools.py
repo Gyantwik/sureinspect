@@ -40,7 +40,11 @@ MIN_GOOD_MATCHES = 12
 MIN_INLIERS = 10
 MIN_INLIER_RATIO = 0.25
 RANSAC_THRESH = 3.0
-SCALE_RANGE = (0.8, 1.25)
+# Reference-to-test scale accepted by the evidence aligner. This deliberately
+# covers ordinary browser/phone resampling (including the 0.729x screenshot
+# regression) while retaining hard bounds against tiny thumbnails and severe
+# close crops. Alignment quality and valid-overlap gates still have to pass.
+SCALE_RANGE = (0.60, 1.60)
 MAX_ROT_DEG = 45.0
 MIN_OVERLAP = 0.6
 BLUR_KSIZE = 5

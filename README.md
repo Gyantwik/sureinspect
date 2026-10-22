@@ -2,6 +2,8 @@
 
 SureInspect is a **Selective Inspection & Operator Triage System** for surface-mount electronics manufacturing (SMT/PCB) built natively on **OpenCV 5 DNN** and **Split-Conformal Risk Control**.
 
+Each decision includes a bounded OpenCV evidence trace and a structured, recommendation-only next action. Strong capture-scale shifts trigger conservative clearance rules so geometry can be recovered without silently treating resampled screenshots as calibrated sensor frames.
+
 > **Key Operational Finding:** On the previously seen test regression split, SureInspect eliminated automated normal-board scrap (0/100), routed 18/100 normal boards to human review, and passed 4/70 defects. The cautious binary baseline rejected 27/100 normal boards and also passed 4/70 defects. Interception assumes human reviewers catch HUMAN-routed defects.
 
 - **OpenCV AI Competition 2026 Entry**
@@ -35,7 +37,7 @@ SureInspect is a **Selective Inspection & Operator Triage System** for surface-m
 .venv\Scripts\activate       # Windows
 source .venv/bin/activate    # Mac/Linux
 
-# 2. Run test suite (currently 171 passed, 5 skipped)
+# 2. Run test suite (currently 180 passed, 5 skipped)
 pytest -q
 
 # 3. Run benchmarks (E1-E4)

@@ -121,6 +121,12 @@ def main(argv: list[str] | None = None) -> int:
     results.append(
         run_command("Agentic path matrix", [sys.executable, "-m", "eval.generate_agentic_evidence"])
     )
+    results.append(
+        run_command(
+            "Acquisition robustness",
+            [sys.executable, "-m", "eval.run_acquisition_robustness"],
+        )
+    )
     results.append(verify_openapi())
 
     if not args.skip_frontend:

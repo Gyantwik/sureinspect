@@ -469,6 +469,49 @@
           "rotation_deg": {
             "type": "number",
             "title": "Rotation Deg"
+          },
+          "scale": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scale"
+          },
+          "overlap": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Overlap"
+          },
+          "translation_px": {
+            "anyOf": [
+              {
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "type": "array",
+                "maxItems": 2,
+                "minItems": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Translation Px"
           }
         },
         "type": "object",
@@ -1044,6 +1087,37 @@
             },
             "type": "array",
             "title": "Loaded Categories"
+          },
+          "opencv_version": {
+            "type": "string",
+            "title": "Opencv Version"
+          },
+          "python_version": {
+            "type": "string",
+            "title": "Python Version"
+          },
+          "architecture": {
+            "type": "string",
+            "title": "Architecture"
+          },
+          "deployment_provider": {
+            "type": "string",
+            "enum": [
+              "aws",
+              "local_or_unspecified"
+            ],
+            "title": "Deployment Provider"
+          },
+          "aws_region": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Aws Region"
           }
         },
         "type": "object",
@@ -1052,7 +1126,11 @@
           "engine",
           "model_version",
           "enabled_categories",
-          "loaded_categories"
+          "loaded_categories",
+          "opencv_version",
+          "python_version",
+          "architecture",
+          "deployment_provider"
         ],
         "title": "HealthResponse"
       },
@@ -1147,6 +1225,9 @@
           },
           "decision_path": {
             "$ref": "#/components/schemas/DecisionPathEnum"
+          },
+          "next_action": {
+            "$ref": "#/components/schemas/NextActionInfo"
           },
           "suggested_decision": {
             "anyOf": [
@@ -1258,6 +1339,7 @@
           "image",
           "decision",
           "decision_path",
+          "next_action",
           "thresholds",
           "calibration",
           "quality_gate",
@@ -1378,6 +1460,51 @@
           "r_high"
         ],
         "title": "MeasurementStats"
+      },
+      "NextActionInfo": {
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "CONTINUE_LINE",
+              "QUARANTINE_PENDING_CONFIRMATION",
+              "REVIEW_EVIDENCE",
+              "REQUEST_RETAKE"
+            ],
+            "title": "Action"
+          },
+          "execution_mode": {
+            "type": "string",
+            "const": "recommendation_only",
+            "title": "Execution Mode",
+            "default": "recommendation_only"
+          },
+          "requires_human_confirmation": {
+            "type": "boolean",
+            "title": "Requires Human Confirmation"
+          },
+          "external_actuation_performed": {
+            "type": "boolean",
+            "title": "External Actuation Performed",
+            "default": false
+          },
+          "reversible": {
+            "type": "boolean",
+            "title": "Reversible",
+            "default": true
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "action",
+          "requires_human_confirmation",
+          "reason"
+        ],
+        "title": "NextActionInfo"
       },
       "QualityGateResult": {
         "properties": {

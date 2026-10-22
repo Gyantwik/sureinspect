@@ -1,6 +1,7 @@
 {
-  "__commit__": "536618b43ee52d1369011f868a722f5a4fcdb214",
-  "timestamp": "2026-10-22T13:42:32Z",
+  "__commit__": "d749f32d70ecf53cbc7fdd5f07c91f644a52efad",
+  "__pipeline_fingerprint__": "a241045168624da082502a1b36d78e6588902afad264f3cbe166ef6e3cbc8094",
+  "timestamp": "2026-10-22T19:14:54Z",
   "predictions": {
     "pcb1/train/good/0000.JPG": {
       "score": 1.8308,
@@ -14,10 +15,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 138.5,
-        "perception": 295.5,
+        "quality": 146.0,
+        "perception": 331.3,
         "tools": 0.0,
-        "total": 1596.02
+        "total": 1847.1
       }
     },
     "pcb1/train/good/0004.JPG": {
@@ -32,10 +33,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 21.0,
-        "perception": 297.7,
-        "tools": 81.2,
-        "total": 457.7
+        "quality": 24.7,
+        "perception": 357.2,
+        "tools": 96.2,
+        "total": 541.18
       }
     },
     "pcb1/train/good/0006.JPG": {
@@ -50,10 +51,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.1,
-        "perception": 292.9,
+        "quality": 30.4,
+        "perception": 311.6,
         "tools": 0.0,
-        "total": 375.57
+        "total": 402.56
       }
     },
     "pcb1/train/good/0012.JPG": {
@@ -68,10 +69,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 30.3,
-        "perception": 307.6,
+        "quality": 28.4,
+        "perception": 293.2,
         "tools": 0.0,
-        "total": 397.6
+        "total": 379.27
       }
     },
     "pcb1/train/good/0019.JPG": {
@@ -86,10 +87,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 29.7,
-        "perception": 282.3,
+        "quality": 23.4,
+        "perception": 291.0,
         "tools": 0.0,
-        "total": 366.38
+        "total": 373.67
       }
     },
     "pcb1/train/good/0025.JPG": {
@@ -104,10 +105,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.1,
-        "perception": 268.3,
+        "quality": 20.0,
+        "perception": 308.8,
         "tools": 0.0,
-        "total": 337.29
+        "total": 382.75
       }
     },
     "pcb1/train/good/0034.JPG": {
@@ -122,10 +123,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.6,
-        "perception": 262.8,
+        "quality": 22.5,
+        "perception": 302.6,
         "tools": 0.0,
-        "total": 332.41
+        "total": 381.97
       }
     },
     "pcb1/train/good/0035.JPG": {
@@ -140,10 +141,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.6,
-        "perception": 264.6,
-        "tools": 57.2,
-        "total": 389.5
+        "quality": 23.1,
+        "perception": 325.0,
+        "tools": 66.2,
+        "total": 470.02
       }
     },
     "pcb1/train/good/0036.JPG": {
@@ -158,10 +159,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.7,
-        "perception": 264.2,
+        "quality": 24.4,
+        "perception": 286.7,
         "tools": 0.0,
-        "total": 335.57
+        "total": 365.66
       }
     },
     "pcb1/train/good/0037.JPG": {
@@ -176,10 +177,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.0,
-        "perception": 267.6,
+        "quality": 21.4,
+        "perception": 305.7,
         "tools": 0.0,
-        "total": 338.6
+        "total": 385.6
       }
     },
     "pcb1/train/good/0043.JPG": {
@@ -194,10 +195,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.6,
-        "perception": 270.2,
+        "quality": 26.2,
+        "perception": 318.8,
         "tools": 0.0,
-        "total": 339.32
+        "total": 402.31
       }
     },
     "pcb1/train/good/0045.JPG": {
@@ -212,10 +213,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.3,
-        "perception": 267.1,
-        "tools": 79.8,
-        "total": 419.66
+        "quality": 23.5,
+        "perception": 305.3,
+        "tools": 80.3,
+        "total": 465.97
       }
     },
     "pcb1/train/good/0054.JPG": {
@@ -230,10 +231,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.8,
-        "perception": 277.5,
+        "quality": 24.5,
+        "perception": 349.6,
         "tools": 0.0,
-        "total": 369.58
+        "total": 431.82
       }
     },
     "pcb1/train/good/0055.JPG": {
@@ -248,10 +249,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 25.1,
-        "perception": 296.8,
+        "quality": 41.8,
+        "perception": 363.9,
         "tools": 0.0,
-        "total": 377.11
+        "total": 498.68
       }
     },
     "pcb1/train/good/0056.JPG": {
@@ -266,10 +267,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 23.6,
-        "perception": 309.1,
+        "quality": 43.4,
+        "perception": 460.7,
         "tools": 0.0,
-        "total": 393.38
+        "total": 566.56
       }
     },
     "pcb1/train/good/0057.JPG": {
@@ -284,10 +285,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 24.6,
-        "perception": 276.2,
-        "tools": 61.6,
-        "total": 415.1
+        "quality": 21.3,
+        "perception": 327.3,
+        "tools": 65.9,
+        "total": 474.74
       }
     },
     "pcb1/train/good/0061.JPG": {
@@ -302,10 +303,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.0,
-        "perception": 277.3,
+        "quality": 23.3,
+        "perception": 292.1,
         "tools": 0.0,
-        "total": 346.96
+        "total": 368.35
       }
     },
     "pcb1/train/good/0064.JPG": {
@@ -320,10 +321,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.9,
-        "perception": 270.8,
+        "quality": 18.8,
+        "perception": 268.1,
         "tools": 0.0,
-        "total": 338.94
+        "total": 338.53
       }
     },
     "pcb1/train/good/0067.JPG": {
@@ -338,10 +339,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 22.3,
-        "perception": 357.4,
+        "quality": 16.5,
+        "perception": 296.9,
         "tools": 0.0,
-        "total": 430.94
+        "total": 368.21
       }
     },
     "pcb1/train/good/0068.JPG": {
@@ -356,10 +357,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.6,
-        "perception": 277.2,
+        "quality": 20.2,
+        "perception": 302.5,
         "tools": 0.0,
-        "total": 348.54
+        "total": 376.29
       }
     },
     "pcb1/train/good/0069.JPG": {
@@ -374,10 +375,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.6,
-        "perception": 279.6,
+        "quality": 18.9,
+        "perception": 280.9,
         "tools": 0.0,
-        "total": 349.1
+        "total": 352.33
       }
     },
     "pcb1/train/good/0072.JPG": {
@@ -392,10 +393,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.1,
-        "perception": 308.0,
+        "quality": 21.4,
+        "perception": 311.7,
         "tools": 0.0,
-        "total": 387.22
+        "total": 387.74
       }
     },
     "pcb1/train/good/0076.JPG": {
@@ -410,10 +411,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.1,
-        "perception": 277.0,
+        "quality": 21.9,
+        "perception": 296.7,
         "tools": 0.0,
-        "total": 346.73
+        "total": 372.59
       }
     },
     "pcb1/train/good/0079.JPG": {
@@ -428,10 +429,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 20.1,
-        "perception": 316.4,
-        "tools": 72.1,
-        "total": 468.04
+        "quality": 18.4,
+        "perception": 295.0,
+        "tools": 57.4,
+        "total": 426.9
       }
     },
     "pcb1/train/good/0083.JPG": {
@@ -446,10 +447,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 19.2,
-        "perception": 282.6,
+        "quality": 21.4,
+        "perception": 285.6,
         "tools": 0.0,
-        "total": 355.98
+        "total": 360.39
       }
     },
     "pcb1/train/good/0088.JPG": {
@@ -464,10 +465,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.2,
-        "perception": 271.3,
+        "quality": 18.0,
+        "perception": 278.6,
         "tools": 0.0,
-        "total": 344.77
+        "total": 350.48
       }
     },
     "pcb1/train/good/0097.JPG": {
@@ -482,10 +483,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.1,
-        "perception": 285.9,
+        "quality": 19.3,
+        "perception": 307.9,
         "tools": 0.0,
-        "total": 356.49
+        "total": 381.41
       }
     },
     "pcb1/train/good/0098.JPG": {
@@ -500,10 +501,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 22.2,
-        "perception": 281.8,
+        "quality": 20.4,
+        "perception": 283.1,
         "tools": 0.0,
-        "total": 355.7
+        "total": 357.08
       }
     },
     "pcb1/train/good/0099.JPG": {
@@ -518,10 +519,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.4,
-        "perception": 275.6,
+        "quality": 16.9,
+        "perception": 274.5,
         "tools": 0.0,
-        "total": 344.59
+        "total": 343.78
       }
     },
     "pcb1/train/good/0102.JPG": {
@@ -536,10 +537,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.2,
-        "perception": 274.8,
+        "quality": 21.5,
+        "perception": 291.3,
         "tools": 0.0,
-        "total": 348.07
+        "total": 367.08
       }
     },
     "pcb1/train/good/0104.JPG": {
@@ -554,10 +555,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.1,
-        "perception": 277.3,
+        "quality": 19.7,
+        "perception": 302.2,
         "tools": 0.0,
-        "total": 349.78
+        "total": 374.35
       }
     },
     "pcb1/train/good/0108.JPG": {
@@ -572,10 +573,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.9,
-        "perception": 273.2,
+        "quality": 20.8,
+        "perception": 306.2,
         "tools": 0.0,
-        "total": 340.71
+        "total": 380.4
       }
     },
     "pcb1/train/good/0111.JPG": {
@@ -590,10 +591,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 18.1,
-        "perception": 299.0,
+        "quality": 20.2,
+        "perception": 269.0,
         "tools": 0.0,
-        "total": 371.17
+        "total": 343.52
       }
     },
     "pcb1/train/good/0118.JPG": {
@@ -608,10 +609,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 18.7,
-        "perception": 304.3,
+        "quality": 20.2,
+        "perception": 279.2,
         "tools": 0.0,
-        "total": 378.12
+        "total": 351.58
       }
     },
     "pcb1/train/good/0124.JPG": {
@@ -626,10 +627,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 23.4,
-        "perception": 289.7,
+        "quality": 21.0,
+        "perception": 286.9,
         "tools": 0.0,
-        "total": 369.33
+        "total": 363.89
       }
     },
     "pcb1/train/good/0126.JPG": {
@@ -644,10 +645,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.9,
-        "perception": 300.1,
+        "quality": 19.5,
+        "perception": 281.4,
         "tools": 0.0,
-        "total": 372.88
+        "total": 352.56
       }
     },
     "pcb1/train/good/0133.JPG": {
@@ -662,10 +663,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 22.1,
-        "perception": 300.9,
-        "tools": 67.0,
-        "total": 445.46
+        "quality": 18.6,
+        "perception": 293.3,
+        "tools": 57.8,
+        "total": 425.58
       }
     },
     "pcb1/train/good/0136.JPG": {
@@ -680,10 +681,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.6,
-        "perception": 309.0,
+        "quality": 20.6,
+        "perception": 297.3,
         "tools": 0.0,
-        "total": 385.1
+        "total": 371.07
       }
     },
     "pcb1/train/good/0138.JPG": {
@@ -698,10 +699,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 22.4,
-        "perception": 334.4,
+        "quality": 17.9,
+        "perception": 265.5,
         "tools": 0.0,
-        "total": 411.69
+        "total": 335.31
       }
     },
     "pcb1/train/good/0140.JPG": {
@@ -716,10 +717,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 23.1,
-        "perception": 353.2,
+        "quality": 16.5,
+        "perception": 259.4,
         "tools": 0.0,
-        "total": 442.39
+        "total": 326.68
       }
     },
     "pcb1/train/good/0145.JPG": {
@@ -734,10 +735,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.2,
-        "perception": 276.4,
+        "quality": 17.2,
+        "perception": 333.7,
         "tools": 0.0,
-        "total": 349.94
+        "total": 403.8
       }
     },
     "pcb1/train/good/0149.JPG": {
@@ -752,10 +753,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 18.4,
-        "perception": 275.2,
-        "tools": 59.6,
-        "total": 408.56
+        "quality": 21.2,
+        "perception": 313.3,
+        "tools": 77.7,
+        "total": 471.09
       }
     },
     "pcb1/train/good/0150.JPG": {
@@ -770,10 +771,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.5,
-        "perception": 280.0,
+        "quality": 22.9,
+        "perception": 331.2,
         "tools": 0.0,
-        "total": 353.82
+        "total": 411.45
       }
     },
     "pcb1/train/good/0152.JPG": {
@@ -788,10 +789,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 24.2,
-        "perception": 316.8,
-        "tools": 65.9,
-        "total": 461.17
+        "quality": 13.9,
+        "perception": 311.6,
+        "tools": 57.9,
+        "total": 436.99
       }
     },
     "pcb1/train/good/0155.JPG": {
@@ -806,10 +807,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.5,
+        "quality": 20.1,
         "perception": 0.0,
         "tools": 0.0,
-        "total": 58.29
+        "total": 58.08
       }
     },
     "pcb1/train/good/0156.JPG": {
@@ -824,10 +825,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 18.6,
-        "perception": 281.8,
+        "quality": 21.1,
+        "perception": 291.3,
         "tools": 0.0,
-        "total": 355.02
+        "total": 366.56
       }
     },
     "pcb1/train/good/0158.JPG": {
@@ -842,10 +843,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.1,
-        "perception": 275.9,
+        "quality": 19.8,
+        "perception": 265.0,
         "tools": 0.0,
-        "total": 347.9
+        "total": 335.71
       }
     },
     "pcb1/train/good/0160.JPG": {
@@ -860,10 +861,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.1,
-        "perception": 274.3,
+        "quality": 17.8,
+        "perception": 257.5,
         "tools": 0.0,
-        "total": 354.22
+        "total": 327.26
       }
     },
     "pcb1/train/good/0161.JPG": {
@@ -878,10 +879,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.9,
-        "perception": 273.9,
+        "quality": 16.0,
+        "perception": 258.9,
         "tools": 0.0,
-        "total": 342.53
+        "total": 324.38
       }
     },
     "pcb1/train/good/0163.JPG": {
@@ -896,10 +897,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.7,
-        "perception": 283.0,
+        "quality": 18.0,
+        "perception": 255.9,
         "tools": 0.0,
-        "total": 357.83
+        "total": 323.2
       }
     },
     "pcb1/train/good/0165.JPG": {
@@ -914,10 +915,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.2,
-        "perception": 273.6,
+        "quality": 17.3,
+        "perception": 302.8,
         "tools": 0.0,
-        "total": 346.46
+        "total": 372.95
       }
     },
     "pcb1/train/good/0166.JPG": {
@@ -932,10 +933,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.9,
-        "perception": 278.1,
-        "tools": 63.7,
-        "total": 416.6
+        "quality": 21.5,
+        "perception": 334.0,
+        "tools": 68.6,
+        "total": 488.93
       }
     },
     "pcb1/train/good/0181.JPG": {
@@ -950,10 +951,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 25.6,
-        "perception": 275.8,
+        "quality": 21.2,
+        "perception": 310.4,
         "tools": 0.0,
-        "total": 357.5
+        "total": 386.2
       }
     },
     "pcb1/train/good/0182.JPG": {
@@ -968,10 +969,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 24.6,
-        "perception": 308.1,
-        "tools": 71.7,
-        "total": 457.89
+        "quality": 24.2,
+        "perception": 309.9,
+        "tools": 66.3,
+        "total": 458.98
       }
     },
     "pcb1/train/good/0184.JPG": {
@@ -986,10 +987,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 20.4,
-        "perception": 267.9,
-        "tools": 55.8,
-        "total": 399.56
+        "quality": 20.3,
+        "perception": 282.1,
+        "tools": 60.3,
+        "total": 416.39
       }
     },
     "pcb1/train/good/0185.JPG": {
@@ -1004,10 +1005,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 18.2,
-        "perception": 267.3,
+        "quality": 18.8,
+        "perception": 285.9,
         "tools": 0.0,
-        "total": 337.9
+        "total": 358.49
       }
     },
     "pcb1/train/good/0186.JPG": {
@@ -1022,10 +1023,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.9,
-        "perception": 263.4,
+        "quality": 16.6,
+        "perception": 280.2,
         "tools": 0.0,
-        "total": 331.9
+        "total": 348.99
       }
     },
     "pcb1/train/good/0188.JPG": {
@@ -1040,10 +1041,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.6,
-        "perception": 261.4,
+        "quality": 18.6,
+        "perception": 282.6,
         "tools": 0.0,
-        "total": 333.49
+        "total": 363.94
       }
     },
     "pcb1/train/good/0191.JPG": {
@@ -1058,10 +1059,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 18.9,
-        "perception": 260.7,
+        "quality": 18.5,
+        "perception": 339.5,
         "tools": 0.0,
-        "total": 339.39
+        "total": 415.84
       }
     },
     "pcb1/train/good/0199.JPG": {
@@ -1076,10 +1077,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.6,
-        "perception": 266.3,
+        "quality": 19.4,
+        "perception": 299.6,
         "tools": 0.0,
-        "total": 339.64
+        "total": 373.9
       }
     },
     "pcb1/train/good/0203.JPG": {
@@ -1094,10 +1095,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 18.1,
-        "perception": 274.4,
+        "quality": 19.8,
+        "perception": 325.1,
         "tools": 0.0,
-        "total": 345.34
+        "total": 399.94
       }
     },
     "pcb1/train/good/0204.JPG": {
@@ -1112,10 +1113,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 22.1,
-        "perception": 264.7,
+        "quality": 24.8,
+        "perception": 324.4,
         "tools": 0.0,
-        "total": 337.62
+        "total": 405.94
       }
     },
     "pcb1/train/good/0207.JPG": {
@@ -1130,10 +1131,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 19.2,
-        "perception": 264.3,
+        "quality": 21.1,
+        "perception": 298.5,
         "tools": 0.0,
-        "total": 335.3
+        "total": 377.0
       }
     },
     "pcb1/train/good/0212.JPG": {
@@ -1148,10 +1149,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 22.3,
-        "perception": 318.4,
+        "quality": 21.6,
+        "perception": 311.5,
         "tools": 0.0,
-        "total": 398.85
+        "total": 391.68
       }
     },
     "pcb1/train/good/0217.JPG": {
@@ -1166,10 +1167,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 26.6,
-        "perception": 283.6,
+        "quality": 21.3,
+        "perception": 331.5,
         "tools": 0.0,
-        "total": 369.37
+        "total": 408.79
       }
     },
     "pcb1/train/good/0219.JPG": {
@@ -1184,10 +1185,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 19.6,
-        "perception": 273.4,
+        "quality": 26.7,
+        "perception": 353.2,
         "tools": 0.0,
-        "total": 344.89
+        "total": 437.66
       }
     },
     "pcb1/train/good/0221.JPG": {
@@ -1202,10 +1203,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.1,
-        "perception": 294.5,
+        "quality": 21.7,
+        "perception": 291.7,
         "tools": 0.0,
-        "total": 368.95
+        "total": 367.1
       }
     },
     "pcb1/train/good/0223.JPG": {
@@ -1220,10 +1221,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 23.1,
-        "perception": 278.2,
+        "quality": 18.6,
+        "perception": 274.6,
         "tools": 0.0,
-        "total": 353.84
+        "total": 346.09
       }
     },
     "pcb1/train/good/0224.JPG": {
@@ -1238,10 +1239,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.7,
-        "perception": 272.6,
-        "tools": 71.9,
-        "total": 420.87
+        "quality": 17.9,
+        "perception": 276.1,
+        "tools": 57.9,
+        "total": 405.51
       }
     },
     "pcb1/train/good/0229.JPG": {
@@ -1256,10 +1257,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 23.2,
-        "perception": 279.0,
+        "quality": 18.5,
+        "perception": 271.5,
         "tools": 0.0,
-        "total": 356.57
+        "total": 341.85
       }
     },
     "pcb1/train/good/0232.JPG": {
@@ -1274,10 +1275,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.5,
-        "perception": 268.8,
+        "quality": 17.1,
+        "perception": 284.8,
         "tools": 0.0,
-        "total": 342.08
+        "total": 354.89
       }
     },
     "pcb1/train/good/0245.JPG": {
@@ -1292,10 +1293,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 20.6,
-        "perception": 265.4,
-        "tools": 57.2,
-        "total": 395.15
+        "quality": 19.0,
+        "perception": 294.7,
+        "tools": 65.3,
+        "total": 436.27
       }
     },
     "pcb1/train/good/0246.JPG": {
@@ -1310,10 +1311,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.7,
-        "perception": 301.2,
+        "quality": 21.8,
+        "perception": 325.7,
         "tools": 0.0,
-        "total": 387.81
+        "total": 402.9
       }
     },
     "pcb1/train/good/0248.JPG": {
@@ -1328,10 +1329,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 23.5,
-        "perception": 286.7,
-        "tools": 57.5,
-        "total": 421.73
+        "quality": 22.8,
+        "perception": 293.3,
+        "tools": 63.6,
+        "total": 437.43
       }
     },
     "pcb1/train/good/0253.JPG": {
@@ -1346,10 +1347,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 19.7,
-        "perception": 282.5,
+        "quality": 18.1,
+        "perception": 266.4,
         "tools": 0.0,
-        "total": 358.55
+        "total": 335.31
       }
     },
     "pcb1/train/good/0254.JPG": {
@@ -1364,10 +1365,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.8,
-        "perception": 284.5,
+        "quality": 17.7,
+        "perception": 271.3,
         "tools": 0.0,
-        "total": 358.18
+        "total": 340.87
       }
     },
     "pcb1/train/good/0258.JPG": {
@@ -1382,10 +1383,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.2,
-        "perception": 275.1,
+        "quality": 18.0,
+        "perception": 286.1,
         "tools": 0.0,
-        "total": 350.22
+        "total": 356.09
       }
     },
     "pcb1/train/good/0260.JPG": {
@@ -1400,10 +1401,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.7,
-        "perception": 275.4,
+        "quality": 17.1,
+        "perception": 261.9,
         "tools": 0.0,
-        "total": 347.7
+        "total": 331.03
       }
     },
     "pcb1/train/good/0263.JPG": {
@@ -1418,10 +1419,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.6,
-        "perception": 273.4,
+        "quality": 18.1,
+        "perception": 259.5,
         "tools": 0.0,
-        "total": 346.78
+        "total": 327.5
       }
     },
     "pcb1/train/good/0266.JPG": {
@@ -1437,9 +1438,9 @@
       "rois_total": 0,
       "timing_ms": {
         "quality": 17.2,
-        "perception": 276.7,
+        "perception": 279.5,
         "tools": 0.0,
-        "total": 346.06
+        "total": 347.37
       }
     },
     "pcb1/train/good/0279.JPG": {
@@ -1454,10 +1455,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.1,
-        "perception": 274.0,
+        "quality": 17.5,
+        "perception": 260.8,
         "tools": 0.0,
-        "total": 348.17
+        "total": 330.96
       }
     },
     "pcb1/train/good/0281.JPG": {
@@ -1472,10 +1473,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 18.6,
-        "perception": 319.4,
+        "quality": 17.0,
+        "perception": 331.2,
         "tools": 0.0,
-        "total": 392.96
+        "total": 403.08
       }
     },
     "pcb1/train/good/0284.JPG": {
@@ -1490,10 +1491,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 24.6,
-        "perception": 279.8,
-        "tools": 65.7,
-        "total": 423.04
+        "quality": 19.6,
+        "perception": 322.2,
+        "tools": 57.2,
+        "total": 458.11
       }
     },
     "pcb1/train/good/0285.JPG": {
@@ -1508,10 +1509,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.7,
-        "perception": 281.2,
+        "quality": 18.9,
+        "perception": 307.3,
         "tools": 0.0,
-        "total": 350.8
+        "total": 379.97
       }
     },
     "pcb1/train/good/0287.JPG": {
@@ -1526,10 +1527,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.3,
-        "perception": 266.9,
+        "quality": 17.5,
+        "perception": 283.0,
         "tools": 0.0,
-        "total": 340.94
+        "total": 355.51
       }
     },
     "pcb1/train/good/0289.JPG": {
@@ -1544,10 +1545,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.4,
-        "perception": 281.3,
+        "quality": 21.8,
+        "perception": 302.7,
         "tools": 0.0,
-        "total": 356.42
+        "total": 378.16
       }
     },
     "pcb1/train/good/0290.JPG": {
@@ -1562,10 +1563,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.1,
-        "perception": 275.5,
+        "quality": 17.5,
+        "perception": 267.4,
         "tools": 0.0,
-        "total": 344.86
+        "total": 337.68
       }
     },
     "pcb1/train/good/0308.JPG": {
@@ -1580,10 +1581,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.5,
-        "perception": 273.3,
+        "quality": 18.0,
+        "perception": 269.9,
         "tools": 0.0,
-        "total": 348.18
+        "total": 340.41
       }
     },
     "pcb1/train/good/0312.JPG": {
@@ -1598,10 +1599,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.1,
-        "perception": 270.2,
+        "quality": 18.7,
+        "perception": 265.9,
         "tools": 0.0,
-        "total": 340.98
+        "total": 338.53
       }
     },
     "pcb1/train/good/0313.JPG": {
@@ -1616,10 +1617,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 22.8,
-        "perception": 277.4,
+        "quality": 17.0,
+        "perception": 268.7,
         "tools": 0.0,
-        "total": 350.51
+        "total": 338.15
       }
     },
     "pcb1/train/good/0322.JPG": {
@@ -1634,10 +1635,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.5,
-        "perception": 273.4,
+        "quality": 16.8,
+        "perception": 269.1,
         "tools": 0.0,
-        "total": 345.99
+        "total": 337.38
       }
     },
     "pcb1/train/good/0324.JPG": {
@@ -1652,10 +1653,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.9,
-        "perception": 265.0,
+        "quality": 17.9,
+        "perception": 264.8,
         "tools": 0.0,
-        "total": 338.18
+        "total": 333.49
       }
     },
     "pcb1/train/good/0331.JPG": {
@@ -1670,10 +1671,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 19.2,
-        "perception": 277.0,
+        "quality": 17.0,
+        "perception": 289.4,
         "tools": 0.0,
-        "total": 347.48
+        "total": 359.18
       }
     },
     "pcb1/train/good/0334.JPG": {
@@ -1688,10 +1689,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 17.2,
-        "perception": 303.7,
-        "tools": 69.3,
-        "total": 446.72
+        "quality": 21.2,
+        "perception": 312.3,
+        "tools": 64.1,
+        "total": 452.09
       }
     },
     "pcb1/train/good/0339.JPG": {
@@ -1706,10 +1707,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.3,
-        "perception": 273.5,
+        "quality": 22.2,
+        "perception": 283.5,
         "tools": 0.0,
-        "total": 348.63
+        "total": 359.49
       }
     },
     "pcb1/train/good/0341.JPG": {
@@ -1724,10 +1725,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.6,
-        "perception": 269.2,
+        "quality": 20.5,
+        "perception": 287.1,
         "tools": 0.0,
-        "total": 336.12
+        "total": 363.5
       }
     },
     "pcb1/train/good/0343.JPG": {
@@ -1742,10 +1743,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.9,
-        "perception": 266.5,
-        "tools": 64.1,
-        "total": 404.08
+        "quality": 20.0,
+        "perception": 303.1,
+        "tools": 59.2,
+        "total": 436.24
       }
     },
     "pcb1/train/good/0347.JPG": {
@@ -1760,10 +1761,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 18.3,
-        "perception": 273.8,
-        "tools": 55.6,
-        "total": 400.55
+        "quality": 19.2,
+        "perception": 272.8,
+        "tools": 59.5,
+        "total": 403.91
       }
     },
     "pcb1/train/good/0353.JPG": {
@@ -1778,10 +1779,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 18.0,
-        "perception": 264.1,
-        "tools": 57.3,
-        "total": 393.22
+        "quality": 20.9,
+        "perception": 297.4,
+        "tools": 58.6,
+        "total": 431.46
       }
     },
     "pcb1/train/good/0354.JPG": {
@@ -1796,10 +1797,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.6,
-        "perception": 262.2,
+        "quality": 18.8,
+        "perception": 271.0,
         "tools": 0.0,
-        "total": 329.96
+        "total": 341.17
       }
     },
     "pcb1/train/good/0355.JPG": {
@@ -1814,10 +1815,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 18.3,
-        "perception": 262.0,
-        "tools": 56.4,
-        "total": 386.95
+        "quality": 18.2,
+        "perception": 282.6,
+        "tools": 72.8,
+        "total": 426.57
       }
     },
     "pcb1/train/good/0357.JPG": {
@@ -1832,10 +1833,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 19.8,
-        "perception": 272.8,
+        "quality": 21.1,
+        "perception": 302.0,
         "tools": 0.0,
-        "total": 347.53
+        "total": 379.05
       }
     },
     "pcb1/train/good/0359.JPG": {
@@ -1850,10 +1851,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 15.8,
-        "perception": 310.2,
+        "quality": 20.5,
+        "perception": 315.8,
         "tools": 0.0,
-        "total": 389.88
+        "total": 390.93
       }
     },
     "pcb1/train/good/0360.JPG": {
@@ -1868,10 +1869,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 22.5,
-        "perception": 273.4,
+        "quality": 19.0,
+        "perception": 288.9,
         "tools": 0.0,
-        "total": 348.73
+        "total": 360.86
       }
     },
     "pcb1/train/good/0371.JPG": {
@@ -1886,10 +1887,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 17.7,
-        "perception": 277.1,
-        "tools": 58.2,
-        "total": 404.45
+        "quality": 18.0,
+        "perception": 280.6,
+        "tools": 59.0,
+        "total": 410.4
       }
     },
     "pcb1/train/good/0373.JPG": {
@@ -1904,10 +1905,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 18.1,
-        "perception": 270.0,
-        "tools": 57.0,
-        "total": 396.93
+        "quality": 21.8,
+        "perception": 268.9,
+        "tools": 58.0,
+        "total": 401.37
       }
     },
     "pcb1/train/good/0376.JPG": {
@@ -1922,10 +1923,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 32.0,
-        "perception": 302.5,
-        "tools": 61.0,
-        "total": 452.15
+        "quality": 18.2,
+        "perception": 261.6,
+        "tools": 56.8,
+        "total": 391.88
       }
     },
     "pcb1/train/good/0380.JPG": {
@@ -1940,10 +1941,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.9,
-        "perception": 267.8,
-        "tools": 61.9,
-        "total": 402.09
+        "quality": 17.7,
+        "perception": 280.0,
+        "tools": 63.1,
+        "total": 417.0
       }
     },
     "pcb1/train/good/0382.JPG": {
@@ -1958,10 +1959,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.1,
-        "perception": 270.9,
+        "quality": 18.5,
+        "perception": 280.4,
         "tools": 0.0,
-        "total": 341.19
+        "total": 350.42
       }
     },
     "pcb1/train/good/0384.JPG": {
@@ -1976,10 +1977,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.2,
-        "perception": 278.5,
-        "tools": 54.1,
-        "total": 400.96
+        "quality": 20.4,
+        "perception": 275.1,
+        "tools": 61.3,
+        "total": 409.22
       }
     },
     "pcb1/train/good/0387.JPG": {
@@ -1994,10 +1995,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.1,
-        "perception": 270.6,
+        "quality": 18.8,
+        "perception": 276.9,
         "tools": 0.0,
-        "total": 338.63
+        "total": 351.3
       }
     },
     "pcb1/train/good/0388.JPG": {
@@ -2012,10 +2013,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.6,
-        "perception": 316.1,
+        "quality": 21.4,
+        "perception": 307.3,
         "tools": 0.0,
-        "total": 383.86
+        "total": 384.3
       }
     },
     "pcb1/train/good/0389.JPG": {
@@ -2030,10 +2031,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.8,
-        "perception": 267.7,
+        "quality": 21.4,
+        "perception": 289.9,
         "tools": 0.0,
-        "total": 340.19
+        "total": 364.76
       }
     },
     "pcb1/train/good/0391.JPG": {
@@ -2048,10 +2049,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.5,
-        "perception": 355.5,
+        "quality": 20.2,
+        "perception": 281.2,
         "tools": 0.0,
-        "total": 434.66
+        "total": 354.31
       }
     },
     "pcb1/train/good/0397.JPG": {
@@ -2066,10 +2067,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.9,
-        "perception": 298.2,
+        "quality": 21.6,
+        "perception": 276.5,
         "tools": 0.0,
-        "total": 375.53
+        "total": 350.84
       }
     },
     "pcb1/train/good/0401.JPG": {
@@ -2084,10 +2085,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 24.0,
-        "perception": 303.7,
+        "quality": 17.0,
+        "perception": 275.5,
         "tools": 0.0,
-        "total": 382.02
+        "total": 346.41
       }
     },
     "pcb1/train/good/0404.JPG": {
@@ -2102,10 +2103,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.2,
-        "perception": 283.0,
+        "quality": 22.6,
+        "perception": 267.5,
         "tools": 0.0,
-        "total": 357.76
+        "total": 343.52
       }
     },
     "pcb1/train/good/0410.JPG": {
@@ -2120,10 +2121,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 24.6,
-        "perception": 307.7,
+        "quality": 16.5,
+        "perception": 264.6,
         "tools": 0.0,
-        "total": 385.33
+        "total": 332.96
       }
     },
     "pcb1/train/good/0411.JPG": {
@@ -2138,10 +2139,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 19.4,
-        "perception": 295.5,
+        "quality": 17.1,
+        "perception": 265.7,
         "tools": 0.0,
-        "total": 367.48
+        "total": 333.91
       }
     },
     "pcb1/train/good/0418.JPG": {
@@ -2156,10 +2157,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.6,
-        "perception": 268.4,
+        "quality": 16.4,
+        "perception": 263.1,
         "tools": 0.0,
-        "total": 340.75
+        "total": 331.69
       }
     },
     "pcb1/train/good/0422.JPG": {
@@ -2174,10 +2175,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 17.0,
-        "perception": 274.5,
-        "tools": 57.8,
-        "total": 403.59
+        "quality": 17.9,
+        "perception": 303.4,
+        "tools": 61.6,
+        "total": 439.32
       }
     },
     "pcb1/train/good/0426.JPG": {
@@ -2192,10 +2193,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 19.6,
-        "perception": 269.8,
+        "quality": 21.0,
+        "perception": 276.8,
         "tools": 0.0,
-        "total": 341.77
+        "total": 352.82
       }
     },
     "pcb1/train/good/0432.JPG": {
@@ -2210,10 +2211,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.1,
-        "perception": 301.5,
-        "tools": 63.4,
-        "total": 441.64
+        "quality": 17.4,
+        "perception": 267.6,
+        "tools": 60.1,
+        "total": 400.84
       }
     },
     "pcb1/train/good/0440.JPG": {
@@ -2228,10 +2229,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 20.1,
-        "perception": 265.1,
-        "tools": 59.8,
-        "total": 404.65
+        "quality": 19.4,
+        "perception": 323.7,
+        "tools": 62.7,
+        "total": 461.5
       }
     },
     "pcb1/train/good/0441.JPG": {
@@ -2246,10 +2247,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.5,
-        "perception": 267.0,
+        "quality": 17.2,
+        "perception": 295.8,
         "tools": 0.0,
-        "total": 334.75
+        "total": 365.27
       }
     },
     "pcb1/train/good/0450.JPG": {
@@ -2264,10 +2265,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 19.5,
-        "perception": 264.2,
+        "quality": 20.0,
+        "perception": 291.7,
         "tools": 0.0,
-        "total": 336.65
+        "total": 365.07
       }
     },
     "pcb1/train/good/0454.JPG": {
@@ -2282,10 +2283,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 22.1,
-        "perception": 274.6,
+        "quality": 17.6,
+        "perception": 272.2,
         "tools": 0.0,
-        "total": 350.94
+        "total": 341.3
       }
     },
     "pcb1/train/good/0456.JPG": {
@@ -2300,10 +2301,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.0,
-        "perception": 282.3,
-        "tools": 78.5,
-        "total": 436.05
+        "quality": 18.1,
+        "perception": 265.9,
+        "tools": 57.9,
+        "total": 395.68
       }
     },
     "pcb1/train/good/0459.JPG": {
@@ -2318,10 +2319,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.6,
-        "perception": 281.5,
+        "quality": 17.9,
+        "perception": 269.3,
         "tools": 0.0,
-        "total": 355.46
+        "total": 339.25
       }
     },
     "pcb1/train/good/0465.JPG": {
@@ -2336,10 +2337,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.7,
-        "perception": 295.1,
+        "quality": 17.0,
+        "perception": 269.7,
         "tools": 0.0,
-        "total": 365.0
+        "total": 339.3
       }
     },
     "pcb1/train/good/0467.JPG": {
@@ -2354,10 +2355,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 27.4,
-        "perception": 300.9,
-        "tools": 62.5,
-        "total": 446.56
+        "quality": 18.0,
+        "perception": 279.3,
+        "tools": 58.3,
+        "total": 407.65
       }
     },
     "pcb1/train/good/0468.JPG": {
@@ -2372,10 +2373,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.6,
-        "perception": 263.8,
+        "quality": 16.0,
+        "perception": 274.0,
         "tools": 0.0,
-        "total": 331.27
+        "total": 345.1
       }
     },
     "pcb1/train/good/0472.JPG": {
@@ -2390,10 +2391,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 17.7,
-        "perception": 263.2,
-        "tools": 58.2,
-        "total": 394.57
+        "quality": 21.4,
+        "perception": 338.3,
+        "tools": 75.9,
+        "total": 492.46
       }
     },
     "pcb1/train/good/0485.JPG": {
@@ -2408,10 +2409,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.4,
-        "perception": 304.7,
+        "quality": 20.3,
+        "perception": 282.0,
         "tools": 0.0,
-        "total": 379.79
+        "total": 355.54
       }
     },
     "pcb1/train/good/0487.JPG": {
@@ -2426,10 +2427,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 15.7,
-        "perception": 274.3,
+        "quality": 18.5,
+        "perception": 287.6,
         "tools": 0.0,
-        "total": 345.28
+        "total": 359.09
       }
     },
     "pcb1/train/good/0489.JPG": {
@@ -2444,10 +2445,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 18.4,
-        "perception": 277.0,
+        "quality": 19.4,
+        "perception": 295.0,
         "tools": 0.0,
-        "total": 349.6
+        "total": 367.59
       }
     },
     "pcb1/train/good/0493.JPG": {
@@ -2462,10 +2463,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 19.9,
-        "perception": 291.0,
+        "quality": 21.0,
+        "perception": 283.8,
         "tools": 0.0,
-        "total": 370.91
+        "total": 358.01
       }
     },
     "pcb1/train/good/0495.JPG": {
@@ -2480,10 +2481,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 28.0,
-        "perception": 308.3,
+        "quality": 18.0,
+        "perception": 284.0,
         "tools": 0.0,
-        "total": 395.8
+        "total": 353.83
       }
     },
     "pcb1/train/good/0497.JPG": {
@@ -2498,10 +2499,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 22.0,
-        "perception": 283.4,
+        "quality": 23.6,
+        "perception": 297.1,
         "tools": 0.0,
-        "total": 357.12
+        "total": 374.61
       }
     },
     "pcb1/train/good/0499.JPG": {
@@ -2516,10 +2517,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.0,
-        "perception": 269.4,
+        "quality": 20.4,
+        "perception": 308.8,
         "tools": 0.0,
-        "total": 337.59
+        "total": 387.47
       }
     },
     "pcb1/train/good/0500.JPG": {
@@ -2534,10 +2535,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.1,
-        "perception": 268.0,
+        "quality": 18.1,
+        "perception": 295.6,
         "tools": 0.0,
-        "total": 335.42
+        "total": 366.58
       }
     },
     "pcb1/train/good/0503.JPG": {
@@ -2552,10 +2553,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 18.5,
-        "perception": 267.2,
+        "quality": 20.5,
+        "perception": 322.1,
         "tools": 0.0,
-        "total": 337.98
+        "total": 397.62
       }
     },
     "pcb1/train/good/0506.JPG": {
@@ -2570,10 +2571,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 18.4,
-        "perception": 303.4,
+        "quality": 21.1,
+        "perception": 302.1,
         "tools": 0.0,
-        "total": 378.56
+        "total": 377.84
       }
     },
     "pcb1/train/good/0511.JPG": {
@@ -2588,10 +2589,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 21.2,
-        "perception": 285.9,
-        "tools": 57.9,
-        "total": 418.46
+        "quality": 20.3,
+        "perception": 295.4,
+        "tools": 60.7,
+        "total": 433.48
       }
     },
     "pcb1/train/good/0515.JPG": {
@@ -2607,9 +2608,9 @@
       "rois_total": 0,
       "timing_ms": {
         "quality": 17.1,
-        "perception": 273.9,
+        "perception": 273.0,
         "tools": 0.0,
-        "total": 343.53
+        "total": 344.01
       }
     },
     "pcb1/train/good/0517.JPG": {
@@ -2624,10 +2625,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 18.1,
-        "perception": 277.5,
+        "quality": 17.6,
+        "perception": 282.3,
         "tools": 0.0,
-        "total": 346.41
+        "total": 352.44
       }
     },
     "pcb1/train/good/0519.JPG": {
@@ -2642,10 +2643,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.1,
-        "perception": 274.3,
+        "quality": 21.0,
+        "perception": 279.7,
         "tools": 0.0,
-        "total": 352.15
+        "total": 352.68
       }
     },
     "pcb1/train/good/0521.JPG": {
@@ -2660,10 +2661,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 18.2,
-        "perception": 273.4,
+        "quality": 19.8,
+        "perception": 282.8,
         "tools": 0.0,
-        "total": 342.75
+        "total": 355.74
       }
     },
     "pcb1/train/good/0526.JPG": {
@@ -2678,10 +2679,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 22.2,
-        "perception": 275.8,
+        "quality": 16.9,
+        "perception": 283.0,
         "tools": 0.0,
-        "total": 349.96
+        "total": 352.27
       }
     },
     "pcb1/train/good/0528.JPG": {
@@ -2696,10 +2697,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.0,
-        "perception": 274.4,
+        "quality": 23.5,
+        "perception": 268.5,
         "tools": 0.0,
-        "total": 345.26
+        "total": 338.51
       }
     },
     "pcb1/train/good/0538.JPG": {
@@ -2715,9 +2716,9 @@
       "rois_total": 0,
       "timing_ms": {
         "quality": 21.0,
-        "perception": 281.4,
+        "perception": 272.7,
         "tools": 0.0,
-        "total": 355.66
+        "total": 345.69
       }
     },
     "pcb1/train/good/0546.JPG": {
@@ -2732,10 +2733,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.7,
-        "perception": 315.9,
+        "quality": 18.2,
+        "perception": 275.6,
         "tools": 0.0,
-        "total": 388.04
+        "total": 346.59
       }
     },
     "pcb1/train/good/0550.JPG": {
@@ -2750,10 +2751,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 24.1,
-        "perception": 283.0,
+        "quality": 17.5,
+        "perception": 283.6,
         "tools": 0.0,
-        "total": 361.48
+        "total": 354.0
       }
     },
     "pcb1/train/good/0551.JPG": {
@@ -2768,10 +2769,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 18.6,
-        "perception": 272.9,
+        "quality": 20.4,
+        "perception": 301.1,
         "tools": 0.0,
-        "total": 343.04
+        "total": 376.26
       }
     },
     "pcb1/train/good/0553.JPG": {
@@ -2786,10 +2787,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.1,
-        "perception": 275.5,
+        "quality": 23.5,
+        "perception": 303.1,
         "tools": 0.0,
-        "total": 347.84
+        "total": 380.66
       }
     },
     "pcb1/train/good/0554.JPG": {
@@ -2804,10 +2805,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.1,
-        "perception": 288.1,
+        "quality": 21.4,
+        "perception": 281.1,
         "tools": 0.0,
-        "total": 358.75
+        "total": 355.33
       }
     },
     "pcb1/train/good/0558.JPG": {
@@ -2822,10 +2823,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 18.1,
-        "perception": 273.8,
+        "quality": 18.0,
+        "perception": 296.2,
         "tools": 0.0,
-        "total": 349.44
+        "total": 366.82
       }
     },
     "pcb1/train/good/0562.JPG": {
@@ -2840,10 +2841,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 19.8,
-        "perception": 283.2,
+        "quality": 20.4,
+        "perception": 303.0,
         "tools": 0.0,
-        "total": 354.83
+        "total": 378.0
       }
     },
     "pcb1/train/good/0567.JPG": {
@@ -2858,10 +2859,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 19.2,
-        "perception": 279.2,
+        "quality": 21.6,
+        "perception": 291.0,
         "tools": 0.0,
-        "total": 352.74
+        "total": 364.1
       }
     },
     "pcb1/train/good/0568.JPG": {
@@ -2876,10 +2877,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.1,
-        "perception": 274.9,
+        "quality": 19.9,
+        "perception": 272.8,
         "tools": 0.0,
-        "total": 344.84
+        "total": 347.18
       }
     },
     "pcb1/train/good/0572.JPG": {
@@ -2894,10 +2895,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.7,
-        "perception": 277.8,
+        "quality": 18.2,
+        "perception": 293.0,
         "tools": 0.0,
-        "total": 353.37
+        "total": 365.34
       }
     },
     "pcb1/train/good/0576.JPG": {
@@ -2912,10 +2913,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.9,
-        "perception": 279.4,
+        "quality": 20.0,
+        "perception": 296.8,
         "tools": 0.0,
-        "total": 354.06
+        "total": 370.24
       }
     },
     "pcb1/train/good/0579.JPG": {
@@ -2930,10 +2931,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 18.6,
-        "perception": 281.5,
-        "tools": 57.7,
-        "total": 415.76
+        "quality": 22.2,
+        "perception": 367.5,
+        "tools": 60.1,
+        "total": 505.02
       }
     },
     "pcb1/train/good/0581.JPG": {
@@ -2948,10 +2949,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 23.5,
-        "perception": 338.5,
+        "quality": 21.0,
+        "perception": 279.6,
         "tools": 0.0,
-        "total": 422.85
+        "total": 353.82
       }
     },
     "pcb1/train/good/0585.JPG": {
@@ -2966,10 +2967,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.7,
-        "perception": 272.4,
+        "quality": 17.9,
+        "perception": 317.8,
         "tools": 0.0,
-        "total": 342.81
+        "total": 393.91
       }
     },
     "pcb1/train/good/0589.JPG": {
@@ -2984,10 +2985,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 23.3,
-        "perception": 283.9,
+        "quality": 20.6,
+        "perception": 293.0,
         "tools": 0.0,
-        "total": 365.29
+        "total": 367.06
       }
     },
     "pcb1/train/good/0590.JPG": {
@@ -3002,10 +3003,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 22.8,
-        "perception": 285.1,
+        "quality": 20.4,
+        "perception": 292.0,
         "tools": 0.0,
-        "total": 362.67
+        "total": 365.19
       }
     },
     "pcb1/train/good/0592.JPG": {
@@ -3020,10 +3021,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.6,
-        "perception": 295.9,
-        "tools": 64.1,
-        "total": 428.1
+        "quality": 19.4,
+        "perception": 287.8,
+        "tools": 58.5,
+        "total": 421.77
       }
     },
     "pcb1/train/good/0593.JPG": {
@@ -3038,10 +3039,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.8,
-        "perception": 279.3,
+        "quality": 20.1,
+        "perception": 281.2,
         "tools": 0.0,
-        "total": 351.89
+        "total": 353.3
       }
     },
     "pcb1/train/good/0595.JPG": {
@@ -3056,10 +3057,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.8,
-        "perception": 285.7,
+        "quality": 18.0,
+        "perception": 271.9,
         "tools": 0.0,
-        "total": 356.76
+        "total": 346.02
       }
     },
     "pcb1/train/good/0596.JPG": {
@@ -3074,10 +3075,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.2,
-        "perception": 334.3,
+        "quality": 19.9,
+        "perception": 324.2,
         "tools": 0.0,
-        "total": 422.73
+        "total": 400.3
       }
     },
     "pcb1/train/good/0598.JPG": {
@@ -3092,10 +3093,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 25.4,
-        "perception": 289.2,
+        "quality": 25.3,
+        "perception": 322.1,
         "tools": 0.0,
-        "total": 374.01
+        "total": 401.64
       }
     },
     "pcb1/train/good/0607.JPG": {
@@ -3110,10 +3111,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 19.5,
-        "perception": 326.9,
+        "quality": 27.8,
+        "perception": 307.9,
         "tools": 0.0,
-        "total": 400.58
+        "total": 389.75
       }
     },
     "pcb1/train/good/0608.JPG": {
@@ -3128,10 +3129,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 23.6,
-        "perception": 308.8,
+        "quality": 19.5,
+        "perception": 305.1,
         "tools": 0.0,
-        "total": 393.26
+        "total": 378.27
       }
     },
     "pcb1/train/good/0613.JPG": {
@@ -3146,10 +3147,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.9,
-        "perception": 282.8,
+        "quality": 19.8,
+        "perception": 284.5,
         "tools": 0.0,
-        "total": 354.41
+        "total": 356.05
       }
     },
     "pcb1/train/good/0622.JPG": {
@@ -3164,10 +3165,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 17.5,
-        "perception": 282.4,
-        "tools": 80.5,
-        "total": 434.65
+        "quality": 18.2,
+        "perception": 266.7,
+        "tools": 79.1,
+        "total": 413.77
       }
     },
     "pcb1/train/good/0625.JPG": {
@@ -3182,10 +3183,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 20.7,
-        "perception": 280.0,
-        "tools": 57.7,
-        "total": 411.62
+        "quality": 18.0,
+        "perception": 271.9,
+        "tools": 55.1,
+        "total": 395.69
       }
     },
     "pcb1/train/good/0627.JPG": {
@@ -3200,10 +3201,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.0,
-        "perception": 264.6,
+        "quality": 18.1,
+        "perception": 272.3,
         "tools": 0.0,
-        "total": 334.02
+        "total": 342.84
       }
     },
     "pcb1/train/good/0628.JPG": {
@@ -3218,10 +3219,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.9,
-        "perception": 282.2,
+        "quality": 18.3,
+        "perception": 277.8,
         "tools": 0.0,
-        "total": 358.49
+        "total": 347.82
       }
     },
     "pcb1/train/good/0630.JPG": {
@@ -3236,10 +3237,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.4,
-        "perception": 264.2,
-        "tools": 57.7,
-        "total": 389.03
+        "quality": 18.0,
+        "perception": 269.7,
+        "tools": 54.2,
+        "total": 392.71
       }
     },
     "pcb1/train/good/0637.JPG": {
@@ -3254,10 +3255,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.2,
-        "perception": 270.6,
+        "quality": 19.4,
+        "perception": 311.9,
         "tools": 0.0,
-        "total": 341.32
+        "total": 384.26
       }
     },
     "pcb1/train/good/0640.JPG": {
@@ -3272,10 +3273,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.1,
-        "perception": 269.7,
+        "quality": 19.1,
+        "perception": 281.6,
         "tools": 0.0,
-        "total": 339.05
+        "total": 352.8
       }
     },
     "pcb1/train/good/0653.JPG": {
@@ -3290,10 +3291,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 17.3,
-        "perception": 306.3,
-        "tools": 88.0,
-        "total": 467.22
+        "quality": 19.1,
+        "perception": 305.7,
+        "tools": 96.3,
+        "total": 479.04
       }
     },
     "pcb1/train/good/0665.JPG": {
@@ -3308,10 +3309,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 22.9,
-        "perception": 281.7,
-        "tools": 75.1,
-        "total": 432.82
+        "quality": 22.2,
+        "perception": 333.4,
+        "tools": 97.8,
+        "total": 509.16
       }
     },
     "pcb1/train/good/0669.JPG": {
@@ -3326,10 +3327,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 17.1,
-        "perception": 272.6,
-        "tools": 55.4,
-        "total": 396.32
+        "quality": 21.8,
+        "perception": 338.0,
+        "tools": 66.1,
+        "total": 480.94
       }
     },
     "pcb1/train/good/0673.JPG": {
@@ -3344,10 +3345,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 18.4,
-        "perception": 273.4,
-        "tools": 59.1,
-        "total": 402.17
+        "quality": 21.2,
+        "perception": 291.5,
+        "tools": 61.5,
+        "total": 430.71
       }
     },
     "pcb1/train/good/0678.JPG": {
@@ -3362,10 +3363,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 20.7,
-        "perception": 267.1,
-        "tools": 77.0,
-        "total": 418.14
+        "quality": 25.0,
+        "perception": 340.6,
+        "tools": 98.7,
+        "total": 521.14
       }
     },
     "pcb1/train/good/0686.JPG": {
@@ -3380,10 +3381,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 18.0,
-        "perception": 266.8,
+        "quality": 19.0,
+        "perception": 289.6,
         "tools": 0.0,
-        "total": 334.59
+        "total": 362.17
       }
     },
     "pcb1/train/good/0692.JPG": {
@@ -3398,10 +3399,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 18.5,
-        "perception": 295.9,
-        "tools": 53.6,
-        "total": 418.7
+        "quality": 17.9,
+        "perception": 283.8,
+        "tools": 59.3,
+        "total": 415.63
       }
     },
     "pcb1/train/good/0693.JPG": {
@@ -3416,10 +3417,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 17.1,
-        "perception": 270.3,
-        "tools": 57.1,
-        "total": 397.55
+        "quality": 20.0,
+        "perception": 265.7,
+        "tools": 58.2,
+        "total": 398.13
       }
     },
     "pcb1/train/good/0699.JPG": {
@@ -3434,10 +3435,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 19.2,
-        "perception": 272.7,
+        "quality": 18.0,
+        "perception": 284.6,
         "tools": 0.0,
-        "total": 347.22
+        "total": 354.85
       }
     },
     "pcb1/train/good/0702.JPG": {
@@ -3452,10 +3453,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 20.5,
-        "perception": 357.8,
-        "tools": 60.8,
-        "total": 503.51
+        "quality": 19.4,
+        "perception": 266.0,
+        "tools": 55.5,
+        "total": 396.97
       }
     },
     "pcb1/train/good/0706.JPG": {
@@ -3470,10 +3471,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 18.2,
-        "perception": 276.8,
-        "tools": 78.8,
-        "total": 426.2
+        "quality": 22.2,
+        "perception": 313.1,
+        "tools": 89.8,
+        "total": 481.82
       }
     },
     "pcb1/train/good/0708.JPG": {
@@ -3488,10 +3489,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 22.6,
-        "perception": 293.0,
-        "tools": 88.5,
-        "total": 457.49
+        "quality": 23.2,
+        "perception": 279.7,
+        "tools": 80.8,
+        "total": 439.31
       }
     },
     "pcb1/train/good/0709.JPG": {
@@ -3506,10 +3507,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 23.7,
-        "perception": 305.7,
-        "tools": 88.5,
-        "total": 473.37
+        "quality": 22.0,
+        "perception": 301.8,
+        "tools": 87.7,
+        "total": 466.32
       }
     },
     "pcb1/train/good/0710.JPG": {
@@ -3524,10 +3525,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 20.1,
-        "perception": 310.7,
-        "tools": 94.5,
-        "total": 481.61
+        "quality": 20.0,
+        "perception": 312.8,
+        "tools": 88.4,
+        "total": 478.87
       }
     },
     "pcb1/train/good/0718.JPG": {
@@ -3542,10 +3543,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 28.6,
-        "perception": 359.9,
+        "quality": 25.1,
+        "perception": 304.1,
         "tools": 0.0,
-        "total": 447.98
+        "total": 382.78
       }
     },
     "pcb1/train/good/0719.JPG": {
@@ -3560,10 +3561,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 24.1,
-        "perception": 315.2,
+        "quality": 21.5,
+        "perception": 307.7,
         "tools": 0.0,
-        "total": 396.15
+        "total": 380.21
       }
     },
     "pcb1/train/good/0720.JPG": {
@@ -3578,10 +3579,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.3,
-        "perception": 268.9,
-        "tools": 77.1,
-        "total": 413.82
+        "quality": 18.0,
+        "perception": 296.3,
+        "tools": 83.3,
+        "total": 451.07
       }
     },
     "pcb1/train/good/0724.JPG": {
@@ -3596,10 +3597,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.0,
-        "perception": 268.4,
+        "quality": 20.0,
+        "perception": 281.8,
         "tools": 0.0,
-        "total": 338.73
+        "total": 355.31
       }
     },
     "pcb1/train/good/0727.JPG": {
@@ -3614,10 +3615,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.1,
-        "perception": 268.0,
+        "quality": 21.8,
+        "perception": 300.8,
         "tools": 0.0,
-        "total": 337.91
+        "total": 378.7
       }
     },
     "pcb1/train/good/0731.JPG": {
@@ -3632,10 +3633,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 19.9,
-        "perception": 271.7,
+        "quality": 25.0,
+        "perception": 363.0,
         "tools": 0.0,
-        "total": 343.89
+        "total": 443.86
       }
     },
     "pcb1/train/good/0732.JPG": {
@@ -3650,10 +3651,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.3,
-        "perception": 267.5,
+        "quality": 22.7,
+        "perception": 319.3,
         "tools": 0.0,
-        "total": 338.56
+        "total": 395.5
       }
     },
     "pcb1/train/good/0738.JPG": {
@@ -3668,10 +3669,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.6,
-        "perception": 299.2,
-        "tools": 88.0,
-        "total": 463.19
+        "quality": 23.8,
+        "perception": 312.6,
+        "tools": 89.0,
+        "total": 479.93
       }
     },
     "pcb1/train/good/0745.JPG": {
@@ -3686,10 +3687,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 22.7,
-        "perception": 261.8,
-        "tools": 78.8,
-        "total": 418.48
+        "quality": 21.6,
+        "perception": 290.7,
+        "tools": 83.6,
+        "total": 451.76
       }
     },
     "pcb1/train/good/0750.JPG": {
@@ -3704,10 +3705,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.7,
-        "perception": 282.0,
-        "tools": 56.9,
-        "total": 409.29
+        "quality": 21.1,
+        "perception": 314.3,
+        "tools": 59.3,
+        "total": 446.54
       }
     },
     "pcb1/train/good/0752.JPG": {
@@ -3722,10 +3723,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 20.9,
-        "perception": 266.7,
-        "tools": 55.5,
-        "total": 394.82
+        "quality": 20.0,
+        "perception": 295.4,
+        "tools": 59.8,
+        "total": 428.55
       }
     },
     "pcb1/train/good/0760.JPG": {
@@ -3740,10 +3741,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 17.0,
-        "perception": 271.6,
-        "tools": 72.5,
-        "total": 411.94
+        "quality": 17.9,
+        "perception": 286.1,
+        "tools": 81.1,
+        "total": 436.94
       }
     },
     "pcb1/train/good/0762.JPG": {
@@ -3758,10 +3759,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 20.5,
-        "perception": 269.4,
-        "tools": 77.4,
-        "total": 423.52
+        "quality": 17.7,
+        "perception": 277.3,
+        "tools": 82.9,
+        "total": 431.49
       }
     },
     "pcb1/train/good/0769.JPG": {
@@ -3776,10 +3777,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.6,
-        "perception": 262.7,
+        "quality": 21.0,
+        "perception": 287.5,
         "tools": 0.0,
-        "total": 330.92
+        "total": 362.34
       }
     },
     "pcb1/train/good/0773.JPG": {
@@ -3794,10 +3795,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.6,
-        "perception": 265.2,
-        "tools": 54.2,
-        "total": 390.29
+        "quality": 23.0,
+        "perception": 328.2,
+        "tools": 74.5,
+        "total": 484.54
       }
     },
     "pcb1/train/good/0777.JPG": {
@@ -3812,10 +3813,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 25.0,
-        "perception": 271.2,
+        "quality": 19.7,
+        "perception": 339.2,
         "tools": 0.0,
-        "total": 351.32
+        "total": 415.79
       }
     },
     "pcb1/train/good/0785.JPG": {
@@ -3830,10 +3831,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 19.4,
-        "perception": 302.3,
+        "quality": 22.3,
+        "perception": 338.4,
         "tools": 0.0,
-        "total": 374.66
+        "total": 426.8
       }
     },
     "pcb1/train/good/0790.JPG": {
@@ -3848,10 +3849,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 26.4,
-        "perception": 284.1,
+        "quality": 26.9,
+        "perception": 354.8,
         "tools": 0.0,
-        "total": 364.42
+        "total": 438.73
       }
     },
     "pcb1/train/good/0792.JPG": {
@@ -3866,10 +3867,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.2,
-        "perception": 268.2,
+        "quality": 21.3,
+        "perception": 320.0,
         "tools": 0.0,
-        "total": 334.89
+        "total": 395.62
       }
     },
     "pcb1/train/good/0795.JPG": {
@@ -3884,10 +3885,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.4,
-        "perception": 258.2,
+        "quality": 20.8,
+        "perception": 313.6,
         "tools": 0.0,
-        "total": 327.82
+        "total": 390.78
       }
     },
     "pcb1/train/good/0798.JPG": {
@@ -3902,10 +3903,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 18.2,
-        "perception": 362.1,
-        "tools": 109.6,
-        "total": 549.37
+        "quality": 22.1,
+        "perception": 315.2,
+        "tools": 87.7,
+        "total": 479.79
       }
     },
     "pcb1/train/good/0803.JPG": {
@@ -3920,10 +3921,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 28.7,
-        "perception": 322.0,
+        "quality": 21.8,
+        "perception": 291.3,
         "tools": 0.0,
-        "total": 415.31
+        "total": 366.16
       }
     },
     "pcb1/train/good/0805.JPG": {
@@ -3938,10 +3939,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 33.1,
-        "perception": 386.0,
+        "quality": 21.1,
+        "perception": 285.5,
         "tools": 0.0,
-        "total": 481.87
+        "total": 360.25
       }
     },
     "pcb1/train/good/0806.JPG": {
@@ -3956,10 +3957,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 26.2,
-        "perception": 307.8,
-        "tools": 54.4,
-        "total": 444.66
+        "quality": 20.8,
+        "perception": 287.6,
+        "tools": 62.3,
+        "total": 427.06
       }
     },
     "pcb1/train/good/0807.JPG": {
@@ -3974,10 +3975,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 17.6,
-        "perception": 330.5,
-        "tools": 91.7,
-        "total": 499.8
+        "quality": 23.8,
+        "perception": 306.1,
+        "tools": 94.3,
+        "total": 480.08
       }
     },
     "pcb1/train/good/0809.JPG": {
@@ -3992,10 +3993,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 24.5,
-        "perception": 295.8,
-        "tools": 85.4,
-        "total": 470.05
+        "quality": 24.0,
+        "perception": 338.8,
+        "tools": 105.2,
+        "total": 526.44
       }
     },
     "pcb1/train/good/0812.JPG": {
@@ -4010,10 +4011,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 27.6,
-        "perception": 324.8,
-        "tools": 62.9,
-        "total": 479.02
+        "quality": 27.8,
+        "perception": 314.6,
+        "tools": 67.3,
+        "total": 463.94
       }
     },
     "pcb1/train/good/0814.JPG": {
@@ -4028,10 +4029,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.9,
-        "perception": 264.1,
-        "tools": 74.0,
-        "total": 407.56
+        "quality": 24.4,
+        "perception": 338.7,
+        "tools": 93.5,
+        "total": 512.58
       }
     },
     "pcb1/train/good/0815.JPG": {
@@ -4046,10 +4047,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.8,
-        "perception": 274.0,
-        "tools": 54.8,
-        "total": 396.35
+        "quality": 55.3,
+        "perception": 440.3,
+        "tools": 60.5,
+        "total": 610.77
       }
     },
     "pcb1/train/good/0819.JPG": {
@@ -4064,10 +4065,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 18.5,
-        "perception": 268.8,
-        "tools": 56.8,
-        "total": 398.69
+        "quality": 20.0,
+        "perception": 276.3,
+        "tools": 58.6,
+        "total": 411.22
       }
     },
     "pcb1/train/good/0820.JPG": {
@@ -4082,10 +4083,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.7,
-        "perception": 260.6,
-        "tools": 80.0,
-        "total": 411.85
+        "quality": 18.8,
+        "perception": 304.5,
+        "tools": 89.3,
+        "total": 471.68
       }
     },
     "pcb1/train/good/0822.JPG": {
@@ -4100,10 +4101,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.6,
-        "perception": 279.5,
-        "tools": 56.1,
-        "total": 403.6
+        "quality": 24.6,
+        "perception": 297.3,
+        "tools": 60.7,
+        "total": 436.31
       }
     },
     "pcb1/train/good/0828.JPG": {
@@ -4118,10 +4119,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 15.3,
-        "perception": 266.9,
-        "tools": 53.8,
-        "total": 387.76
+        "quality": 18.1,
+        "perception": 276.7,
+        "tools": 59.6,
+        "total": 406.2
       }
     },
     "pcb1/train/good/0831.JPG": {
@@ -4136,10 +4137,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.3,
-        "perception": 261.5,
-        "tools": 74.0,
-        "total": 405.53
+        "quality": 20.8,
+        "perception": 278.5,
+        "tools": 81.8,
+        "total": 431.71
       }
     },
     "pcb1/train/good/0834.JPG": {
@@ -4154,10 +4155,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.6,
-        "perception": 261.8,
-        "tools": 55.0,
-        "total": 390.91
+        "quality": 23.7,
+        "perception": 286.5,
+        "tools": 68.9,
+        "total": 438.63
       }
     },
     "pcb1/train/good/0836.JPG": {
@@ -4172,10 +4173,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.1,
-        "perception": 267.9,
+        "quality": 25.1,
+        "perception": 311.3,
         "tools": 0.0,
-        "total": 336.64
+        "total": 393.39
       }
     },
     "pcb1/train/good/0837.JPG": {
@@ -4190,10 +4191,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.3,
-        "perception": 286.8,
-        "tools": 52.6,
-        "total": 411.31
+        "quality": 24.8,
+        "perception": 310.7,
+        "tools": 67.1,
+        "total": 461.97
       }
     },
     "pcb1/train/good/0838.JPG": {
@@ -4208,10 +4209,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.0,
-        "perception": 310.4,
-        "tools": 59.4,
-        "total": 443.03
+        "quality": 30.7,
+        "perception": 333.7,
+        "tools": 69.9,
+        "total": 491.2
       }
     },
     "pcb1/train/good/0841.JPG": {
@@ -4226,10 +4227,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.7,
-        "perception": 275.2,
-        "tools": 56.6,
-        "total": 405.62
+        "quality": 29.1,
+        "perception": 311.5,
+        "tools": 65.2,
+        "total": 463.12
       }
     },
     "pcb1/train/good/0845.JPG": {
@@ -4244,10 +4245,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 19.8,
-        "perception": 271.2,
+        "quality": 25.7,
+        "perception": 296.7,
         "tools": 0.0,
-        "total": 342.4
+        "total": 378.08
       }
     },
     "pcb1/train/good/0847.JPG": {
@@ -4262,10 +4263,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.5,
-        "perception": 293.5,
+        "quality": 20.9,
+        "perception": 359.5,
         "tools": 0.0,
-        "total": 377.66
+        "total": 446.27
       }
     },
     "pcb1/train/good/0849.JPG": {
@@ -4280,10 +4281,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 18.1,
-        "perception": 272.1,
+        "quality": 30.8,
+        "perception": 362.4,
         "tools": 0.0,
-        "total": 351.4
+        "total": 454.46
       }
     },
     "pcb1/train/good/0853.JPG": {
@@ -4298,10 +4299,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 23.5,
-        "perception": 275.9,
+        "quality": 18.4,
+        "perception": 365.7,
         "tools": 0.0,
-        "total": 352.65
+        "total": 442.16
       }
     },
     "pcb1/train/good/0854.JPG": {
@@ -4316,10 +4317,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.7,
-        "perception": 285.5,
+        "quality": 26.2,
+        "perception": 420.1,
         "tools": 0.0,
-        "total": 356.27
+        "total": 505.42
       }
     },
     "pcb1/train/good/0855.JPG": {
@@ -4334,10 +4335,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 19.0,
-        "perception": 315.4,
+        "quality": 27.1,
+        "perception": 331.3,
         "tools": 0.0,
-        "total": 393.6
+        "total": 412.94
       }
     },
     "pcb1/train/good/0863.JPG": {
@@ -4352,10 +4353,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 24.2,
-        "perception": 285.3,
+        "quality": 19.8,
+        "perception": 316.5,
         "tools": 0.0,
-        "total": 366.46
+        "total": 390.83
       }
     },
     "pcb1/train/good/0864.JPG": {
@@ -4370,10 +4371,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 26.3,
-        "perception": 323.4,
+        "quality": 19.0,
+        "perception": 307.5,
         "tools": 0.0,
-        "total": 412.32
+        "total": 383.4
       }
     },
     "pcb1/train/good/0865.JPG": {
@@ -4388,10 +4389,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 27.5,
-        "perception": 292.2,
+        "quality": 25.0,
+        "perception": 308.4,
         "tools": 0.0,
-        "total": 377.56
+        "total": 393.72
       }
     },
     "pcb1/train/good/0872.JPG": {
@@ -4406,10 +4407,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 22.0,
-        "perception": 292.7,
-        "tools": 62.4,
-        "total": 434.34
+        "quality": 20.4,
+        "perception": 304.1,
+        "tools": 63.9,
+        "total": 443.92
       }
     },
     "pcb1/train/good/0874.JPG": {
@@ -4424,10 +4425,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 18.5,
-        "perception": 287.3,
+        "quality": 20.0,
+        "perception": 288.7,
         "tools": 0.0,
-        "total": 363.43
+        "total": 361.55
       }
     },
     "pcb1/train/good/0876.JPG": {
@@ -4442,10 +4443,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 27.6,
-        "perception": 293.0,
+        "quality": 22.5,
+        "perception": 279.9,
         "tools": 0.0,
-        "total": 376.81
+        "total": 357.22
       }
     },
     "pcb1/train/good/0882.JPG": {
@@ -4460,10 +4461,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 22.3,
+        "quality": 19.5,
         "perception": 285.7,
         "tools": 0.0,
-        "total": 364.7
+        "total": 357.44
       }
     },
     "pcb1/train/good/0883.JPG": {
@@ -4478,10 +4479,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 25.9,
-        "perception": 296.8,
+        "quality": 18.6,
+        "perception": 273.5,
         "tools": 0.0,
-        "total": 381.55
+        "total": 342.53
       }
     },
     "pcb1/train/good/0884.JPG": {
@@ -4496,10 +4497,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.2,
-        "perception": 282.3,
-        "tools": 62.6,
-        "total": 422.71
+        "quality": 17.1,
+        "perception": 278.4,
+        "tools": 54.4,
+        "total": 402.59
       }
     },
     "pcb1/train/good/0886.JPG": {
@@ -4514,10 +4515,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.0,
-        "perception": 295.0,
+        "quality": 19.3,
+        "perception": 306.7,
         "tools": 0.0,
-        "total": 376.45
+        "total": 380.12
       }
     },
     "pcb1/train/good/0887.JPG": {
@@ -4532,10 +4533,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 23.4,
-        "perception": 302.9,
+        "quality": 23.6,
+        "perception": 301.3,
         "tools": 0.0,
-        "total": 380.47
+        "total": 387.53
       }
     },
     "pcb1/train/good/0888.JPG": {
@@ -4550,10 +4551,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 19.3,
-        "perception": 263.1,
+        "quality": 20.8,
+        "perception": 340.9,
         "tools": 0.0,
-        "total": 331.78
+        "total": 418.99
       }
     },
     "pcb1/train/good/0897.JPG": {
@@ -4568,10 +4569,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.4,
-        "perception": 261.7,
+        "quality": 21.0,
+        "perception": 292.2,
         "tools": 0.0,
-        "total": 334.4
+        "total": 367.63
       }
     },
     "pcb1/train/good/0899.JPG": {
@@ -4586,10 +4587,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 19.3,
-        "perception": 274.3,
+        "quality": 21.8,
+        "perception": 298.1,
         "tools": 0.0,
-        "total": 344.59
+        "total": 373.05
       }
     },
     "pcb1/train/good/0901.JPG": {
@@ -4604,10 +4605,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.5,
-        "perception": 270.8,
-        "tools": 55.8,
-        "total": 394.45
+        "quality": 21.0,
+        "perception": 311.5,
+        "tools": 58.8,
+        "total": 443.03
       }
     },
     "pcb1/train/good/0902.JPG": {
@@ -4622,10 +4623,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.2,
-        "perception": 277.9,
+        "quality": 18.3,
+        "perception": 278.5,
         "tools": 0.0,
-        "total": 355.04
+        "total": 347.38
       }
     },
     "pcb1/train/good/0903.JPG": {
@@ -4640,10 +4641,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.8,
-        "perception": 269.2,
+        "quality": 17.6,
+        "perception": 276.3,
         "tools": 0.0,
-        "total": 336.64
+        "total": 345.02
       }
     },
     "pcb1/train/good/0906.JPG": {
@@ -4658,10 +4659,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 20.2,
-        "perception": 269.0,
-        "tools": 56.4,
-        "total": 397.97
+        "quality": 19.4,
+        "perception": 275.2,
+        "tools": 65.1,
+        "total": 410.85
       }
     },
     "pcb1/train/good/0911.JPG": {
@@ -4676,10 +4677,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.5,
-        "perception": 293.0,
+        "quality": 18.9,
+        "perception": 296.3,
         "tools": 0.0,
-        "total": 359.91
+        "total": 367.22
       }
     },
     "pcb1/train/good/0912.JPG": {
@@ -4694,10 +4695,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.4,
-        "perception": 273.8,
+        "quality": 20.7,
+        "perception": 319.5,
         "tools": 0.0,
-        "total": 347.81
+        "total": 396.44
       }
     },
     "pcb1/train/good/0915.JPG": {
@@ -4712,10 +4713,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 18.6,
-        "perception": 281.1,
+        "quality": 20.6,
+        "perception": 336.1,
         "tools": 0.0,
-        "total": 348.85
+        "total": 411.33
       }
     },
     "pcb1/train/good/0918.JPG": {
@@ -4730,10 +4731,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.2,
-        "perception": 296.1,
-        "tools": 57.1,
-        "total": 429.84
+        "quality": 19.5,
+        "perception": 310.9,
+        "tools": 62.6,
+        "total": 449.07
       }
     },
     "pcb1/train/good/0921.JPG": {
@@ -4748,10 +4749,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.4,
-        "perception": 299.4,
+        "quality": 19.0,
+        "perception": 307.5,
         "tools": 0.0,
-        "total": 379.23
+        "total": 381.06
       }
     },
     "pcb1/train/good/0925.JPG": {
@@ -4766,10 +4767,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.1,
-        "perception": 277.6,
+        "quality": 19.6,
+        "perception": 278.8,
         "tools": 0.0,
-        "total": 345.59
+        "total": 348.67
       }
     },
     "pcb1/train/good/0928.JPG": {
@@ -4784,10 +4785,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.1,
-        "perception": 281.0,
+        "quality": 17.6,
+        "perception": 265.1,
         "tools": 0.0,
-        "total": 350.5
+        "total": 331.79
       }
     },
     "pcb1/train/good/0932.JPG": {
@@ -4802,10 +4803,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.2,
-        "perception": 288.5,
+        "quality": 17.8,
+        "perception": 264.2,
         "tools": 0.0,
-        "total": 362.94
+        "total": 333.47
       }
     },
     "pcb1/train/good/0933.JPG": {
@@ -4820,10 +4821,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.6,
-        "perception": 297.3,
+        "quality": 18.0,
+        "perception": 275.5,
         "tools": 0.0,
-        "total": 377.5
+        "total": 346.02
       }
     },
     "pcb1/train/good/0934.JPG": {
@@ -4838,10 +4839,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 24.6,
-        "perception": 291.6,
+        "quality": 18.2,
+        "perception": 272.0,
         "tools": 0.0,
-        "total": 374.0
+        "total": 341.33
       }
     },
     "pcb1/train/good/0939.JPG": {
@@ -4856,10 +4857,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 23.1,
-        "perception": 311.4,
+        "quality": 19.2,
+        "perception": 275.8,
         "tools": 0.0,
-        "total": 388.34
+        "total": 352.42
       }
     },
     "pcb1/train/good/0943.JPG": {
@@ -4874,10 +4875,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.1,
-        "perception": 312.0,
-        "tools": 80.2,
-        "total": 467.4
+        "quality": 27.2,
+        "perception": 329.1,
+        "tools": 74.1,
+        "total": 491.17
       }
     },
     "pcb1/train/good/0945.JPG": {
@@ -4892,10 +4893,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 22.6,
-        "perception": 292.7,
+        "quality": 20.0,
+        "perception": 303.8,
         "tools": 0.0,
-        "total": 372.68
+        "total": 378.26
       }
     },
     "pcb1/train/good/0946.JPG": {
@@ -4910,10 +4911,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 23.8,
-        "perception": 334.3,
+        "quality": 19.5,
+        "perception": 328.8,
         "tools": 0.0,
-        "total": 419.48
+        "total": 408.27
       }
     },
     "pcb1/train/good/0947.JPG": {
@@ -4928,10 +4929,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 19.1,
-        "perception": 300.9,
+        "quality": 29.6,
+        "perception": 365.3,
         "tools": 0.0,
-        "total": 377.64
+        "total": 451.21
       }
     },
     "pcb1/train/good/0949.JPG": {
@@ -4946,10 +4947,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.9,
-        "perception": 273.3,
+        "quality": 22.3,
+        "perception": 298.0,
         "tools": 0.0,
-        "total": 345.64
+        "total": 374.03
       }
     },
     "pcb1/train/good/0950.JPG": {
@@ -4964,10 +4965,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.5,
-        "perception": 266.4,
+        "quality": 20.3,
+        "perception": 290.7,
         "tools": 0.0,
-        "total": 342.75
+        "total": 365.65
       }
     },
     "pcb1/train/good/0953.JPG": {
@@ -4982,10 +4983,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.7,
-        "perception": 261.1,
+        "quality": 24.4,
+        "perception": 288.1,
         "tools": 0.0,
-        "total": 330.73
+        "total": 366.8
       }
     },
     "pcb1/train/good/0955.JPG": {
@@ -5000,10 +5001,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.7,
-        "perception": 293.1,
+        "quality": 24.1,
+        "perception": 300.8,
         "tools": 0.0,
-        "total": 368.18
+        "total": 380.9
       }
     },
     "pcb1/train/good/0960.JPG": {
@@ -5018,10 +5019,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 15.4,
-        "perception": 261.4,
+        "quality": 23.7,
+        "perception": 310.9,
         "tools": 0.0,
-        "total": 328.39
+        "total": 390.99
       }
     },
     "pcb1/train/good/0961.JPG": {
@@ -5036,10 +5037,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.2,
-        "perception": 259.9,
+        "quality": 24.2,
+        "perception": 320.1,
         "tools": 0.0,
-        "total": 328.79
+        "total": 402.93
       }
     },
     "pcb1/train/good/0963.JPG": {
@@ -5054,10 +5055,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.1,
-        "perception": 255.1,
+        "quality": 29.7,
+        "perception": 329.8,
         "tools": 0.0,
-        "total": 327.93
+        "total": 417.41
       }
     },
     "pcb1/train/good/0966.JPG": {
@@ -5072,10 +5073,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.8,
-        "perception": 290.2,
+        "quality": 25.9,
+        "perception": 331.5,
         "tools": 0.0,
-        "total": 370.38
+        "total": 414.92
       }
     },
     "pcb1/train/good/0968.JPG": {
@@ -5090,10 +5091,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.4,
-        "perception": 282.6,
+        "quality": 24.7,
+        "perception": 310.5,
         "tools": 0.0,
-        "total": 354.42
+        "total": 393.28
       }
     },
     "pcb1/train/good/0975.JPG": {
@@ -5108,10 +5109,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 15.7,
-        "perception": 276.2,
+        "quality": 29.3,
+        "perception": 283.4,
         "tools": 0.0,
-        "total": 345.03
+        "total": 375.45
       }
     },
     "pcb1/train/good/0977.JPG": {
@@ -5126,10 +5127,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 15.6,
-        "perception": 279.2,
+        "quality": 22.9,
+        "perception": 292.9,
         "tools": 0.0,
-        "total": 349.91
+        "total": 370.6
       }
     },
     "pcb1/train/good/0978.JPG": {
@@ -5144,10 +5145,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.5,
-        "perception": 318.5,
+        "quality": 19.0,
+        "perception": 324.4,
         "tools": 0.0,
-        "total": 396.07
+        "total": 398.51
       }
     },
     "pcb1/train/good/0980.JPG": {
@@ -5162,10 +5163,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 21.8,
-        "perception": 295.1,
-        "tools": 64.3,
-        "total": 438.63
+        "quality": 24.7,
+        "perception": 304.0,
+        "tools": 70.4,
+        "total": 457.38
       }
     },
     "pcb1/train/good/0981.JPG": {
@@ -5180,10 +5181,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 18.4,
-        "perception": 284.3,
+        "quality": 23.2,
+        "perception": 319.9,
         "tools": 0.0,
-        "total": 357.79
+        "total": 398.98
       }
     },
     "pcb1/train/good/0985.JPG": {
@@ -5198,10 +5199,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 21.4,
-        "perception": 307.2,
-        "tools": 56.3,
-        "total": 440.23
+        "quality": 24.9,
+        "perception": 318.6,
+        "tools": 72.1,
+        "total": 474.84
       }
     },
     "pcb1/train/good/0988.JPG": {
@@ -5216,10 +5217,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.8,
-        "perception": 261.2,
-        "tools": 57.0,
-        "total": 387.41
+        "quality": 29.3,
+        "perception": 322.8,
+        "tools": 78.9,
+        "total": 491.53
       }
     },
     "pcb1/train/good/0990.JPG": {
@@ -5234,10 +5235,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.2,
-        "perception": 272.3,
+        "quality": 26.9,
+        "perception": 327.5,
         "tools": 0.0,
-        "total": 348.31
+        "total": 415.91
       }
     },
     "pcb1/train/good/0992.JPG": {
@@ -5252,10 +5253,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 23.9,
-        "perception": 320.5,
+        "quality": 23.5,
+        "perception": 308.8,
         "tools": 0.0,
-        "total": 396.74
+        "total": 385.87
       }
     },
     "pcb1/train/good/0995.JPG": {
@@ -5270,10 +5271,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.7,
-        "perception": 269.9,
+        "quality": 21.1,
+        "perception": 286.1,
         "tools": 0.0,
-        "total": 341.57
+        "total": 359.01
       }
     },
     "pcb1/train/good/0996.JPG": {
@@ -5288,10 +5289,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.3,
-        "perception": 266.8,
-        "tools": 56.1,
-        "total": 388.83
+        "quality": 23.1,
+        "perception": 309.4,
+        "tools": 67.3,
+        "total": 455.33
       }
     },
     "pcb1/train/good/0997.JPG": {
@@ -5306,10 +5307,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 19.6,
-        "perception": 262.7,
+        "quality": 23.4,
+        "perception": 361.9,
         "tools": 0.0,
-        "total": 332.56
+        "total": 438.52
       }
     },
     "pcb1/train/good/0998.JPG": {
@@ -5324,10 +5325,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.4,
-        "perception": 269.2,
+        "quality": 20.6,
+        "perception": 302.6,
         "tools": 0.0,
-        "total": 340.02
+        "total": 376.41
       }
     },
     "pcb1/train/good/1003.JPG": {
@@ -5342,10 +5343,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.9,
-        "perception": 274.1,
-        "tools": 55.1,
-        "total": 400.02
+        "quality": 19.2,
+        "perception": 280.5,
+        "tools": 59.2,
+        "total": 415.69
       }
     },
     "pcb1/test/bad/005.JPG": {
@@ -5360,10 +5361,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 20.6,
-        "perception": 273.0,
-        "tools": 92.5,
-        "total": 443.2
+        "quality": 18.1,
+        "perception": 287.0,
+        "tools": 102.6,
+        "total": 461.85
       }
     },
     "pcb1/test/bad/009.JPG": {
@@ -5379,9 +5380,9 @@
       "rois_total": 0,
       "timing_ms": {
         "quality": 19.5,
-        "perception": 282.1,
-        "tools": 64.9,
-        "total": 420.08
+        "perception": 303.1,
+        "tools": 69.2,
+        "total": 450.84
       }
     },
     "pcb1/test/bad/011.JPG": {
@@ -5396,10 +5397,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 20.7,
-        "perception": 294.4,
-        "tools": 64.0,
-        "total": 439.21
+        "quality": 25.3,
+        "perception": 310.5,
+        "tools": 71.3,
+        "total": 465.81
       }
     },
     "pcb1/test/bad/012.JPG": {
@@ -5414,10 +5415,10 @@
       "rois_checked": 1,
       "rois_total": 2,
       "timing_ms": {
-        "quality": 24.3,
-        "perception": 292.9,
-        "tools": 57.3,
-        "total": 427.5
+        "quality": 21.1,
+        "perception": 319.4,
+        "tools": 64.9,
+        "total": 459.8
       }
     },
     "pcb1/test/bad/016.JPG": {
@@ -5432,10 +5433,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.8,
-        "perception": 281.9,
-        "tools": 55.7,
-        "total": 409.3
+        "quality": 18.1,
+        "perception": 312.9,
+        "tools": 62.1,
+        "total": 448.2
       }
     },
     "pcb1/test/bad/017.JPG": {
@@ -5450,10 +5451,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 23.1,
-        "perception": 269.0,
-        "tools": 77.2,
-        "total": 421.8
+        "quality": 21.2,
+        "perception": 275.3,
+        "tools": 83.0,
+        "total": 432.47
       }
     },
     "pcb1/test/bad/027.JPG": {
@@ -5468,10 +5469,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 17.3,
-        "perception": 273.1,
-        "tools": 76.2,
-        "total": 420.84
+        "quality": 19.7,
+        "perception": 258.1,
+        "tools": 81.5,
+        "total": 411.61
       }
     },
     "pcb1/test/bad/034.JPG": {
@@ -5486,10 +5487,10 @@
       "rois_checked": 1,
       "rois_total": 2,
       "timing_ms": {
-        "quality": 17.1,
-        "perception": 274.1,
-        "tools": 60.0,
-        "total": 409.32
+        "quality": 16.1,
+        "perception": 275.3,
+        "tools": 62.1,
+        "total": 404.26
       }
     },
     "pcb1/test/bad/040.JPG": {
@@ -5504,10 +5505,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 20.9,
-        "perception": 277.2,
-        "tools": 90.4,
-        "total": 439.91
+        "quality": 16.9,
+        "perception": 269.5,
+        "tools": 95.7,
+        "total": 433.5
       }
     },
     "pcb1/test/bad/042.JPG": {
@@ -5522,10 +5523,10 @@
       "rois_checked": 1,
       "rois_total": 2,
       "timing_ms": {
-        "quality": 19.9,
-        "perception": 284.7,
-        "tools": 56.1,
-        "total": 411.79
+        "quality": 16.6,
+        "perception": 271.9,
+        "tools": 57.3,
+        "total": 396.67
       }
     },
     "pcb1/test/bad/043.JPG": {
@@ -5540,10 +5541,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.1,
+        "quality": 23.8,
         "perception": 0.0,
         "tools": 0.0,
-        "total": 53.95
+        "total": 57.92
       }
     },
     "pcb1/test/bad/047.JPG": {
@@ -5558,10 +5559,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.1,
-        "perception": 270.3,
-        "tools": 63.9,
-        "total": 410.39
+        "quality": 20.1,
+        "perception": 331.4,
+        "tools": 74.5,
+        "total": 486.87
       }
     },
     "pcb1/test/bad/048.JPG": {
@@ -5576,10 +5577,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 28.6,
-        "perception": 341.2,
-        "tools": 67.7,
-        "total": 493.72
+        "quality": 24.9,
+        "perception": 335.0,
+        "tools": 70.6,
+        "total": 488.02
       }
     },
     "pcb1/test/bad/049.JPG": {
@@ -5594,10 +5595,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 22.2,
-        "perception": 276.7,
-        "tools": 418.2,
-        "total": 769.35
+        "quality": 20.1,
+        "perception": 322.6,
+        "tools": 431.3,
+        "total": 826.73
       }
     },
     "pcb1/test/bad/050.JPG": {
@@ -5612,10 +5613,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.6,
+        "quality": 17.9,
         "perception": 0.0,
         "tools": 0.0,
-        "total": 54.89
+        "total": 53.1
       }
     },
     "pcb1/test/bad/052.JPG": {
@@ -5630,10 +5631,10 @@
       "rois_checked": 2,
       "rois_total": 2,
       "timing_ms": {
-        "quality": 16.8,
-        "perception": 302.8,
-        "tools": 65.2,
-        "total": 443.12
+        "quality": 18.0,
+        "perception": 279.7,
+        "tools": 64.2,
+        "total": 413.82
       }
     },
     "pcb1/test/bad/053.JPG": {
@@ -5648,10 +5649,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 27.9,
-        "perception": 321.8,
-        "tools": 99.6,
-        "total": 507.61
+        "quality": 19.2,
+        "perception": 310.7,
+        "tools": 92.9,
+        "total": 477.12
       }
     },
     "pcb1/test/bad/054.JPG": {
@@ -5666,10 +5667,10 @@
       "rois_checked": 1,
       "rois_total": 2,
       "timing_ms": {
-        "quality": 17.2,
-        "perception": 286.2,
-        "tools": 62.5,
-        "total": 420.07
+        "quality": 22.6,
+        "perception": 282.4,
+        "tools": 58.0,
+        "total": 413.63
       }
     },
     "pcb1/test/bad/055.JPG": {
@@ -5684,10 +5685,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 18.1,
-        "perception": 272.1,
-        "tools": 72.9,
-        "total": 415.16
+        "quality": 17.0,
+        "perception": 270.6,
+        "tools": 78.2,
+        "total": 418.16
       }
     },
     "pcb1/test/bad/072.JPG": {
@@ -5702,10 +5703,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.2,
-        "perception": 264.7,
-        "tools": 54.2,
-        "total": 386.38
+        "quality": 18.0,
+        "perception": 301.6,
+        "tools": 58.4,
+        "total": 430.99
       }
     },
     "pcb1/test/bad/073.JPG": {
@@ -5720,10 +5721,10 @@
       "rois_checked": 1,
       "rois_total": 2,
       "timing_ms": {
-        "quality": 18.1,
-        "perception": 258.3,
-        "tools": 84.4,
-        "total": 417.54
+        "quality": 19.6,
+        "perception": 309.4,
+        "tools": 102.2,
+        "total": 487.6
       }
     },
     "pcb1/test/bad/077.JPG": {
@@ -5738,10 +5739,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 23.5,
-        "perception": 298.4,
-        "tools": 73.4,
-        "total": 447.22
+        "quality": 26.2,
+        "perception": 322.8,
+        "tools": 88.4,
+        "total": 492.25
       }
     },
     "pcb1/test/bad/078.JPG": {
@@ -5756,10 +5757,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.6,
-        "perception": 268.1,
-        "tools": 53.1,
-        "total": 395.75
+        "quality": 17.8,
+        "perception": 324.2,
+        "tools": 74.2,
+        "total": 475.3
       }
     },
     "pcb1/test/bad/081.JPG": {
@@ -5774,10 +5775,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 17.6,
-        "perception": 278.6,
-        "tools": 79.1,
-        "total": 427.63
+        "quality": 23.1,
+        "perception": 318.0,
+        "tools": 87.0,
+        "total": 485.35
       }
     },
     "pcb1/test/bad/092.JPG": {
@@ -5792,10 +5793,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 21.2,
-        "perception": 264.9,
-        "tools": 76.7,
-        "total": 422.14
+        "quality": 22.0,
+        "perception": 297.4,
+        "tools": 80.8,
+        "total": 454.37
       }
     },
     "pcb1/test/bad/098.JPG": {
@@ -5810,10 +5811,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.5,
-        "perception": 273.4,
-        "tools": 74.6,
-        "total": 421.61
+        "quality": 18.5,
+        "perception": 272.3,
+        "tools": 81.7,
+        "total": 424.94
       }
     },
     "pcb1/test/good/0011.JPG": {
@@ -5828,10 +5829,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.6,
-        "perception": 276.8,
+        "quality": 19.0,
+        "perception": 302.4,
         "tools": 0.0,
-        "total": 348.65
+        "total": 374.5
       }
     },
     "pcb1/test/good/0013.JPG": {
@@ -5846,10 +5847,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 26.5,
-        "perception": 302.4,
-        "tools": 54.9,
-        "total": 445.49
+        "quality": 20.6,
+        "perception": 356.2,
+        "tools": 70.3,
+        "total": 504.54
       }
     },
     "pcb1/test/good/0016.JPG": {
@@ -5864,10 +5865,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.3,
-        "perception": 284.8,
+        "quality": 25.9,
+        "perception": 339.2,
         "tools": 0.0,
-        "total": 353.04
+        "total": 425.21
       }
     },
     "pcb1/test/good/0024.JPG": {
@@ -5882,10 +5883,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 15.8,
-        "perception": 271.8,
+        "quality": 29.9,
+        "perception": 383.2,
         "tools": 0.0,
-        "total": 343.82
+        "total": 470.98
       }
     },
     "pcb1/test/good/0026.JPG": {
@@ -5900,10 +5901,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.1,
-        "perception": 300.4,
+        "quality": 21.5,
+        "perception": 304.9,
         "tools": 0.0,
-        "total": 371.62
+        "total": 381.64
       }
     },
     "pcb1/test/good/0027.JPG": {
@@ -5918,10 +5919,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.3,
-        "perception": 288.7,
+        "quality": 23.1,
+        "perception": 323.6,
         "tools": 0.0,
-        "total": 358.46
+        "total": 403.09
       }
     },
     "pcb1/test/good/0046.JPG": {
@@ -5936,10 +5937,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.9,
-        "perception": 270.8,
+        "quality": 18.6,
+        "perception": 286.6,
         "tools": 0.0,
-        "total": 342.6
+        "total": 358.64
       }
     },
     "pcb1/test/good/0100.JPG": {
@@ -5954,10 +5955,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.9,
-        "perception": 281.7,
+        "quality": 20.8,
+        "perception": 282.7,
         "tools": 0.0,
-        "total": 356.64
+        "total": 353.41
       }
     },
     "pcb1/test/good/0107.JPG": {
@@ -5972,10 +5973,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.4,
-        "perception": 274.1,
+        "quality": 17.0,
+        "perception": 288.4,
         "tools": 0.0,
-        "total": 348.16
+        "total": 360.58
       }
     },
     "pcb1/test/good/0159.JPG": {
@@ -5990,10 +5991,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 18.1,
-        "perception": 269.0,
+        "quality": 20.7,
+        "perception": 291.2,
         "tools": 0.0,
-        "total": 339.22
+        "total": 363.97
       }
     },
     "pcb1/test/good/0168.JPG": {
@@ -6008,10 +6009,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.9,
-        "perception": 283.6,
-        "tools": 59.6,
-        "total": 417.48
+        "quality": 18.9,
+        "perception": 297.8,
+        "tools": 64.3,
+        "total": 436.68
       }
     },
     "pcb1/test/good/0170.JPG": {
@@ -6026,10 +6027,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.5,
-        "perception": 266.7,
+        "quality": 20.3,
+        "perception": 347.8,
         "tools": 0.0,
-        "total": 340.71
+        "total": 424.07
       }
     },
     "pcb1/test/good/0172.JPG": {
@@ -6044,10 +6045,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 22.7,
-        "perception": 280.7,
-        "tools": 68.0,
-        "total": 436.9
+        "quality": 25.3,
+        "perception": 350.3,
+        "tools": 74.8,
+        "total": 510.06
       }
     },
     "pcb1/test/good/0174.JPG": {
@@ -6062,10 +6063,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 24.2,
-        "perception": 331.2,
-        "tools": 74.8,
-        "total": 493.06
+        "quality": 24.1,
+        "perception": 314.2,
+        "tools": 63.4,
+        "total": 459.42
       }
     },
     "pcb1/test/good/0178.JPG": {
@@ -6080,10 +6081,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 28.2,
-        "perception": 328.4,
+        "quality": 21.7,
+        "perception": 288.8,
         "tools": 0.0,
-        "total": 423.53
+        "total": 364.86
       }
     },
     "pcb1/test/good/0187.JPG": {
@@ -6098,10 +6099,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 27.0,
-        "perception": 302.7,
+        "quality": 20.9,
+        "perception": 301.3,
         "tools": 0.0,
-        "total": 390.56
+        "total": 376.48
       }
     },
     "pcb1/test/good/0196.JPG": {
@@ -6116,10 +6117,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 22.7,
-        "perception": 312.3,
+        "quality": 20.9,
+        "perception": 298.1,
         "tools": 0.0,
-        "total": 394.77
+        "total": 381.75
       }
     },
     "pcb1/test/good/0208.JPG": {
@@ -6134,10 +6135,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 25.6,
-        "perception": 266.5,
+        "quality": 23.9,
+        "perception": 301.5,
         "tools": 0.0,
-        "total": 348.76
+        "total": 381.18
       }
     },
     "pcb1/test/good/0214.JPG": {
@@ -6152,10 +6153,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 17.0,
-        "perception": 274.0,
-        "tools": 53.5,
-        "total": 402.48
+        "quality": 22.4,
+        "perception": 298.8,
+        "tools": 66.0,
+        "total": 443.05
       }
     },
     "pcb1/test/good/0215.JPG": {
@@ -6170,10 +6171,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 18.4,
-        "perception": 263.6,
-        "tools": 54.2,
-        "total": 387.44
+        "quality": 23.6,
+        "perception": 297.6,
+        "tools": 65.7,
+        "total": 442.78
       }
     },
     "pcb1/test/good/0237.JPG": {
@@ -6188,10 +6189,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.5,
-        "perception": 271.7,
+        "quality": 22.5,
+        "perception": 293.1,
         "tools": 0.0,
-        "total": 344.06
+        "total": 369.73
       }
     },
     "pcb1/test/good/0261.JPG": {
@@ -6206,10 +6207,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 24.3,
-        "perception": 288.6,
-        "tools": 60.7,
-        "total": 429.62
+        "quality": 25.8,
+        "perception": 323.4,
+        "tools": 66.4,
+        "total": 475.25
       }
     },
     "pcb1/test/good/0286.JPG": {
@@ -6224,10 +6225,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 17.5,
-        "perception": 293.4,
-        "tools": 75.8,
-        "total": 450.46
+        "quality": 21.0,
+        "perception": 328.8,
+        "tools": 123.5,
+        "total": 553.91
       }
     },
     "pcb1/test/good/0294.JPG": {
@@ -6242,10 +6243,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 25.1,
-        "perception": 327.6,
+        "quality": 45.1,
+        "perception": 392.5,
         "tools": 0.0,
-        "total": 413.01
+        "total": 498.08
       }
     },
     "pcb1/test/good/0297.JPG": {
@@ -6260,10 +6261,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 23.0,
-        "perception": 312.2,
+        "quality": 19.9,
+        "perception": 314.4,
         "tools": 0.0,
-        "total": 405.43
+        "total": 394.43
       }
     },
     "pcb1/test/good/0303.JPG": {
@@ -6278,10 +6279,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 26.1,
-        "perception": 301.9,
-        "tools": 60.6,
-        "total": 446.98
+        "quality": 28.1,
+        "perception": 313.1,
+        "tools": 63.0,
+        "total": 461.52
       }
     },
     "pcb1/test/good/0306.JPG": {
@@ -6296,10 +6297,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 22.7,
-        "perception": 272.5,
-        "tools": 64.8,
-        "total": 422.02
+        "quality": 22.2,
+        "perception": 293.3,
+        "tools": 66.7,
+        "total": 437.99
       }
     },
     "pcb1/test/good/0320.JPG": {
@@ -6314,10 +6315,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 25.2,
-        "perception": 275.6,
+        "quality": 25.5,
+        "perception": 294.1,
         "tools": 0.0,
-        "total": 353.46
+        "total": 375.08
       }
     },
     "pcb1/test/good/0333.JPG": {
@@ -6332,10 +6333,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.1,
-        "perception": 275.1,
-        "tools": 57.5,
-        "total": 399.37
+        "quality": 26.7,
+        "perception": 295.3,
+        "tools": 66.0,
+        "total": 444.24
       }
     },
     "pcb1/test/good/0363.JPG": {
@@ -6350,10 +6351,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.4,
-        "perception": 286.6,
+        "quality": 24.1,
+        "perception": 307.2,
         "tools": 0.0,
-        "total": 357.5
+        "total": 387.51
       }
     },
     "pcb1/test/good/0377.JPG": {
@@ -6368,10 +6369,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.4,
-        "perception": 258.4,
+        "quality": 24.4,
+        "perception": 379.9,
         "tools": 0.0,
-        "total": 330.41
+        "total": 475.82
       }
     },
     "pcb1/test/good/0394.JPG": {
@@ -6386,10 +6387,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.1,
-        "perception": 271.9,
+        "quality": 36.0,
+        "perception": 374.3,
         "tools": 0.0,
-        "total": 343.58
+        "total": 474.67
       }
     },
     "pcb1/test/good/0400.JPG": {
@@ -6404,10 +6405,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 18.6,
-        "perception": 266.0,
+        "quality": 22.7,
+        "perception": 301.9,
         "tools": 0.0,
-        "total": 339.42
+        "total": 380.72
       }
     },
     "pcb1/test/good/0402.JPG": {
@@ -6422,10 +6423,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.3,
-        "perception": 304.0,
+        "quality": 23.3,
+        "perception": 308.3,
         "tools": 0.0,
-        "total": 378.59
+        "total": 386.91
       }
     },
     "pcb1/test/good/0417.JPG": {
@@ -6440,10 +6441,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 20.5,
-        "perception": 282.0,
-        "tools": 57.9,
-        "total": 415.6
+        "quality": 22.0,
+        "perception": 299.4,
+        "tools": 58.1,
+        "total": 434.24
       }
     },
     "pcb1/test/good/0423.JPG": {
@@ -6458,10 +6459,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.2,
-        "perception": 264.6,
+        "quality": 19.6,
+        "perception": 263.2,
         "tools": 0.0,
-        "total": 332.59
+        "total": 335.02
       }
     },
     "pcb1/test/good/0427.JPG": {
@@ -6476,10 +6477,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 22.1,
-        "perception": 265.0,
+        "quality": 17.2,
+        "perception": 275.9,
         "tools": 0.0,
-        "total": 337.99
+        "total": 346.67
       }
     },
     "pcb1/test/good/0457.JPG": {
@@ -6494,10 +6495,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 18.9,
-        "perception": 271.6,
+        "quality": 17.8,
+        "perception": 269.7,
         "tools": 0.0,
-        "total": 343.13
+        "total": 341.13
       }
     },
     "pcb1/test/good/0469.JPG": {
@@ -6512,10 +6513,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.0,
-        "perception": 272.1,
-        "tools": 59.9,
-        "total": 402.42
+        "quality": 19.1,
+        "perception": 417.7,
+        "tools": 67.0,
+        "total": 558.96
       }
     },
     "pcb1/test/good/0479.JPG": {
@@ -6530,10 +6531,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.7,
-        "perception": 267.1,
+        "quality": 18.2,
+        "perception": 286.1,
         "tools": 0.0,
-        "total": 339.38
+        "total": 355.5
       }
     },
     "pcb1/test/good/0483.JPG": {
@@ -6548,10 +6549,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.6,
-        "perception": 266.6,
+        "quality": 17.6,
+        "perception": 410.1,
         "tools": 0.0,
-        "total": 334.0
+        "total": 483.35
       }
     },
     "pcb1/test/good/0484.JPG": {
@@ -6566,10 +6567,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.1,
-        "perception": 266.3,
+        "quality": 23.0,
+        "perception": 403.5,
         "tools": 0.0,
-        "total": 335.58
+        "total": 489.59
       }
     },
     "pcb1/test/good/0488.JPG": {
@@ -6584,10 +6585,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.2,
-        "perception": 261.4,
+        "quality": 27.3,
+        "perception": 372.4,
         "tools": 0.0,
-        "total": 333.3
+        "total": 460.31
       }
     },
     "pcb1/test/good/0490.JPG": {
@@ -6602,10 +6603,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 18.4,
-        "perception": 300.2,
-        "tools": 63.1,
-        "total": 440.4
+        "quality": 24.3,
+        "perception": 304.1,
+        "tools": 65.4,
+        "total": 453.96
       }
     },
     "pcb1/test/good/0514.JPG": {
@@ -6621,9 +6622,9 @@
       "rois_total": 0,
       "timing_ms": {
         "quality": 18.7,
-        "perception": 269.7,
+        "perception": 349.4,
         "tools": 0.0,
-        "total": 343.2
+        "total": 431.2
       }
     },
     "pcb1/test/good/0518.JPG": {
@@ -6639,9 +6640,9 @@
       "rois_total": 0,
       "timing_ms": {
         "quality": 20.8,
-        "perception": 265.3,
+        "perception": 289.0,
         "tools": 0.0,
-        "total": 337.69
+        "total": 364.03
       }
     },
     "pcb1/test/good/0520.JPG": {
@@ -6656,10 +6657,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 19.7,
-        "perception": 259.5,
+        "quality": 21.4,
+        "perception": 318.5,
         "tools": 0.0,
-        "total": 329.07
+        "total": 395.72
       }
     },
     "pcb1/test/good/0525.JPG": {
@@ -6674,10 +6675,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 18.1,
-        "perception": 264.4,
-        "tools": 55.3,
-        "total": 388.14
+        "quality": 22.7,
+        "perception": 309.0,
+        "tools": 71.4,
+        "total": 460.59
       }
     },
     "pcb1/test/good/0545.JPG": {
@@ -6692,10 +6693,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.8,
-        "perception": 271.4,
-        "tools": 53.9,
-        "total": 399.6
+        "quality": 18.0,
+        "perception": 286.0,
+        "tools": 64.8,
+        "total": 423.36
       }
     },
     "pcb1/test/good/0552.JPG": {
@@ -6710,10 +6711,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 18.7,
-        "perception": 268.7,
+        "quality": 20.0,
+        "perception": 313.1,
         "tools": 0.0,
-        "total": 339.78
+        "total": 386.41
       }
     },
     "pcb1/test/good/0569.JPG": {
@@ -6728,10 +6729,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.0,
-        "perception": 271.1,
+        "quality": 17.8,
+        "perception": 311.0,
         "tools": 0.0,
-        "total": 340.95
+        "total": 381.84
       }
     },
     "pcb1/test/good/0615.JPG": {
@@ -6746,10 +6747,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 20.4,
-        "perception": 258.1,
-        "tools": 75.4,
-        "total": 407.17
+        "quality": 25.1,
+        "perception": 344.7,
+        "tools": 122.4,
+        "total": 560.65
       }
     },
     "pcb1/test/good/0617.JPG": {
@@ -6764,10 +6765,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.2,
-        "perception": 260.3,
+        "quality": 28.5,
+        "perception": 366.1,
         "tools": 0.0,
-        "total": 328.13
+        "total": 454.27
       }
     },
     "pcb1/test/good/0619.JPG": {
@@ -6782,10 +6783,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.3,
-        "perception": 326.3,
+        "quality": 23.9,
+        "perception": 312.4,
         "tools": 0.0,
-        "total": 399.42
+        "total": 394.48
       }
     },
     "pcb1/test/good/0621.JPG": {
@@ -6800,10 +6801,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 21.5,
-        "perception": 265.3,
-        "tools": 73.3,
-        "total": 413.74
+        "quality": 24.4,
+        "perception": 309.4,
+        "tools": 91.4,
+        "total": 482.68
       }
     },
     "pcb1/test/good/0629.JPG": {
@@ -6818,10 +6819,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.9,
-        "perception": 268.1,
+        "quality": 22.1,
+        "perception": 285.9,
         "tools": 0.0,
-        "total": 337.93
+        "total": 363.49
       }
     },
     "pcb1/test/good/0631.JPG": {
@@ -6836,10 +6837,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 17.2,
-        "perception": 259.4,
-        "tools": 74.1,
-        "total": 401.48
+        "quality": 19.0,
+        "perception": 276.4,
+        "tools": 87.9,
+        "total": 437.71
       }
     },
     "pcb1/test/good/0648.JPG": {
@@ -6854,10 +6855,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 15.9,
-        "perception": 264.8,
+        "quality": 18.8,
+        "perception": 285.0,
         "tools": 0.0,
-        "total": 332.19
+        "total": 358.42
       }
     },
     "pcb1/test/good/0654.JPG": {
@@ -6872,10 +6873,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.2,
-        "perception": 268.9,
+        "quality": 21.5,
+        "perception": 309.8,
         "tools": 0.0,
-        "total": 336.94
+        "total": 385.21
       }
     },
     "pcb1/test/good/0657.JPG": {
@@ -6890,10 +6891,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 22.0,
-        "perception": 256.8,
+        "quality": 18.4,
+        "perception": 298.4,
         "tools": 0.0,
-        "total": 330.45
+        "total": 371.3
       }
     },
     "pcb1/test/good/0659.JPG": {
@@ -6908,10 +6909,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 19.2,
-        "perception": 256.5,
+        "quality": 23.0,
+        "perception": 325.0,
         "tools": 0.0,
-        "total": 325.48
+        "total": 404.17
       }
     },
     "pcb1/test/good/0674.JPG": {
@@ -6926,10 +6927,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.9,
-        "perception": 260.6,
-        "tools": 79.3,
-        "total": 414.83
+        "quality": 28.8,
+        "perception": 351.7,
+        "tools": 93.8,
+        "total": 531.31
       }
     },
     "pcb1/test/good/0684.JPG": {
@@ -6944,10 +6945,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 20.3,
-        "perception": 268.2,
-        "tools": 52.5,
-        "total": 398.73
+        "quality": 21.1,
+        "perception": 331.4,
+        "tools": 64.5,
+        "total": 476.29
       }
     },
     "pcb1/test/good/0685.JPG": {
@@ -6962,10 +6963,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.1,
-        "perception": 322.3,
+        "quality": 21.4,
+        "perception": 327.9,
         "tools": 0.0,
-        "total": 399.99
+        "total": 405.79
       }
     },
     "pcb1/test/good/0688.JPG": {
@@ -6980,10 +6981,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.8,
-        "perception": 270.0,
+        "quality": 22.0,
+        "perception": 290.9,
         "tools": 0.0,
-        "total": 342.97
+        "total": 365.15
       }
     },
     "pcb1/test/good/0690.JPG": {
@@ -6998,10 +6999,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.2,
-        "perception": 265.6,
+        "quality": 25.9,
+        "perception": 309.3,
         "tools": 0.0,
-        "total": 336.83
+        "total": 386.36
       }
     },
     "pcb1/test/good/0694.JPG": {
@@ -7016,10 +7017,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 17.1,
-        "perception": 271.8,
-        "tools": 76.0,
-        "total": 417.02
+        "quality": 20.0,
+        "perception": 288.7,
+        "tools": 82.5,
+        "total": 443.48
       }
     },
     "pcb1/test/good/0705.JPG": {
@@ -7034,10 +7035,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.3,
-        "perception": 256.3,
-        "tools": 55.2,
-        "total": 382.54
+        "quality": 28.5,
+        "perception": 306.0,
+        "tools": 60.4,
+        "total": 448.75
       }
     },
     "pcb1/test/good/0725.JPG": {
@@ -7052,10 +7053,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 20.8,
-        "perception": 265.2,
-        "tools": 75.4,
-        "total": 413.29
+        "quality": 23.3,
+        "perception": 292.7,
+        "tools": 85.8,
+        "total": 454.0
       }
     },
     "pcb1/test/good/0730.JPG": {
@@ -7070,10 +7071,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 20.6,
-        "perception": 263.1,
-        "tools": 77.5,
-        "total": 412.83
+        "quality": 21.9,
+        "perception": 293.1,
+        "tools": 85.4,
+        "total": 453.43
       }
     },
     "pcb1/test/good/0735.JPG": {
@@ -7088,10 +7089,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.1,
-        "perception": 261.0,
+        "quality": 22.2,
+        "perception": 321.0,
         "tools": 0.0,
-        "total": 333.01
+        "total": 397.98
       }
     },
     "pcb1/test/good/0739.JPG": {
@@ -7106,10 +7107,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 15.8,
-        "perception": 275.3,
-        "tools": 74.0,
-        "total": 419.69
+        "quality": 21.3,
+        "perception": 323.1,
+        "tools": 121.1,
+        "total": 528.01
       }
     },
     "pcb1/test/good/0751.JPG": {
@@ -7124,10 +7125,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.4,
-        "perception": 263.2,
-        "tools": 74.6,
-        "total": 410.92
+        "quality": 27.4,
+        "perception": 394.9,
+        "tools": 106.5,
+        "total": 585.35
       }
     },
     "pcb1/test/good/0755.JPG": {
@@ -7142,10 +7143,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.7,
-        "perception": 296.1,
+        "quality": 25.8,
+        "perception": 339.7,
         "tools": 0.0,
-        "total": 372.82
+        "total": 420.35
       }
     },
     "pcb1/test/good/0764.JPG": {
@@ -7160,10 +7161,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.2,
-        "perception": 267.6,
-        "tools": 73.8,
-        "total": 408.79
+        "quality": 31.9,
+        "perception": 431.8,
+        "tools": 109.7,
+        "total": 633.71
       }
     },
     "pcb1/test/good/0768.JPG": {
@@ -7178,10 +7179,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.8,
-        "perception": 267.4,
+        "quality": 29.6,
+        "perception": 362.7,
         "tools": 0.0,
-        "total": 337.03
+        "total": 449.79
       }
     },
     "pcb1/test/good/0779.JPG": {
@@ -7196,10 +7197,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.7,
-        "perception": 269.0,
-        "tools": 53.6,
-        "total": 388.68
+        "quality": 19.8,
+        "perception": 338.2,
+        "tools": 71.6,
+        "total": 489.92
       }
     },
     "pcb1/test/good/0784.JPG": {
@@ -7214,10 +7215,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 20.1,
-        "perception": 278.3,
-        "tools": 53.3,
-        "total": 403.75
+        "quality": 25.9,
+        "perception": 312.5,
+        "tools": 58.6,
+        "total": 451.24
       }
     },
     "pcb1/test/good/0796.JPG": {
@@ -7232,10 +7233,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.6,
-        "perception": 256.3,
-        "tools": 55.0,
-        "total": 381.59
+        "quality": 19.1,
+        "perception": 275.0,
+        "tools": 58.5,
+        "total": 404.2
       }
     },
     "pcb1/test/good/0797.JPG": {
@@ -7250,10 +7251,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 20.8,
-        "perception": 262.8,
-        "tools": 56.8,
-        "total": 394.05
+        "quality": 23.4,
+        "perception": 277.5,
+        "tools": 60.7,
+        "total": 417.82
       }
     },
     "pcb1/test/good/0800.JPG": {
@@ -7268,10 +7269,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.6,
-        "perception": 253.8,
+        "quality": 22.5,
+        "perception": 340.7,
         "tools": 0.0,
-        "total": 325.99
+        "total": 419.48
       }
     },
     "pcb1/test/good/0804.JPG": {
@@ -7286,10 +7287,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 17.0,
-        "perception": 260.0,
-        "tools": 81.4,
-        "total": 410.7
+        "quality": 24.4,
+        "perception": 321.5,
+        "tools": 106.1,
+        "total": 511.52
       }
     },
     "pcb1/test/good/0811.JPG": {
@@ -7304,10 +7305,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.9,
-        "perception": 260.5,
+        "quality": 24.0,
+        "perception": 316.0,
         "tools": 0.0,
-        "total": 329.41
+        "total": 396.65
       }
     },
     "pcb1/test/good/0844.JPG": {
@@ -7322,10 +7323,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 23.3,
-        "perception": 312.1,
+        "quality": 24.7,
+        "perception": 321.3,
         "tools": 0.0,
-        "total": 391.21
+        "total": 402.36
       }
     },
     "pcb1/test/good/0869.JPG": {
@@ -7340,10 +7341,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 21.1,
-        "perception": 280.8,
-        "tools": 57.7,
-        "total": 414.63
+        "quality": 22.7,
+        "perception": 313.5,
+        "tools": 64.8,
+        "total": 456.03
       }
     },
     "pcb1/test/good/0871.JPG": {
@@ -7358,10 +7359,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.1,
-        "perception": 280.0,
+        "quality": 23.4,
+        "perception": 305.5,
         "tools": 0.0,
-        "total": 350.53
+        "total": 385.58
       }
     },
     "pcb1/test/good/0892.JPG": {
@@ -7376,10 +7377,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 21.4,
-        "perception": 281.9,
+        "quality": 23.1,
+        "perception": 308.2,
         "tools": 0.0,
-        "total": 355.45
+        "total": 387.08
       }
     },
     "pcb1/test/good/0900.JPG": {
@@ -7394,10 +7395,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.5,
-        "perception": 276.7,
-        "tools": 54.9,
-        "total": 399.95
+        "quality": 23.9,
+        "perception": 317.1,
+        "tools": 62.7,
+        "total": 459.71
       }
     },
     "pcb1/test/good/0920.JPG": {
@@ -7412,10 +7413,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.3,
-        "perception": 271.2,
-        "tools": 57.5,
-        "total": 401.3
+        "quality": 23.1,
+        "perception": 298.9,
+        "tools": 60.2,
+        "total": 438.54
       }
     },
     "pcb1/test/good/0923.JPG": {
@@ -7430,10 +7431,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.8,
-        "perception": 259.3,
-        "tools": 58.1,
-        "total": 388.42
+        "quality": 21.0,
+        "perception": 287.5,
+        "tools": 55.0,
+        "total": 415.76
       }
     },
     "pcb1/test/good/0935.JPG": {
@@ -7448,10 +7449,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 18.6,
-        "perception": 267.2,
+        "quality": 16.9,
+        "perception": 304.6,
         "tools": 0.0,
-        "total": 339.36
+        "total": 378.46
       }
     },
     "pcb1/test/good/0940.JPG": {
@@ -7466,10 +7467,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.7,
-        "perception": 259.3,
+        "quality": 21.0,
+        "perception": 327.7,
         "tools": 0.0,
-        "total": 333.14
+        "total": 403.66
       }
     },
     "pcb1/test/good/0952.JPG": {
@@ -7484,10 +7485,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.1,
-        "perception": 270.6,
+        "quality": 20.2,
+        "perception": 291.8,
         "tools": 0.0,
-        "total": 341.94
+        "total": 365.7
       }
     },
     "pcb1/test/good/0957.JPG": {
@@ -7502,10 +7503,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.1,
-        "perception": 315.1,
+        "quality": 21.1,
+        "perception": 367.7,
         "tools": 0.0,
-        "total": 395.76
+        "total": 447.47
       }
     },
     "pcb1/test/good/0964.JPG": {
@@ -7520,10 +7521,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 21.5,
-        "perception": 290.4,
-        "tools": 56.3,
-        "total": 422.39
+        "quality": 25.8,
+        "perception": 365.4,
+        "tools": 77.9,
+        "total": 525.68
       }
     },
     "pcb1/test/good/0971.JPG": {
@@ -7538,10 +7539,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 19.6,
-        "perception": 268.0,
+        "quality": 17.7,
+        "perception": 303.8,
         "tools": 0.0,
-        "total": 338.92
+        "total": 374.32
       }
     },
     "pcb1/test/good/0974.JPG": {
@@ -7556,10 +7557,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 18.0,
-        "perception": 270.0,
-        "tools": 57.8,
-        "total": 398.86
+        "quality": 19.8,
+        "perception": 301.6,
+        "tools": 63.5,
+        "total": 439.47
       }
     },
     "pcb1/test/good/0989.JPG": {
@@ -7574,10 +7575,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.6,
-        "perception": 263.8,
+        "quality": 21.1,
+        "perception": 325.2,
         "tools": 0.0,
-        "total": 332.78
+        "total": 400.05
       }
     },
     "pcb1/test/good/0994.JPG": {
@@ -7592,10 +7593,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 22.2,
-        "perception": 261.2,
+        "quality": 18.0,
+        "perception": 362.2,
         "tools": 0.0,
-        "total": 335.15
+        "total": 436.18
       }
     },
     "pcb1/test/good/1000.JPG": {
@@ -7610,10 +7611,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.5,
-        "perception": 269.7,
+        "quality": 27.4,
+        "perception": 292.2,
         "tools": 0.0,
-        "total": 341.41
+        "total": 378.34
       }
     },
     "pcb1/test/bad/000.JPG": {
@@ -7628,10 +7629,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 18.2,
-        "perception": 293.6,
-        "tools": 57.3,
-        "total": 424.02
+        "quality": 21.8,
+        "perception": 326.7,
+        "tools": 67.9,
+        "total": 474.64
       }
     },
     "pcb1/test/bad/002.JPG": {
@@ -7646,10 +7647,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 22.3,
-        "perception": 304.0,
-        "tools": 92.6,
-        "total": 476.35
+        "quality": 24.0,
+        "perception": 325.0,
+        "tools": 90.0,
+        "total": 493.76
       }
     },
     "pcb1/test/bad/003.JPG": {
@@ -7664,10 +7665,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 18.6,
-        "perception": 305.3,
-        "tools": 112.4,
-        "total": 498.16
+        "quality": 20.0,
+        "perception": 325.3,
+        "tools": 115.3,
+        "total": 517.25
       }
     },
     "pcb1/test/bad/004.JPG": {
@@ -7682,10 +7683,10 @@
       "rois_checked": 1,
       "rois_total": 2,
       "timing_ms": {
-        "quality": 22.7,
-        "perception": 309.0,
-        "tools": 85.2,
-        "total": 468.41
+        "quality": 25.6,
+        "perception": 306.9,
+        "tools": 91.6,
+        "total": 482.29
       }
     },
     "pcb1/test/bad/006.JPG": {
@@ -7700,10 +7701,10 @@
       "rois_checked": 1,
       "rois_total": 3,
       "timing_ms": {
-        "quality": 19.5,
-        "perception": 257.5,
-        "tools": 78.0,
-        "total": 407.05
+        "quality": 23.2,
+        "perception": 279.1,
+        "tools": 74.7,
+        "total": 430.24
       }
     },
     "pcb1/test/bad/007.JPG": {
@@ -7718,10 +7719,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 15.7,
-        "perception": 263.1,
-        "tools": 87.8,
-        "total": 418.89
+        "quality": 16.8,
+        "perception": 266.1,
+        "tools": 83.8,
+        "total": 420.39
       }
     },
     "pcb1/test/bad/008.JPG": {
@@ -7736,10 +7737,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.6,
-        "perception": 259.5,
-        "tools": 77.1,
-        "total": 409.09
+        "quality": 17.0,
+        "perception": 281.0,
+        "tools": 83.1,
+        "total": 440.91
       }
     },
     "pcb1/test/bad/010.JPG": {
@@ -7754,10 +7755,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 17.0,
-        "perception": 260.3,
-        "tools": 55.2,
-        "total": 385.89
+        "quality": 16.1,
+        "perception": 265.2,
+        "tools": 53.6,
+        "total": 385.63
       }
     },
     "pcb1/test/bad/013.JPG": {
@@ -7772,10 +7773,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 29.8,
-        "perception": 268.0,
-        "tools": 58.8,
-        "total": 412.84
+        "quality": 20.1,
+        "perception": 274.8,
+        "tools": 56.4,
+        "total": 402.37
       }
     },
     "pcb1/test/bad/014.JPG": {
@@ -7790,10 +7791,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 21.1,
-        "perception": 275.9,
-        "tools": 56.9,
-        "total": 405.96
+        "quality": 17.3,
+        "perception": 271.1,
+        "tools": 59.8,
+        "total": 402.04
       }
     },
     "pcb1/test/bad/015.JPG": {
@@ -7808,10 +7809,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 18.0,
-        "perception": 271.1,
+        "quality": 19.9,
+        "perception": 292.8,
         "tools": 0.0,
-        "total": 340.63
+        "total": 365.71
       }
     },
     "pcb1/test/bad/018.JPG": {
@@ -7826,10 +7827,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 17.0,
-        "perception": 268.4,
-        "tools": 77.5,
-        "total": 418.29
+        "quality": 20.0,
+        "perception": 303.5,
+        "tools": 83.4,
+        "total": 460.35
       }
     },
     "pcb1/test/bad/019.JPG": {
@@ -7844,10 +7845,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.4,
-        "perception": 301.0,
-        "tools": 65.4,
-        "total": 444.24
+        "quality": 22.0,
+        "perception": 315.6,
+        "tools": 61.6,
+        "total": 455.46
       }
     },
     "pcb1/test/bad/020.JPG": {
@@ -7862,10 +7863,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 21.0,
-        "perception": 314.0,
-        "tools": 79.0,
-        "total": 467.79
+        "quality": 22.8,
+        "perception": 335.8,
+        "tools": 91.6,
+        "total": 507.87
       }
     },
     "pcb1/test/bad/021.JPG": {
@@ -7880,10 +7881,10 @@
       "rois_checked": 1,
       "rois_total": 2,
       "timing_ms": {
-        "quality": 18.7,
-        "perception": 274.1,
-        "tools": 85.4,
-        "total": 430.87
+        "quality": 21.5,
+        "perception": 304.1,
+        "tools": 80.4,
+        "total": 460.35
       }
     },
     "pcb1/test/bad/022.JPG": {
@@ -7898,10 +7899,10 @@
       "rois_checked": 1,
       "rois_total": 2,
       "timing_ms": {
-        "quality": 17.0,
-        "perception": 272.9,
-        "tools": 80.3,
-        "total": 425.29
+        "quality": 19.5,
+        "perception": 306.4,
+        "tools": 88.4,
+        "total": 468.83
       }
     },
     "pcb1/test/bad/023.JPG": {
@@ -7916,10 +7917,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.1,
-        "perception": 267.5,
-        "tools": 54.8,
-        "total": 389.57
+        "quality": 20.1,
+        "perception": 300.9,
+        "tools": 56.1,
+        "total": 430.82
       }
     },
     "pcb1/test/bad/024.JPG": {
@@ -7934,10 +7935,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 18.7,
-        "perception": 266.2,
-        "tools": 74.6,
-        "total": 409.59
+        "quality": 16.7,
+        "perception": 271.1,
+        "tools": 73.6,
+        "total": 413.59
       }
     },
     "pcb1/test/bad/025.JPG": {
@@ -7952,10 +7953,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 22.0,
-        "perception": 259.6,
-        "tools": 77.4,
-        "total": 409.52
+        "quality": 17.4,
+        "perception": 268.0,
+        "tools": 73.3,
+        "total": 410.71
       }
     },
     "pcb1/test/bad/026.JPG": {
@@ -7970,10 +7971,10 @@
       "rois_checked": 1,
       "rois_total": 2,
       "timing_ms": {
-        "quality": 18.8,
-        "perception": 266.5,
-        "tools": 56.6,
-        "total": 393.89
+        "quality": 17.4,
+        "perception": 260.9,
+        "tools": 50.6,
+        "total": 382.75
       }
     },
     "pcb1/test/bad/028.JPG": {
@@ -7988,10 +7989,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 17.2,
-        "perception": 270.5,
-        "tools": 53.4,
-        "total": 392.66
+        "quality": 20.7,
+        "perception": 368.7,
+        "tools": 78.7,
+        "total": 527.53
       }
     },
     "pcb1/test/bad/029.JPG": {
@@ -8006,10 +8007,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 20.7,
-        "perception": 265.9,
-        "tools": 84.2,
-        "total": 420.84
+        "quality": 31.1,
+        "perception": 347.9,
+        "tools": 103.0,
+        "total": 537.29
       }
     },
     "pcb1/test/bad/030.JPG": {
@@ -8024,10 +8025,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.9,
-        "perception": 271.9,
-        "tools": 88.9,
-        "total": 439.04
+        "quality": 24.7,
+        "perception": 411.7,
+        "tools": 93.1,
+        "total": 585.88
       }
     },
     "pcb1/test/bad/031.JPG": {
@@ -8042,10 +8043,10 @@
       "rois_checked": 1,
       "rois_total": 2,
       "timing_ms": {
-        "quality": 21.9,
-        "perception": 291.9,
-        "tools": 78.6,
-        "total": 448.89
+        "quality": 19.5,
+        "perception": 304.0,
+        "tools": 74.5,
+        "total": 451.98
       }
     },
     "pcb1/test/bad/032.JPG": {
@@ -8060,10 +8061,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.1,
-        "perception": 263.8,
-        "tools": 79.0,
-        "total": 414.08
+        "quality": 16.9,
+        "perception": 283.7,
+        "tools": 73.5,
+        "total": 425.66
       }
     },
     "pcb1/test/bad/033.JPG": {
@@ -8078,10 +8079,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 20.8,
-        "perception": 268.9,
-        "tools": 75.7,
-        "total": 416.47
+        "quality": 17.0,
+        "perception": 277.4,
+        "tools": 77.9,
+        "total": 425.1
       }
     },
     "pcb1/test/bad/035.JPG": {
@@ -8096,10 +8097,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 20.2,
-        "perception": 272.3,
-        "tools": 75.4,
-        "total": 425.16
+        "quality": 18.6,
+        "perception": 317.9,
+        "tools": 82.5,
+        "total": 472.35
       }
     },
     "pcb1/test/bad/036.JPG": {
@@ -8114,10 +8115,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.9,
-        "perception": 272.9,
-        "tools": 73.4,
-        "total": 417.04
+        "quality": 19.4,
+        "perception": 266.3,
+        "tools": 75.1,
+        "total": 437.11
       }
     },
     "pcb1/test/bad/037.JPG": {
@@ -8132,10 +8133,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.1,
-        "perception": 270.2,
-        "tools": 74.1,
-        "total": 415.06
+        "quality": 34.9,
+        "perception": 371.6,
+        "tools": 91.7,
+        "total": 555.67
       }
     },
     "pcb1/test/bad/038.JPG": {
@@ -8150,10 +8151,10 @@
       "rois_checked": 1,
       "rois_total": 2,
       "timing_ms": {
-        "quality": 16.2,
-        "perception": 271.4,
-        "tools": 74.3,
-        "total": 416.58
+        "quality": 18.0,
+        "perception": 319.2,
+        "tools": 98.9,
+        "total": 490.56
       }
     },
     "pcb1/test/bad/039.JPG": {
@@ -8168,10 +8169,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 17.4,
-        "perception": 268.4,
-        "tools": 77.5,
-        "total": 416.82
+        "quality": 19.7,
+        "perception": 286.1,
+        "tools": 92.3,
+        "total": 456.99
       }
     },
     "pcb1/test/bad/041.JPG": {
@@ -8186,10 +8187,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 19.6,
+        "quality": 18.8,
         "perception": 0.0,
         "tools": 0.0,
-        "total": 56.2
+        "total": 58.13
       }
     },
     "pcb1/test/bad/044.JPG": {
@@ -8204,10 +8205,10 @@
       "rois_checked": 1,
       "rois_total": 3,
       "timing_ms": {
-        "quality": 17.2,
-        "perception": 270.2,
-        "tools": 73.6,
-        "total": 419.89
+        "quality": 24.1,
+        "perception": 303.3,
+        "tools": 85.8,
+        "total": 467.49
       }
     },
     "pcb1/test/bad/045.JPG": {
@@ -8222,10 +8223,10 @@
       "rois_checked": 1,
       "rois_total": 2,
       "timing_ms": {
-        "quality": 20.4,
-        "perception": 310.1,
-        "tools": 81.8,
-        "total": 465.93
+        "quality": 22.3,
+        "perception": 284.4,
+        "tools": 81.1,
+        "total": 442.77
       }
     },
     "pcb1/test/bad/046.JPG": {
@@ -8240,10 +8241,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 20.0,
-        "perception": 264.3,
-        "tools": 53.7,
-        "total": 388.29
+        "quality": 22.0,
+        "perception": 307.7,
+        "tools": 63.9,
+        "total": 448.51
       }
     },
     "pcb1/test/bad/051.JPG": {
@@ -8258,10 +8259,10 @@
       "rois_checked": 1,
       "rois_total": 3,
       "timing_ms": {
-        "quality": 19.3,
-        "perception": 271.9,
-        "tools": 55.6,
-        "total": 399.23
+        "quality": 22.7,
+        "perception": 341.9,
+        "tools": 54.5,
+        "total": 475.22
       }
     },
     "pcb1/test/bad/056.JPG": {
@@ -8276,10 +8277,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.2,
-        "perception": 259.8,
-        "tools": 59.6,
-        "total": 389.91
+        "quality": 19.6,
+        "perception": 289.5,
+        "tools": 64.7,
+        "total": 427.89
       }
     },
     "pcb1/test/bad/057.JPG": {
@@ -8294,10 +8295,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.0,
-        "perception": 271.0,
-        "tools": 79.2,
-        "total": 423.15
+        "quality": 24.1,
+        "perception": 297.2,
+        "tools": 75.8,
+        "total": 451.03
       }
     },
     "pcb1/test/bad/058.JPG": {
@@ -8312,10 +8313,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 22.9,
-        "perception": 263.9,
-        "tools": 54.1,
-        "total": 394.22
+        "quality": 17.0,
+        "perception": 312.4,
+        "tools": 58.8,
+        "total": 444.49
       }
     },
     "pcb1/test/bad/059.JPG": {
@@ -8330,10 +8331,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.6,
-        "perception": 274.8,
+        "quality": 21.7,
+        "perception": 291.4,
         "tools": 54.3,
-        "total": 399.46
+        "total": 423.74
       }
     },
     "pcb1/test/bad/060.JPG": {
@@ -8348,10 +8349,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 18.1,
-        "perception": 269.3,
-        "tools": 76.8,
-        "total": 415.71
+        "quality": 15.4,
+        "perception": 301.7,
+        "tools": 97.4,
+        "total": 471.11
       }
     },
     "pcb1/test/bad/061.JPG": {
@@ -8366,10 +8367,10 @@
       "rois_checked": 2,
       "rois_total": 2,
       "timing_ms": {
-        "quality": 18.1,
-        "perception": 275.7,
-        "tools": 56.8,
-        "total": 401.29
+        "quality": 19.0,
+        "perception": 328.8,
+        "tools": 57.4,
+        "total": 458.02
       }
     },
     "pcb1/test/bad/062.JPG": {
@@ -8384,10 +8385,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 17.6,
-        "perception": 278.4,
-        "tools": 91.4,
-        "total": 449.76
+        "quality": 19.0,
+        "perception": 301.4,
+        "tools": 80.1,
+        "total": 454.72
       }
     },
     "pcb1/test/bad/063.JPG": {
@@ -8402,10 +8403,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 22.3,
-        "perception": 302.1,
-        "tools": 54.3,
-        "total": 430.68
+        "quality": 19.0,
+        "perception": 273.3,
+        "tools": 54.0,
+        "total": 401.58
       }
     },
     "pcb1/test/bad/064.JPG": {
@@ -8420,10 +8421,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 17.3,
-        "perception": 273.1,
-        "tools": 74.1,
-        "total": 418.48
+        "quality": 16.8,
+        "perception": 269.2,
+        "tools": 79.8,
+        "total": 421.78
       }
     },
     "pcb1/test/bad/065.JPG": {
@@ -8438,10 +8439,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 17.0,
-        "perception": 278.7,
-        "tools": 53.4,
-        "total": 399.79
+        "quality": 19.6,
+        "perception": 275.0,
+        "tools": 61.5,
+        "total": 411.4
       }
     },
     "pcb1/test/bad/066.JPG": {
@@ -8456,10 +8457,10 @@
       "rois_checked": 1,
       "rois_total": 3,
       "timing_ms": {
-        "quality": 19.7,
-        "perception": 271.8,
-        "tools": 57.6,
-        "total": 400.65
+        "quality": 19.0,
+        "perception": 288.4,
+        "tools": 63.9,
+        "total": 424.92
       }
     },
     "pcb1/test/bad/067.JPG": {
@@ -8474,10 +8475,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 20.7,
-        "perception": 265.7,
-        "tools": 55.0,
-        "total": 394.54
+        "quality": 17.7,
+        "perception": 281.2,
+        "tools": 63.0,
+        "total": 414.74
       }
     },
     "pcb1/test/bad/068.JPG": {
@@ -8492,10 +8493,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.9,
-        "perception": 269.7,
-        "tools": 55.1,
-        "total": 394.66
+        "quality": 18.8,
+        "perception": 286.9,
+        "tools": 56.0,
+        "total": 414.68
       }
     },
     "pcb1/test/bad/069.JPG": {
@@ -8510,10 +8511,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.6,
-        "perception": 263.9,
-        "tools": 75.2,
-        "total": 411.76
+        "quality": 17.4,
+        "perception": 351.0,
+        "tools": 95.3,
+        "total": 523.85
       }
     },
     "pcb1/test/bad/070.JPG": {
@@ -8528,10 +8529,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 18.7,
-        "perception": 275.4,
-        "tools": 74.1,
-        "total": 420.31
+        "quality": 27.6,
+        "perception": 597.1,
+        "tools": 169.3,
+        "total": 857.17
       }
     },
     "pcb1/test/bad/071.JPG": {
@@ -8546,10 +8547,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.7,
-        "perception": 280.8,
-        "tools": 55.9,
-        "total": 405.37
+        "quality": 26.9,
+        "perception": 330.3,
+        "tools": 73.8,
+        "total": 493.21
       }
     },
     "pcb1/test/bad/074.JPG": {
@@ -8564,10 +8565,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 18.6,
-        "perception": 281.7,
-        "tools": 90.9,
-        "total": 449.0
+        "quality": 20.0,
+        "perception": 383.2,
+        "tools": 91.9,
+        "total": 551.27
       }
     },
     "pcb1/test/bad/075.JPG": {
@@ -8582,10 +8583,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 22.2,
-        "perception": 298.0,
-        "tools": 80.9,
-        "total": 452.22
+        "quality": 17.9,
+        "perception": 284.5,
+        "tools": 80.4,
+        "total": 438.77
       }
     },
     "pcb1/test/bad/080.JPG": {
@@ -8600,10 +8601,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.9,
-        "perception": 263.7,
-        "tools": 60.4,
-        "total": 402.33
+        "quality": 20.6,
+        "perception": 289.6,
+        "tools": 56.7,
+        "total": 422.27
       }
     },
     "pcb1/test/bad/082.JPG": {
@@ -8618,10 +8619,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 19.7,
-        "perception": 258.4,
-        "tools": 62.3,
-        "total": 394.0
+        "quality": 17.8,
+        "perception": 282.5,
+        "tools": 65.1,
+        "total": 418.35
       }
     },
     "pcb1/test/bad/083.JPG": {
@@ -8636,10 +8637,10 @@
       "rois_checked": 1,
       "rois_total": 3,
       "timing_ms": {
-        "quality": 16.6,
-        "perception": 268.9,
-        "tools": 88.7,
-        "total": 430.62
+        "quality": 17.1,
+        "perception": 297.1,
+        "tools": 94.3,
+        "total": 463.18
       }
     },
     "pcb1/test/bad/084.JPG": {
@@ -8654,10 +8655,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 16.2,
-        "perception": 264.0,
-        "tools": 63.5,
-        "total": 394.77
+        "quality": 19.8,
+        "perception": 306.5,
+        "tools": 70.1,
+        "total": 451.49
       }
     },
     "pcb1/test/bad/085.JPG": {
@@ -8672,10 +8673,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 16.5,
-        "perception": 275.1,
-        "tools": 71.8,
-        "total": 416.05
+        "quality": 17.2,
+        "perception": 268.4,
+        "tools": 76.5,
+        "total": 414.82
       }
     },
     "pcb1/test/bad/086.JPG": {
@@ -8690,10 +8691,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 17.5,
-        "perception": 262.5,
-        "tools": 61.8,
-        "total": 399.02
+        "quality": 17.0,
+        "perception": 280.6,
+        "tools": 73.7,
+        "total": 423.42
       }
     },
     "pcb1/test/bad/087.JPG": {
@@ -8708,10 +8709,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.0,
-        "perception": 263.2,
-        "tools": 55.7,
-        "total": 392.11
+        "quality": 21.9,
+        "perception": 354.0,
+        "tools": 87.8,
+        "total": 531.1
       }
     },
     "pcb1/test/bad/088.JPG": {
@@ -8726,10 +8727,10 @@
       "rois_checked": 0,
       "rois_total": 0,
       "timing_ms": {
-        "quality": 17.8,
-        "perception": 262.5,
-        "tools": 53.9,
-        "total": 383.77
+        "quality": 30.6,
+        "perception": 376.9,
+        "tools": 74.1,
+        "total": 544.15
       }
     },
     "pcb1/test/bad/089.JPG": {
@@ -8744,10 +8745,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 21.9,
-        "perception": 257.4,
-        "tools": 92.4,
-        "total": 427.15
+        "quality": 29.4,
+        "perception": 379.6,
+        "tools": 122.4,
+        "total": 597.07
       }
     },
     "pcb1/test/bad/090.JPG": {
@@ -8762,10 +8763,10 @@
       "rois_checked": 1,
       "rois_total": 3,
       "timing_ms": {
-        "quality": 20.0,
-        "perception": 301.6,
-        "tools": 76.3,
-        "total": 450.41
+        "quality": 22.2,
+        "perception": 376.9,
+        "tools": 109.2,
+        "total": 566.47
       }
     },
     "pcb1/test/bad/091.JPG": {
@@ -8780,10 +8781,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 17.8,
-        "perception": 273.1,
-        "tools": 89.2,
-        "total": 433.69
+        "quality": 20.7,
+        "perception": 351.8,
+        "tools": 139.7,
+        "total": 573.95
       }
     },
     "pcb1/test/bad/093.JPG": {
@@ -8798,10 +8799,10 @@
       "rois_checked": 1,
       "rois_total": 2,
       "timing_ms": {
-        "quality": 17.0,
-        "perception": 263.7,
-        "tools": 81.2,
-        "total": 414.12
+        "quality": 21.2,
+        "perception": 306.9,
+        "tools": 92.8,
+        "total": 478.82
       }
     },
     "pcb1/test/bad/094.JPG": {
@@ -8816,10 +8817,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 15.9,
-        "perception": 278.1,
-        "tools": 85.1,
-        "total": 429.63
+        "quality": 22.0,
+        "perception": 302.8,
+        "tools": 88.8,
+        "total": 466.09
       }
     },
     "pcb1/test/bad/095.JPG": {
@@ -8834,10 +8835,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 19.0,
-        "perception": 280.3,
-        "tools": 53.2,
-        "total": 404.19
+        "quality": 17.5,
+        "perception": 269.4,
+        "tools": 56.2,
+        "total": 392.41
       }
     },
     "pcb1/test/bad/096.JPG": {
@@ -8852,10 +8853,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 20.4,
-        "perception": 267.2,
-        "tools": 75.2,
-        "total": 414.99
+        "quality": 16.9,
+        "perception": 264.0,
+        "tools": 78.0,
+        "total": 408.23
       }
     },
     "pcb1/test/bad/099.JPG": {
@@ -8870,10 +8871,10 @@
       "rois_checked": 1,
       "rois_total": 1,
       "timing_ms": {
-        "quality": 17.8,
-        "perception": 276.3,
-        "tools": 55.1,
-        "total": 402.83
+        "quality": 17.0,
+        "perception": 282.7,
+        "tools": 57.2,
+        "total": 408.17
       }
     }
   }

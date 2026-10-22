@@ -98,6 +98,26 @@ def test_resolution_scaling_gives_a_full_resolution_transform():
     assert mean_point_error(full, m_true) < 3.0
 
 
+def test_alignment_recovers_browser_screenshot_scale():
+    """A display-resampled 0.729x frame remains inside the bounded recovery envelope."""
+    ref = textured()
+    test = cv2.resize(ref, None, fx=0.729, fy=0.729, interpolation=cv2.INTER_AREA)
+    r = T.align(test, ref)
+    assert r.valid, r.reason
+    assert r.scale == pytest.approx(0.729, abs=0.02)
+    assert r.quality is not None and r.quality > 0.90
+    assert r.overlap is not None and r.overlap > 0.95
+
+
+@pytest.mark.parametrize("scale", [0.59, 1.61])
+def test_alignment_rejects_scale_outside_recovery_envelope(scale):
+    ref = textured()
+    m = T.as_h(cv2.getRotationMatrix2D(((ref.shape[1] - 1) / 2, (ref.shape[0] - 1) / 2), 0, scale))
+    result = T._finalize(m, ref, ref, "test", q_min=None)
+    assert not result.valid
+    assert "scale" in result.reason
+
+
 def test_low_overlap_is_rejected_with_a_reason():
     ref = textured()
     far = T.as_h(np.array([[1, 0, 700.0], [0, 1, 0.0]]))
