@@ -137,6 +137,9 @@ def run_e1_decision_benchmark(
 
             return {
                 "benchmark_mode": "measured_real_images",
+                "source_commit": measured_data.get("commit"),
+                "source_timestamp": measured_data.get("timestamp"),
+                "pipeline_version": measured_data.get("pipeline_version"),
                 "t_pass": measured_data["thresholds"]["t_pass"],
                 "t_fail": measured_data["thresholds"]["t_fail"],
                 "n_normals": dev_split["n_normals"],
@@ -466,6 +469,51 @@ def generate_markdown_report(summary: Dict[str, Any]) -> str:
     e3 = summary["e3_corruption_robustness"]
     e4 = summary["e4_latency_profiling"]
 
+    dev_split = e1.get("dev_split") or {}
+    test_split = e1.get("final_test_split") or {}
+    dev_agent = dev_split.get("agent", {})
+    test_agent = test_split.get("agent", {})
+    dev_counts = dev_agent.get("counts", {})
+    test_counts = test_agent.get("counts", {})
+
+    test_normals = int(test_split.get("n_normals", 0))
+    test_defects = int(test_split.get("n_anomalies", 0))
+    dev_normals = int(dev_split.get("n_normals", 0))
+    dev_defects = int(dev_split.get("n_anomalies", 0))
+    test_normal_human = int(test_counts.get("normal_human", 0))
+    dev_normal_human = int(dev_counts.get("normal_human", 0))
+    test_normal_fail = int(test_counts.get("normal_fail", 0))
+    dev_normal_fail = int(dev_counts.get("normal_fail", 0))
+    test_escapes = int(test_counts.get("defective_pass_fast", 0)) + int(
+        test_counts.get("defective_pass_cleared", 0)
+    )
+    dev_escapes = int(dev_counts.get("defective_pass_fast", 0)) + int(
+        dev_counts.get("defective_pass_cleared", 0)
+    )
+    test_intercepted = int(test_counts.get("defective_fail", 0)) + int(
+        test_counts.get("defective_human", 0)
+    )
+    dev_intercepted = int(dev_counts.get("defective_fail", 0)) + int(
+        dev_counts.get("defective_human", 0)
+    )
+    test_pass_baseline = test_split.get("baseline_t_pass", {})
+    cautious_normal_fail = int(
+        test_pass_baseline.get("counts", {}).get("normal_fail", 0)
+    )
+    cautious_escapes = int(
+        test_pass_baseline.get("counts", {}).get("defective_pass", 0)
+    )
+    test_fail_baseline = test_split.get("baseline_t_fail", {})
+    default_normal_fail = int(
+        test_fail_baseline.get("counts", {}).get("normal_fail", 0)
+    )
+    default_escapes = int(
+        test_fail_baseline.get("counts", {}).get("defective_pass", 0)
+    )
+
+    def pct(k: int, n: int) -> float:
+        return 100.0 * k / n if n else 0.0
+
     # Clopper-Pearson CI helper
     def cp_str(k: int, n: int) -> str:
         ci = clopper_pearson(k, n)
@@ -478,11 +526,11 @@ def generate_markdown_report(summary: Dict[str, Any]) -> str:
         "> **Project:** SureInspect (OpenCV AI Competition 2026)  ",
         "> **System Architecture:** Selective Inspection & Operator Triage System  ",
         "> **Dataset:** Amazon VisA (`pcb1` Printed Circuit Boards)  ",
-        "> **Generated:** " + time.strftime("%B %d, %Y", time.gmtime()) + "  ",
+        "> **Generated:** " + time.strftime("%B %d, %Y", time.gmtime()),
         "",
         "---",
         "",
-        "> **Key Operational Finding:** On a seen test split, the evidence tools cut good-board review from 27% to 12% and eliminated auto-scrap, with defect escapes of 8/70 against 4/70 for the cautious baseline (CIs overlap). Interception assumes human reviewers catch flagged defects.",
+        f"> **Key Operational Finding:** On the previously seen test regression split, SureInspect produced {test_normal_fail}/{test_normals} automated normal-board FAIL decisions, routed {test_normal_human}/{test_normals} normal boards to human review, and passed {test_escapes}/{test_defects} defects. The cautious binary baseline rejected {cautious_normal_fail}/{test_normals} normal boards and passed {cautious_escapes}/{test_defects} defects. Interception counts assume a reviewer catches HUMAN-routed defects.",
         "",
         "---",
         "",
@@ -492,17 +540,17 @@ def generate_markdown_report(summary: Dict[str, Any]) -> str:
         "",
         "The core architectural objective of SureInspect is to **eliminate automated false-alarm scrap** and **minimize operator review burden** by orchestrating secondary OpenCV evidence tools (ORB+ECC alignment, multi-ROI photometric residuals, and contour measurements) to safely clear ambiguous normal boards while escalating uncertain cases to human operators.",
         "",
-        "### High-Level Operational Comparison (Final Test Split: 100 Normals, 70 Anomalies)",
+        "### High-Level Operational Comparison (Previously Seen Test Regression Split: 100 Normals, 70 Anomalies)",
         "",
         "| Inspection Strategy | Good-Board Review / Scrap Rate | Defect Escapes (Bad $\\to$ PASS) | Defect Interception (FAIL + HUMAN) | Operational Characteristics |",
         "| :--- | :---: | :---: | :---: | :--- |",
-        "| **Cautious Baseline ($t_{\\text{pass}}=2.04$)** | 27.00% (27/100 scrap) | 5.71% (4/70) [2.24%, 13.79%] | 94.29% (66/70) | Conservative single cutoff; halts 27% of good boards as false alarms. |",
-        "| **Permissive Baseline ($t_{\\text{fail}}=2.29$)** | 9.00% (9/100 scrap) | 27.14% (19/70) [18.12%, 38.54%] | 72.86% (51/70) | Higher throughput; unacceptably high defect escape rate (>27%). |",
+        f"| **Cautious Baseline ($t_{{\\text{{pass}}}}=2.04$)** | {pct(cautious_normal_fail, test_normals):.2f}% ({cautious_normal_fail}/{test_normals} scrap) | {pct(cautious_escapes, test_defects):.2f}% ({cautious_escapes}/{test_defects}) {cp_str(cautious_escapes, test_defects)} | {pct(test_defects - cautious_escapes, test_defects):.2f}% ({test_defects - cautious_escapes}/{test_defects}) | Conservative single cutoff. |",
+        f"| **Permissive Baseline ($t_{{\\text{{fail}}}}=2.29$)** | {pct(default_normal_fail, test_normals):.2f}% ({default_normal_fail}/{test_normals} scrap) | {pct(default_escapes, test_defects):.2f}% ({default_escapes}/{test_defects}) {cp_str(default_escapes, test_defects)} | {pct(test_defects - default_escapes, test_defects):.2f}% ({test_defects - default_escapes}/{test_defects}) | Higher throughput but more defect escapes. |",
         "| **SureInspect v1 (Pre-Remediation)** | 22.00% (14 scrap + 8 review) | 7.14% (5/70) [3.09%, 15.69%] | 91.43% (64/70) | Inconsistent tool routing; high automated scrap. |",
-        "| **SureInspect v2 (Unified Pipeline)** | **12.00%** (0 scrap + 12 review) | **11.43%** (8/70) [5.90%, 20.97%] | **87.14%** (61/70) | Eliminates 100% of auto-scrap; evidence tools safely clear 15 ambiguous normals. |",
+        f"| **SureInspect v2 (Current Measured Pipeline)** | **{pct(test_normal_human + test_normal_fail, test_normals):.2f}%** ({test_normal_fail} scrap + {test_normal_human} review) | **{pct(test_escapes, test_defects):.2f}%** ({test_escapes}/{test_defects}) {cp_str(test_escapes, test_defects)} | **{pct(test_intercepted, test_defects):.2f}%** ({test_intercepted}/{test_defects}) | Eliminates automated normal-board scrap while routing uncertainty to review. |",
         "",
-        "> **Low-Prevalence Production Implication:**  ",
-        "> In real-world surface-mount PCB assembly lines, defect prevalence is typically $< 1\\%$ (e.g., 0.1%–0.5%), unlike the 41% artificial prevalence in the balanced test split. At $< 1\\%$ prevalence, the human operator workload is dominated by the normal routing rate. On the test split distribution, SureInspect routes 12% of normal boards to human review (routing ~1 in 8 boards to an operator while clearing 88% automatically). On the development split distribution, SureInspect routes only 5.39% of normal boards to human review (routing ~1 in 18 boards to an operator while clearing 94.6% automatically). In both settings, automated false alarm scrap is 0.00%.",
+        "> **Production-workload implication:**",
+        f"> When normal boards dominate a production stream, operator workload is driven mainly by normal routing. In these measured splits, SureInspect routes {pct(test_normal_human, test_normals):.2f}% ({test_normal_human}/{test_normals}) of test normals and {pct(dev_normal_human, dev_normals):.2f}% ({dev_normal_human}/{dev_normals}) of development normals to human review. Automated normal-board FAIL is {test_normal_fail}/{test_normals} and {dev_normal_fail}/{dev_normals}, respectively.",
         "",
         "---",
         "",
@@ -512,9 +560,6 @@ def generate_markdown_report(summary: Dict[str, Any]) -> str:
     ]
 
     is_measured = e1.get("benchmark_mode") == "measured_real_images"
-    dev_split = e1.get("dev_split")
-    test_split = e1.get("final_test_split")
-
     if is_measured and dev_split and test_split:
         report_lines.extend([
             "",
@@ -529,7 +574,7 @@ def generate_markdown_report(summary: Dict[str, Any]) -> str:
             "- **RETAKE (Admission Gate Rejection):** Frame rejected by the front-line Admission Quality Gate prior to model scoring due to physical focus blur, extreme exposure, or specular glare. **Reported in a separate column and never counted as a caught defect.**",
             "- **Confidence Intervals:** Exact Clopper-Pearson 95% binomial confidence intervals are reported for every empirical rate.",
             "",
-            "### Table 1.1: Final Held-Out Test Split (100 Normals, 70 Anomalies)",
+            "### Table 1.1: Previously Seen Test Regression Split (100 Normals, 70 Anomalies)",
             "",
             "> **Evaluation Split Notice:** *re-run after fixes; split previously seen; not a clean hold-out.* Thresholds were frozen on dev calibration and never fitted against this split.",
             "",
@@ -639,34 +684,60 @@ def generate_markdown_report(summary: Dict[str, Any]) -> str:
         ret_v2 = da["counts"]["normal_retake"] + da["counts"]["defective_retake"]
         report_lines.append(f"| **Admission Gate Rejection (RETAKE)** | 0.00% (No gate) | 0.00% (No gate) | {ret_v1/n_tot*100:.2f}% ({ret_v1}/{n_tot}) | **{ret_v2/n_tot*100:.2f}%** ({ret_v2}/{n_tot}) | {cp_str(ret_v2, n_tot)} |")
 
+        escape_table_lines: list[str] = []
+        cache_path = Path("eval/results/cached_e1_predictions.json")
+        splits_path = Path(DEFAULT_SNAPSHOT_DIR) / "splits.json"
+        try:
+            cache_payload = json.loads(cache_path.read_text(encoding="utf-8"))
+            split_payload = json.loads(splits_path.read_text(encoding="utf-8"))["splits"]
+            if cache_payload.get("__commit__") == e1.get("source_commit"):
+                predictions = cache_payload["predictions"]
+                dev_bad = {item["path"] for item in split_payload["dev_anomalies"]}
+                test_bad = {
+                    item["path"] for item in split_payload["final_test"]["anomalies"]
+                }
+                for image_path, prediction in predictions.items():
+                    if prediction.get("ground_truth") != "bad" or prediction.get("decision") != "PASS":
+                        continue
+                    split_name = "Dev" if image_path in dev_bad else "Test" if image_path in test_bad else "Unknown"
+                    alignment = prediction.get("alignment_quality")
+                    residual = prediction.get("residual_mean")
+                    alignment_text = "N/A" if alignment is None else f"{float(alignment):.4f}"
+                    residual_text = "N/A" if residual is None else f"{float(residual):.4f}"
+                    checked = int(prediction.get("rois_checked", 0))
+                    total_rois = int(prediction.get("rois_total", 0))
+                    roi_text = "N/A" if total_rois == 0 else f"{checked} / {total_rois}"
+                    escape_table_lines.append(
+                        f"| **{split_name}** | `{image_path}` | {float(prediction['score']):.4f} | `{prediction['decision_path']}` | {alignment_text} | {residual_text} | {roi_text} |"
+                    )
+        except (OSError, KeyError, TypeError, json.JSONDecodeError):
+            escape_table_lines = []
+        if not escape_table_lines:
+            escape_table_lines.append(
+                "| — | Per-image cache unavailable or provenance mismatch | — | — | — | — | — |"
+            )
+
         report_lines.extend([
             "",
             "### Table 1.3: Escaped Defect Breakdown Across Dev and Test Splits",
             "",
-            "Across both splits (26 dev defects, 70 test defects = 96 total defects), 9 defect images received a final verdict of `PASS` (1 on dev, 8 on test):",
+            f"Across both splits ({dev_defects} dev defects and {test_defects} test defects), {dev_escapes + test_escapes} defect images received a final verdict of `PASS` ({dev_escapes} on dev, {test_escapes} on test):",
             "",
-            "| Split | Image Path | Ground-Truth Defect Type (from VisA) | PatchCore Score | Decision | Decision Path | Alignment Quality ($q$) | Residual Mean ($r_{\\text{mean}}$) | Secondary ROIs Checked |",
-            "| :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |",
-            "| **Dev** | `pcb1/test/bad/048.JPG` | `missing` | 2.2530 | `PASS` | `AGENT_CLEARED` | 0.7679 | 0.1379 | 1 / 1 |",
-            "| **Test** | `pcb1/test/bad/015.JPG` | `melt` | 1.9064 | `PASS` | `FAST_PASS` | N/A | N/A | N/A |",
-            "| **Test** | `pcb1/test/bad/025.JPG` | `melt` | 2.0637 | `PASS` | `AGENT_CLEARED` | 0.8636 | 0.0826 | 1 / 1 |",
-            "| **Test** | `pcb1/test/bad/058.JPG` | `missing` | 2.2110 | `PASS` | `AGENT_CLEARED` | 0.8223 | 0.1100 | 1 / 1 |",
-            "| **Test** | `pcb1/test/bad/061.JPG` | `melt` | 2.2357 | `PASS` | `AGENT_CLEARED` | 0.8826 | 0.0409 | 2 / 2 |",
-            "| **Test** | `pcb1/test/bad/062.JPG` | `melt` | 2.1965 | `PASS` | `AGENT_CLEARED` | 0.8444 | 0.0429 | 1 / 1 |",
-            "| **Test** | `pcb1/test/bad/063.JPG` | `melt` | 2.0085 | `PASS` | `FAST_PASS` | N/A | N/A | N/A |",
-            "| **Test** | `pcb1/test/bad/085.JPG` | `scratch` | 2.1771 | `PASS` | `AGENT_CLEARED` | 0.8554 | 0.0613 | 1 / 1 |",
-            "| **Test** | `pcb1/test/bad/096.JPG` | `scratch` | 2.0057 | `PASS` | `FAST_PASS` | N/A | N/A | N/A |",
+            "| Split | Image Path | PatchCore Score | Decision Path | Alignment Quality ($q$) | Residual Mean | Secondary ROIs Checked |",
+            "| :---: | :--- | :---: | :---: | :---: | :---: | :---: |",
+            *escape_table_lines,
             "",
-            "#### Detailed Escape Mechanism Analysis:",
-            "1. **Sub-Threshold Deep Perception ($s \\le t_{\\text{pass}}$):** 3 defects (`015.JPG`, `063.JPG`, `096.JPG`) had global PatchCore nearest-neighbor distance scores below the cautious pass threshold $t_{\\text{pass}} = 2.0405$. For these subtle defects (hairline scratches, faint melt seams), localized CNN feature activations did not exceed normal structural variance, resulting in direct `FAST_PASS` routing without tool invocation.",
-            "2. **Micro-Anomaly Photometric Dilution ($r_{\\text{mean}} \\le r_{\\text{low}}$):** 6 defects (`048.JPG` on dev, and `025.JPG`, `058.JPG`, `061.JPG`, `062.JPG`, `085.JPG` on test) produced intermediate PatchCore scores in the ambiguous zone ($s \\in (2.04, 2.29]$), correctly invoking Evidence Tools T1 (ORB+ECC alignment) and T3 (ROI residual measurement). Alignment succeeded with high confidence ($q \\in [0.7679, 0.8826] \\ge q_{\\text{min}} = 0.65$). However, because the physical defect was geographically confined to a micro-scale footprint (a single missing SMD or tiny scratch) within the $256 \\times 256$ ROI patch window, the mean absolute intensity deviation was photometrically diluted over the background, yielding $r_{\\text{mean}} \\in [0.0409, 0.1379]$, well below the clearing threshold $r_{\\text{low}} = 0.38$. The tool policy therefore interpreted the difference as benign registration/lighting variance rather than a structural defect, resulting in `AGENT_CLEARED`.",
+            "#### Detailed Escape Mechanism Summary",
+            f"- `{test_counts.get('defective_pass_fast', 0)}` test defect(s) followed `FAST_PASS`, so secondary tools were not invoked.",
+            f"- `{test_counts.get('defective_pass_cleared', 0)}` test defect(s) were cleared after secondary evidence checks.",
+            "- These cases remain known limitations. The table is generated from the commit-matched per-image cache; no defect-type label is inferred from filenames.",
             "",
             "### Quality Gate Rejections & Threshold Sensitivity",
             "",
             "> **Root-Cause Analysis for Dev Split Rejections:** 2 real defect images received `RETAKE` from the Admission Quality Gate: `043.JPG` and `050.JPG`. Detailed inspection indicates that they sit near the marginal optical threshold boundary alongside normal boards (such as `0152.JPG` blur 163.3 and `0154.JPG` blur 183.5):",
             "> - `pcb1/test/bad/043.JPG`: Laplacian blur variance was 183.1 (below 190.0 threshold), bright pixel fraction was 12.9% (exceeded 11.8% threshold), and specular glare was 13.4% (exceeded 10.5% threshold).",
             "> - `pcb1/test/bad/050.JPG`: Glare fraction was 10.6% (exceeded 10.5% threshold by 0.1%).",
-            "> These rejections represent marginal optical threshold boundary cutoffs rather than catastrophic physical corruptions. In industrial deployment, marginal captures trigger an automated camera re-take prior to neural inference.",
+            "> These rejections represent marginal optical threshold boundary cutoffs rather than catastrophic physical corruptions. In an industrial deployment, the intended response is a camera re-take prior to neural inference.",
             "",
             "> **Quality Gate v1.0 vs. v1.1 Clarification:**",
             "> - **v1.0 (Snapshot Deployment):** Used in all E1 benchmark runs above to guarantee strict reproducibility against the immutable frozen snapshot.",
@@ -782,8 +853,8 @@ def generate_markdown_report(summary: Dict[str, Any]) -> str:
         "",
         "## 6. Architectural Conclusions & Competition Significance",
         "1. **False Alarm Scrap Elimination:** SureInspect reduces automated normal false alarm scrap rates to **0.00%** on both the development (0/297) and test (0/100) splits, representing a **100.0% relative reduction** compared to single-threshold baselines.",
-        "2. **Operator Triage Burden Reduction:** By dispatching secondary OpenCV evidence tools (ORB+ECC alignment, multi-ROI photometric residuals, and contour measurements), SureInspect safely clears 15 ambiguous normal boards on the test split, reducing human review burden from 27.00% down to 12.00%.",
-        "3. **Defect Interception Efficacy:** SureInspect achieves an **87.14% total defect interception rate** (61/70) on the test split and **88.46%** (23/26) on the development split (combining automated rejection with operator escalation).",
+        f"2. **Operator Triage Trade-Off:** SureInspect routes **{pct(test_normal_human, test_normals):.2f}%** ({test_normal_human}/{test_normals}) of test normals and **{pct(dev_normal_human, dev_normals):.2f}%** ({dev_normal_human}/{dev_normals}) of development normals to human review while keeping automated normal-board FAIL at zero.",
+        f"3. **Defect Interception Efficacy:** SureInspect routes **{pct(test_intercepted, test_defects):.2f}%** ({test_intercepted}/{test_defects}) of test defects and **{pct(dev_intercepted, dev_defects):.2f}%** ({dev_intercepted}/{dev_defects}) of development defects to FAIL or HUMAN. This statement assumes HUMAN-routed defects are caught by review and excludes RETAKE from interception.",
         "4. **Split-Conformal Statistical Guarantees:** Conformal calibration mathematically bounds the normal marginal error rate ($1 - \\alpha \\ge 90\\%$ at $\\alpha=0.10$). Ambiguity in the interval $(t_{\\text{pass}}, t_{\\text{fail}}]$ triggers evidence verification or operator triage rather than uncalibrated auto-passing.",
         "5. **Edge CPU Feasibility:** The full pipeline executes on commodity CPU hardware without cloud or GPU dependencies, clocking **~397 ms** for Fast-Pass boards and **~538 ms** for multi-tool escalation boards.",
         "6. **Physical Admission Defense:** Shipped quality gate parameters intercept 100% of out-of-focus blur, gamma darkening, and specular glare corruptions prior to neural evaluation, preventing silent downstream failures.",

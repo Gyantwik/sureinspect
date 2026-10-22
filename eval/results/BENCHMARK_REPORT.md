@@ -4,11 +4,11 @@
 > **Project:** SureInspect (OpenCV AI Competition 2026)  
 > **System Architecture:** Selective Inspection & Operator Triage System  
 > **Dataset:** Amazon VisA (`pcb1` Printed Circuit Boards)  
-> **Generated:** October 21, 2026  
+> **Generated:** October 22, 2026
 
 ---
 
-> **Key Operational Finding:** On a seen test split, the evidence tools cut good-board review from 27% to 12% and eliminated auto-scrap, with defect escapes of 8/70 against 4/70 for the cautious baseline (CIs overlap). Interception assumes human reviewers catch flagged defects.
+> **Key Operational Finding:** On the previously seen test regression split, SureInspect produced 0/100 automated normal-board FAIL decisions, routed 18/100 normal boards to human review, and passed 4/70 defects. The cautious binary baseline rejected 27/100 normal boards and passed 4/70 defects. Interception counts assume a reviewer catches HUMAN-routed defects.
 
 ---
 
@@ -18,17 +18,17 @@ SureInspect is engineered as a **Selective Inspection & Operator Triage System**
 
 The core architectural objective of SureInspect is to **eliminate automated false-alarm scrap** and **minimize operator review burden** by orchestrating secondary OpenCV evidence tools (ORB+ECC alignment, multi-ROI photometric residuals, and contour measurements) to safely clear ambiguous normal boards while escalating uncertain cases to human operators.
 
-### High-Level Operational Comparison (Final Test Split: 100 Normals, 70 Anomalies)
+### High-Level Operational Comparison (Previously Seen Test Regression Split: 100 Normals, 70 Anomalies)
 
 | Inspection Strategy | Good-Board Review / Scrap Rate | Defect Escapes (Bad $\to$ PASS) | Defect Interception (FAIL + HUMAN) | Operational Characteristics |
 | :--- | :---: | :---: | :---: | :--- |
-| **Cautious Baseline ($t_{\text{pass}}=2.04$)** | 27.00% (27/100 scrap) | 5.71% (4/70) [2.24%, 13.79%] | 94.29% (66/70) | Conservative single cutoff; halts 27% of good boards as false alarms. |
-| **Permissive Baseline ($t_{\text{fail}}=2.29$)** | 9.00% (9/100 scrap) | 27.14% (19/70) [18.12%, 38.54%] | 72.86% (51/70) | Higher throughput; unacceptably high defect escape rate (>27%). |
+| **Cautious Baseline ($t_{\text{pass}}=2.04$)** | 27.00% (27/100 scrap) | 5.71% (4/70) [1.58%, 13.99%] | 94.29% (66/70) | Conservative single cutoff. |
+| **Permissive Baseline ($t_{\text{fail}}=2.29$)** | 9.00% (9/100 scrap) | 27.14% (19/70) [17.20%, 39.10%] | 72.86% (51/70) | Higher throughput but more defect escapes. |
 | **SureInspect v1 (Pre-Remediation)** | 22.00% (14 scrap + 8 review) | 7.14% (5/70) [3.09%, 15.69%] | 91.43% (64/70) | Inconsistent tool routing; high automated scrap. |
-| **SureInspect v2 (Unified Pipeline)** | **12.00%** (0 scrap + 12 review) | **11.43%** (8/70) [5.90%, 20.97%] | **87.14%** (61/70) | Eliminates 100% of auto-scrap; evidence tools safely clear 15 ambiguous normals. |
+| **SureInspect v2 (Current Measured Pipeline)** | **18.00%** (0 scrap + 18 review) | **5.71%** (4/70) [1.58%, 13.99%] | **92.86%** (65/70) | Eliminates automated normal-board scrap while routing uncertainty to review. |
 
-> **Low-Prevalence Production Implication:**  
-> In real-world surface-mount PCB assembly lines, defect prevalence is typically $< 1\%$ (e.g., 0.1%–0.5%), unlike the 41% artificial prevalence in the balanced test split. At $< 1\%$ prevalence, the human operator workload is dominated by the normal routing rate. On the test split distribution, SureInspect routes 12% of normal boards to human review (routing ~1 in 8 boards to an operator while clearing 88% automatically). On the development split distribution, SureInspect routes only 5.39% of normal boards to human review (routing ~1 in 18 boards to an operator while clearing 94.6% automatically). In both settings, automated false alarm scrap is 0.00%.
+> **Production-workload implication:**
+> When normal boards dominate a production stream, operator workload is driven mainly by normal routing. In these measured splits, SureInspect routes 18.00% (18/100) of test normals and 11.78% (35/297) of development normals to human review. Automated normal-board FAIL is 0/100 and 0/297, respectively.
 
 ---
 
@@ -47,60 +47,56 @@ Comparison between single-threshold PatchCore perception baselines ($t_{\text{pa
 - **RETAKE (Admission Gate Rejection):** Frame rejected by the front-line Admission Quality Gate prior to model scoring due to physical focus blur, extreme exposure, or specular glare. **Reported in a separate column and never counted as a caught defect.**
 - **Confidence Intervals:** Exact Clopper-Pearson 95% binomial confidence intervals are reported for every empirical rate.
 
-### Table 1.1: Final Held-Out Test Split (100 Normals, 70 Anomalies)
+### Table 1.1: Previously Seen Test Regression Split (100 Normals, 70 Anomalies)
 
 > **Evaluation Split Notice:** *re-run after fixes; split previously seen; not a clean hold-out.* Thresholds were frozen on dev calibration and never fitted against this split.
 
 | Metric | Baseline ($t_{\text{pass}}=2.04$) | Baseline ($t_{\text{fail}}=2.29$) | v1 (Before Fixes) | v2 (Unified Pipeline) | Clopper-Pearson 95% CI (v2) |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Automated Coverage** | 100.0% (170/170) | 100.0% (170/170) | 90.00% (153/170) | **62.94%** (107/170) | [55.21%, 70.21%] |
+| **Automated Coverage** | 100.0% (170/170) | 100.0% (170/170) | 90.00% (153/170) | **56.47%** (96/170) | [48.67%, 64.05%] |
 | **Normal False Alarm (Scrap: Normal $\to$ FAIL)** | 27.00% (27/100) | 9.00% (9/100) | 14.00% (14/100) | **0.00%** (0/100) | [0.00%, 3.62%] |
-| **Total Normal False Alarm (FAIL + HUMAN)** | 27.00% (27/100) | 9.00% (9/100) | 22.00% (22/100) | **12.00%** (12/100) | [6.36%, 20.02%] |
-| **Defect Escapes (Bad $\to$ PASS)** | 5.71% (4/70) | 27.14% (19/70) | 7.14% (5/70) | **11.43%** (8/70) | [5.07%, 21.28%] |
-| **Defect Recall (Automated FAIL)** | 94.29% (66/70) | 72.86% (51/70) | 80.00% (56/70) | **15.71%** (11/70) | [8.11%, 26.38%] |
-| **Defect Interception (FAIL + HUMAN)** | 94.29% (66/70) | 72.86% (51/70) | 91.43% (64/70) | **87.14%** (61/70) | [76.99%, 93.95%] |
-| **Human Review Escalation Rate** | 0.00% (Forced binary) | 0.00% (Forced binary) | 9.41% (16/170) | **36.47%** (62/170) | [29.24%, 44.19%] |
+| **Total Normal False Alarm (FAIL + HUMAN)** | 27.00% (27/100) | 9.00% (9/100) | 22.00% (22/100) | **18.00%** (18/100) | [11.03%, 26.95%] |
+| **Defect Escapes (Bad $\to$ PASS)** | 5.71% (4/70) | 27.14% (19/70) | 7.14% (5/70) | **5.71%** (4/70) | [1.58%, 13.99%] |
+| **Defect Recall (Automated FAIL)** | 94.29% (66/70) | 72.86% (51/70) | 80.00% (56/70) | **14.29%** (10/70) | [7.07%, 24.71%] |
+| **Defect Interception (FAIL + HUMAN)** | 94.29% (66/70) | 72.86% (51/70) | 91.43% (64/70) | **92.86%** (65/70) | [84.11%, 97.64%] |
+| **Human Review Escalation Rate** | 0.00% (Forced binary) | 0.00% (Forced binary) | 9.41% (16/170) | **42.94%** (73/170) | [35.39%, 50.74%] |
 | **Admission Gate Rejection (RETAKE)** | 0.00% (No gate) | 0.00% (No gate) | 0.59% (1/170) | **0.59%** (1/170) | [0.01%, 3.23%] |
 
 ### Table 1.2: Development Split Evaluation (297 Normals, 26 Anomalies)
 
 | Metric | Baseline ($t_{\text{pass}}=2.04$) | Baseline ($t_{\text{fail}}=2.29$) | v1 (Before Fixes) | v2 (Unified Pipeline) | Clopper-Pearson 95% CI (v2) |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Automated Coverage** | 100.0% (323/323) | 100.0% (323/323) | 92.26% (298/323) | **88.24%** (285/323) | [84.21%, 91.54%] |
+| **Automated Coverage** | 100.0% (323/323) | 100.0% (323/323) | 92.26% (298/323) | **81.73%** (264/323) | [77.08%, 85.79%] |
 | **Normal False Alarm (Scrap: Normal $\to$ FAIL)** | 20.54% (61/297) | 4.38% (13/297) | 7.41% (22/297) | **0.00%** (0/297) | [0.00%, 1.23%] |
-| **Total Normal False Alarm (FAIL + HUMAN)** | 20.54% (61/297) | 4.38% (13/297) | 14.48% (43/297) | **5.39%** (16/297) | [3.11%, 8.60%] |
-| **Defect Escapes (Bad $\to$ PASS)** | 0.00% (0/26) | 11.54% (3/26) | 0.00% (0/26) | **3.85%** (1/26) | [0.10%, 19.64%] |
-| **Defect Recall (Automated FAIL)** | 100.00% (26/26) | 88.46% (23/26) | 88.46% (23/26) | **15.38%** (4/26) | [4.36%, 34.87%] |
-| **Defect Interception (FAIL + HUMAN)** | 100.00% (26/26) | 88.46% (23/26) | 92.31% (24/26) | **88.46%** (23/26) | [69.85%, 97.55%] |
-| **Human Review Escalation Rate** | 0.00% (Forced binary) | 0.00% (Forced binary) | 6.81% (22/323) | **10.84%** (35/323) | [7.66%, 14.75%] |
+| **Total Normal False Alarm (FAIL + HUMAN)** | 20.54% (61/297) | 4.38% (13/297) | 14.48% (43/297) | **11.78%** (35/297) | [8.35%, 16.01%] |
+| **Defect Escapes (Bad $\to$ PASS)** | 0.00% (0/26) | 11.54% (3/26) | 0.00% (0/26) | **0.00%** (0/26) | [0.00%, 13.23%] |
+| **Defect Recall (Automated FAIL)** | 100.00% (26/26) | 88.46% (23/26) | 88.46% (23/26) | **11.54%** (3/26) | [2.45%, 30.15%] |
+| **Defect Interception (FAIL + HUMAN)** | 100.00% (26/26) | 88.46% (23/26) | 92.31% (24/26) | **92.31%** (24/26) | [74.87%, 99.05%] |
+| **Human Review Escalation Rate** | 0.00% (Forced binary) | 0.00% (Forced binary) | 6.81% (22/323) | **17.34%** (56/323) | [13.37%, 21.92%] |
 | **Admission Gate Rejection (RETAKE)** | 0.00% (No gate) | 0.00% (No gate) | 0.93% (3/323) | **0.93%** (3/323) | [0.19%, 2.69%] |
 
 ### Table 1.3: Escaped Defect Breakdown Across Dev and Test Splits
 
-Across both splits (26 dev defects, 70 test defects = 96 total defects), 9 defect images received a final verdict of `PASS` (1 on dev, 8 on test):
+Across both splits (26 dev defects and 70 test defects), 4 defect images received a final verdict of `PASS` (0 on dev, 4 on test):
 
-| Split | Image Path | Ground-Truth Defect Type (from VisA) | PatchCore Score | Decision | Decision Path | Alignment Quality ($q$) | Residual Mean ($r_{\text{mean}}$) | Secondary ROIs Checked |
-| :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Dev** | `pcb1/test/bad/048.JPG` | `missing` | 2.2530 | `PASS` | `AGENT_CLEARED` | 0.7679 | 0.1379 | 1 / 1 |
-| **Test** | `pcb1/test/bad/015.JPG` | `melt` | 1.9064 | `PASS` | `FAST_PASS` | N/A | N/A | N/A |
-| **Test** | `pcb1/test/bad/025.JPG` | `melt` | 2.0637 | `PASS` | `AGENT_CLEARED` | 0.8636 | 0.0826 | 1 / 1 |
-| **Test** | `pcb1/test/bad/058.JPG` | `missing` | 2.2110 | `PASS` | `AGENT_CLEARED` | 0.8223 | 0.1100 | 1 / 1 |
-| **Test** | `pcb1/test/bad/061.JPG` | `melt` | 2.2357 | `PASS` | `AGENT_CLEARED` | 0.8826 | 0.0409 | 2 / 2 |
-| **Test** | `pcb1/test/bad/062.JPG` | `melt` | 2.1965 | `PASS` | `AGENT_CLEARED` | 0.8444 | 0.0429 | 1 / 1 |
-| **Test** | `pcb1/test/bad/063.JPG` | `melt` | 2.0085 | `PASS` | `FAST_PASS` | N/A | N/A | N/A |
-| **Test** | `pcb1/test/bad/085.JPG` | `scratch` | 2.1771 | `PASS` | `AGENT_CLEARED` | 0.8554 | 0.0613 | 1 / 1 |
-| **Test** | `pcb1/test/bad/096.JPG` | `scratch` | 2.0057 | `PASS` | `FAST_PASS` | N/A | N/A | N/A |
+| Split | Image Path | PatchCore Score | Decision Path | Alignment Quality ($q$) | Residual Mean | Secondary ROIs Checked |
+| :---: | :--- | :---: | :---: | :---: | :---: | :---: |
+| **Test** | `pcb1/test/bad/015.JPG` | 1.9064 | `FAST_PASS` | N/A | N/A | N/A |
+| **Test** | `pcb1/test/bad/058.JPG` | 2.2110 | `AGENT_CLEARED` | 0.8041 | 0.1131 | 1 / 1 |
+| **Test** | `pcb1/test/bad/061.JPG` | 2.2357 | `AGENT_CLEARED` | 0.7558 | 0.0620 | 2 / 2 |
+| **Test** | `pcb1/test/bad/062.JPG` | 2.1965 | `AGENT_CLEARED` | 0.8386 | 0.0435 | 1 / 1 |
 
-#### Detailed Escape Mechanism Analysis:
-1. **Sub-Threshold Deep Perception ($s \le t_{\text{pass}}$):** 3 defects (`015.JPG`, `063.JPG`, `096.JPG`) had global PatchCore nearest-neighbor distance scores below the cautious pass threshold $t_{\text{pass}} = 2.0405$. For these subtle defects (hairline scratches, faint melt seams), localized CNN feature activations did not exceed normal structural variance, resulting in direct `FAST_PASS` routing without tool invocation.
-2. **Micro-Anomaly Photometric Dilution ($r_{\text{mean}} \le r_{\text{low}}$):** 6 defects (`048.JPG` on dev, and `025.JPG`, `058.JPG`, `061.JPG`, `062.JPG`, `085.JPG` on test) produced intermediate PatchCore scores in the ambiguous zone ($s \in (2.04, 2.29]$), correctly invoking Evidence Tools T1 (ORB+ECC alignment) and T3 (ROI residual measurement). Alignment succeeded with high confidence ($q \in [0.7679, 0.8826] \ge q_{\text{min}} = 0.65$). However, because the physical defect was geographically confined to a micro-scale footprint (a single missing SMD or tiny scratch) within the $256 \times 256$ ROI patch window, the mean absolute intensity deviation was photometrically diluted over the background, yielding $r_{\text{mean}} \in [0.0409, 0.1379]$, well below the clearing threshold $r_{\text{low}} = 0.38$. The tool policy therefore interpreted the difference as benign registration/lighting variance rather than a structural defect, resulting in `AGENT_CLEARED`.
+#### Detailed Escape Mechanism Summary
+- `1` test defect(s) followed `FAST_PASS`, so secondary tools were not invoked.
+- `3` test defect(s) were cleared after secondary evidence checks.
+- These cases remain known limitations. The table is generated from the commit-matched per-image cache; no defect-type label is inferred from filenames.
 
 ### Quality Gate Rejections & Threshold Sensitivity
 
 > **Root-Cause Analysis for Dev Split Rejections:** 2 real defect images received `RETAKE` from the Admission Quality Gate: `043.JPG` and `050.JPG`. Detailed inspection indicates that they sit near the marginal optical threshold boundary alongside normal boards (such as `0152.JPG` blur 163.3 and `0154.JPG` blur 183.5):
 > - `pcb1/test/bad/043.JPG`: Laplacian blur variance was 183.1 (below 190.0 threshold), bright pixel fraction was 12.9% (exceeded 11.8% threshold), and specular glare was 13.4% (exceeded 10.5% threshold).
 > - `pcb1/test/bad/050.JPG`: Glare fraction was 10.6% (exceeded 10.5% threshold by 0.1%).
-> These rejections represent marginal optical threshold boundary cutoffs rather than catastrophic physical corruptions. In industrial deployment, marginal captures trigger an automated camera re-take prior to neural inference.
+> These rejections represent marginal optical threshold boundary cutoffs rather than catastrophic physical corruptions. In an industrial deployment, the intended response is a camera re-take prior to neural inference.
 
 > **Quality Gate v1.0 vs. v1.1 Clarification:**
 > - **v1.0 (Snapshot Deployment):** Used in all E1 benchmark runs above to guarantee strict reproducibility against the immutable frozen snapshot.
@@ -143,25 +139,25 @@ Empirical latency profiling across 50 authentic Amazon VisA images (25 Fast-Pass
 
 | Pipeline Stage | Mean Latency | Median ($p_{50}$) | 90th Percentile ($p_{90}$) | 95th Percentile ($p_{95}$) | Maximum Latency |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| 1. Image Preparation & Standardization | 10.1 ms | 10.2 ms | 10.6 ms | 10.6 ms | 10.9 ms |
-| 2. Admission Quality Gate (Focus/Exposure/Glare) | 22.5 ms | 22.0 ms | 25.1 ms | 25.3 ms | 27.0 ms |
-| 3. OpenCV 5 DNN PatchCore (WideResNet-50 + Coreset Search) | 331.4 ms | 328.9 ms | 358.8 ms | 366.0 ms | 372.0 ms |
+| 1. Image Preparation & Standardization | 10.6 ms | 10.5 ms | 11.8 ms | 12.6 ms | 12.9 ms |
+| 2. Admission Quality Gate (Focus/Exposure/Glare) | 19.5 ms | 19.5 ms | 22.3 ms | 23.3 ms | 25.1 ms |
+| 3. OpenCV 5 DNN PatchCore (WideResNet-50 + Coreset Search) | 268.6 ms | 261.8 ms | 293.6 ms | 306.6 ms | 315.9 ms |
 | 4. Evidence Tools (T1 Alignment + T3 Measurement) | 0.0 ms | 0.0 ms | 0.0 ms | 0.0 ms | 0.0 ms |
-| 5. Diagnostic Asset Generation & Base64 Encoding | 2.7 ms | 2.7 ms | 2.8 ms | 2.8 ms | 3.0 ms |
-| 6. Framework Overhead / Internal Transfer | 49.5 ms | 49.5 ms | 51.9 ms | 52.3 ms | 53.8 ms |
-| **Total FAST_PASS End-to-End Latency** | 416.2 ms | 414.8 ms | 447.1 ms | 449.7 ms | 461.6 ms |
+| 5. Diagnostic Asset Generation & Base64 Encoding | 2.7 ms | 2.7 ms | 2.7 ms | 2.7 ms | 2.7 ms |
+| 6. Framework Overhead / Internal Transfer | 45.9 ms | 44.9 ms | 51.0 ms | 51.8 ms | 55.3 ms |
+| **Total FAST_PASS End-to-End Latency** | 347.3 ms | 337.9 ms | 378.7 ms | 389.5 ms | 398.5 ms |
 
 ### Table 4.2: Tool Execution Path (Admission Gate + PatchCore + Multi-Tool Verification)
 
 | Pipeline Stage | Mean Latency | Median ($p_{50}$) | 90th Percentile ($p_{90}$) | 95th Percentile ($p_{95}$) | Maximum Latency |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| 1. Image Preparation & Standardization | 10.5 ms | 10.5 ms | 11.4 ms | 11.6 ms | 12.4 ms |
-| 2. Admission Quality Gate (Focus/Exposure/Glare) | 22.4 ms | 22.0 ms | 24.3 ms | 26.8 ms | 31.2 ms |
-| 3. OpenCV 5 DNN PatchCore (WideResNet-50 + Coreset Search) | 325.4 ms | 319.9 ms | 344.3 ms | 357.9 ms | 364.1 ms |
-| 4. Evidence Tools (T1 Alignment + T3 Measurement) | 169.4 ms | 89.0 ms | 104.8 ms | 137.6 ms | 2018.2 ms |
-| 5. Diagnostic Asset Generation & Base64 Encoding | 2.7 ms | 2.7 ms | 2.8 ms | 2.8 ms | 2.9 ms |
-| 6. Framework Overhead / Internal Transfer | 51.0 ms | 50.3 ms | 55.3 ms | 56.7 ms | 58.6 ms |
-| **Total Multi-Tool End-to-End Latency** | 581.5 ms | 495.5 ms | 536.2 ms | 559.9 ms | 2470.0 ms |
+| 1. Image Preparation & Standardization | 11.1 ms | 10.7 ms | 12.7 ms | 12.8 ms | 13.3 ms |
+| 2. Admission Quality Gate (Focus/Exposure/Glare) | 19.0 ms | 18.7 ms | 21.8 ms | 22.2 ms | 26.0 ms |
+| 3. OpenCV 5 DNN PatchCore (WideResNet-50 + Coreset Search) | 274.2 ms | 270.8 ms | 294.3 ms | 299.4 ms | 306.8 ms |
+| 4. Evidence Tools (T1 Alignment + T3 Measurement) | 58.5 ms | 56.7 ms | 64.4 ms | 66.9 ms | 75.9 ms |
+| 5. Diagnostic Asset Generation & Base64 Encoding | 2.7 ms | 2.7 ms | 2.8 ms | 2.8 ms | 2.8 ms |
+| 6. Framework Overhead / Internal Transfer | 46.7 ms | 45.7 ms | 50.4 ms | 52.5 ms | 54.9 ms |
+| **Total Multi-Tool End-to-End Latency** | 412.2 ms | 404.9 ms | 442.8 ms | 448.5 ms | 457.2 ms |
 
 > **Latency Attribution Note:** All stage means strictly sum to the total end-to-end latency. Feature extraction is executed via `cv2.dnn.readNetFromONNX` with vectorized Euclidean nearest-neighbor search in NumPy.
 
@@ -169,8 +165,8 @@ Empirical latency profiling across 50 authentic Amazon VisA images (25 Fast-Pass
 
 ## 6. Architectural Conclusions & Competition Significance
 1. **False Alarm Scrap Elimination:** SureInspect reduces automated normal false alarm scrap rates to **0.00%** on both the development (0/297) and test (0/100) splits, representing a **100.0% relative reduction** compared to single-threshold baselines.
-2. **Operator Triage Burden Reduction:** By dispatching secondary OpenCV evidence tools (ORB+ECC alignment, multi-ROI photometric residuals, and contour measurements), SureInspect safely clears 15 ambiguous normal boards on the test split, reducing human review burden from 27.00% down to 12.00%.
-3. **Defect Interception Efficacy:** SureInspect achieves an **87.14% total defect interception rate** (61/70) on the test split and **88.46%** (23/26) on the development split (combining automated rejection with operator escalation).
+2. **Operator Triage Trade-Off:** SureInspect routes **18.00%** (18/100) of test normals and **11.78%** (35/297) of development normals to human review while keeping automated normal-board FAIL at zero.
+3. **Defect Interception Efficacy:** SureInspect routes **92.86%** (65/70) of test defects and **92.31%** (24/26) of development defects to FAIL or HUMAN. This statement assumes HUMAN-routed defects are caught by review and excludes RETAKE from interception.
 4. **Split-Conformal Statistical Guarantees:** Conformal calibration mathematically bounds the normal marginal error rate ($1 - \alpha \ge 90\%$ at $\alpha=0.10$). Ambiguity in the interval $(t_{\text{pass}}, t_{\text{fail}}]$ triggers evidence verification or operator triage rather than uncalibrated auto-passing.
 5. **Edge CPU Feasibility:** The full pipeline executes on commodity CPU hardware without cloud or GPU dependencies, clocking **~397 ms** for Fast-Pass boards and **~538 ms** for multi-tool escalation boards.
 6. **Physical Admission Defense:** Shipped quality gate parameters intercept 100% of out-of-focus blur, gamma darkening, and specular glare corruptions prior to neural evaluation, preventing silent downstream failures.

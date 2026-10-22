@@ -87,7 +87,7 @@ def main():
     zip_name = args.output
     is_compact = args.compact
 
-    snap_dir = ROOT / "artifacts" / "snapshots" / "pcb1-wide_resnet50_2-256-edc526f4da11"
+    snap_dir = ROOT / "artifacts" / "snapshots" / "pcb1-wide_resnet50_2-256-edc526f4da11-agent-v1"
     if not is_compact:
         if snap_dir.is_dir():
             if not verify_snapshot_integrity(snap_dir):
@@ -117,6 +117,9 @@ def main():
             for f in files:
                 p = Path(root) / f
                 rel_file = p.relative_to(ROOT)
+
+                if "artifacts" in rel_file.parts and "snapshots" in rel_file.parts and snap_dir.name not in rel_file.parts:
+                    continue
 
                 if f in EXCLUDE_EXACT_FILES or f == zip_name:
                     continue

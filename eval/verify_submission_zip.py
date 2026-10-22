@@ -7,9 +7,9 @@ Extracts and verifies:
 3. Tests real OpenCV 5 DNN live inference on a normal board and a defective board.
 4. Confirms decisions, decision paths, and overlays.
 """
+import argparse
 import hashlib
-import json
-import os
+import subprocess
 import sys
 import tempfile
 import zipfile
@@ -21,37 +21,47 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 import cv2
-import numpy as np
 
-ZIP_PATH = Path("sureinspect_ai_evaluation.zip")
+DEFAULT_ZIP_PATH = Path("sureinspect_ai_evaluation.zip")
 
 
-def main():
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "zip_path",
+        nargs="?",
+        default=str(DEFAULT_ZIP_PATH),
+        help="Submission ZIP to verify",
+    )
+    args = parser.parse_args(argv)
+    zip_path = Path(args.zip_path)
+
     print("=" * 70)
     print("SUREINSPECT SUBMISSION VERIFICATION & LIVE INFERENCE CHECK")
     print("=" * 70)
     print(f"OpenCV Version: {cv2.__version__}")
     print(f"Python Version: {sys.version.split()[0]}")
-    print(f"Checking Archive: {ZIP_PATH.resolve()}")
+    print(f"Checking Archive: {zip_path.resolve()}")
 
-    if not ZIP_PATH.is_file():
-        print(f"FAIL: Archive {ZIP_PATH} does not exist!")
-        sys.exit(1)
+    if not zip_path.is_file():
+        print(f"FAIL: Archive {zip_path} does not exist!")
+        return 1
 
-    print(f"Archive Size: {ZIP_PATH.stat().st_size / (1024*1024):.2f} MB")
+    print(f"Archive Size: {zip_path.stat().st_size / (1024*1024):.2f} MB")
 
     # 1. Inspect ZIP contents
-    with zipfile.ZipFile(ZIP_PATH, "r") as zf:
+    with zipfile.ZipFile(zip_path, "r") as zf:
         namelist = set(zf.namelist())
         print(f"Total Files in ZIP: {len(namelist)}")
 
         # Check required model weights
-        snap_prefix = "artifacts/snapshots/pcb1-wide_resnet50_2-256-edc526f4da11"
+        snap_prefix = "artifacts/snapshots/pcb1-wide_resnet50_2-256-edc526f4da11-agent-v1"
         req_weights = [
             f"{snap_prefix}/model.onnx",
             f"{snap_prefix}/bank.npz",
             f"{snap_prefix}/calibration.json",
             f"{snap_prefix}/quality_gate.json",
+            f"{snap_prefix}/policy.json",
             f"{snap_prefix}/SHA256SUMS",
         ]
         for w in req_weights:
@@ -60,7 +70,7 @@ def main():
                 print(f"  [FOUND] {w} ({info.file_size / (1024*1024):.2f} MB uncompressed)")
             else:
                 print(f"  [FAIL] Missing required artifact: {w}")
-                sys.exit(1)
+                return 1
 
         # Check templates
         req_templates = [f"data/templates/pcb1/template_{i:02d}.png" for i in range(5)]
@@ -69,7 +79,7 @@ def main():
                 print(f"  [FOUND] {t}")
             else:
                 print(f"  [FAIL] Missing required template: {t}")
-                sys.exit(1)
+                return 1
 
         # Check key deliverables
         for doc in ["FINAL_SUBMISSION_REPORT.md", "DEMO_SCRIPT.md", "docs/architecture.mmd"]:
@@ -77,7 +87,7 @@ def main():
                 print(f"  [FOUND] {doc}")
             else:
                 print(f"  [FAIL] Missing required deliverable: {doc}")
-                sys.exit(1)
+                return 1
 
         # Verify SHA256 hashes of snapshot files from inside zip
         sums_content = zf.read(f"{snap_prefix}/SHA256SUMS").decode("utf-8")
@@ -90,6 +100,25 @@ def main():
             actual_hash = hashlib.sha256(data).hexdigest()
             assert actual_hash == expected_hash, f"Hash mismatch for {fname}"
             print(f"  [VERIFIED] {fname} ({expected_hash[:16]}...)")
+
+        # Extract only after rejecting traversal paths, then execute from that
+        # directory so no source file can be accidentally imported from the repo.
+        for info in zf.infolist():
+            target = (Path("/") / info.filename).resolve()
+            if ".." in Path(info.filename).parts or not target.is_relative_to(Path("/").resolve()):
+                print(f"  [FAIL] Unsafe archive path: {info.filename}")
+                return 1
+        with tempfile.TemporaryDirectory(prefix="sureinspect-package-") as temp_dir:
+            zf.extractall(temp_dir)
+            packaged = subprocess.run(
+                [sys.executable, "-m", "eval.verify_packaged_runtime"],
+                cwd=temp_dir,
+                check=False,
+            )
+            if packaged.returncode != 0:
+                print("  [FAIL] Extracted packaged runtime smoke test failed")
+                return 1
+            print("  [VERIFIED] Extracted packaged runtime executed successfully")
 
     # 2. Run live inference on normal and defective boards
     print("\nRunning live OpenCV 5 inference tests...")
@@ -146,9 +175,11 @@ def main():
         print("  => PASSED (Secondary tools executed and logged)")
 
     print("\n" + "=" * 70)
-    print("ALL VERIFICATION CHECKS PASSED: ARCHIVE IS SELF-CONTAINED & SUBMISSION READY")
+    print("ARCHIVE STRUCTURE, SNAPSHOT CHECKSUMS, AND LOCAL LIVE INFERENCE PASSED")
+    print("This check does not prove AWS deployment, endpoint availability, video access, or competition eligibility.")
     print("=" * 70)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

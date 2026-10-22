@@ -217,7 +217,7 @@ To prevent misrepresenting deployment readiness, the following table explicitly 
 | Component | Status | Verification & Evidence |
 | :--- | :--- | :--- |
 | **Docker Container Build** | **Implemented & Tested** | `deploy/Dockerfile` tested locally with OpenCV 5.0.0.93 headless. |
-| **Admission Queue** | **Implemented & Tested** | 163 tests passing (163 passed, 5 skipped), including concurrency tests in `backend/tests/test_admission_queue.py`. |
+| **Admission Queue** | **Implemented & Tested** | Complete suite passes (171 passed, 5 skipped), including concurrency tests in `backend/tests/test_admission_queue.py`. |
 | **Storage & Audit Cache** | **Implemented & Tested** | Thread-safe LRU cache with 200 MiB ceiling tested in `backend/tests/test_storage.py`. |
 | **Reverse Proxy Config** | **Implemented & Tested** | `deploy/Caddyfile` with edge 10 MiB body limit and header forwarding. |
 | **EC2 Bootstrap Script** | **Implemented & Tested** | Shell script `deploy/setup_ec2.sh` for Ubuntu 22.04 LTS Graviton setup. |
@@ -253,31 +253,31 @@ To demonstrate the practical value of multi-tool agent triage, SureInspect was b
 | Metric | Cautious Baseline ($t_{\text{pass}}=2.04$) | Default Baseline ($t_{\text{fail}}=2.29$) | SureInspect Final Hardened |
 | :--- | :---: | :---: | :---: |
 | **Defect Escapes (PASS on Defect)** | **5.71%** (4 / 70) | 27.14% (19 / 70) | **5.71%** (4 / 70) [MATCHED!] |
-| **95% Clopper-Pearson CI** | [2.24%, 13.79%] | [17.80%, 38.97%] | [2.24%, 13.79%] |
-| **Automated Scrap on Good Boards** | 27.00% (27 / 100) | 5.00% (5 / 100) | **0.00%** (0 / 100) [ZERO SCRAP] |
-| **Human Review on Good Boards** | 0.00% (0 / 100) | 0.00% (0 / 100) | **17.00%** (17 / 100) |
-| **Total Good Boards Cleared (PASS)** | 73.00% (73 / 100) | 95.00% (95 / 100) | **83.00%** (83 / 100) |
-| **Total Defect Interception Rate** | 94.29% (66 / 70) | 72.86% (51 / 70) | **94.29%** (66 / 70) |
-| **Automated Rejection (FAIL)** | 66 / 70 | 51 / 70 | 25 / 70 |
-| **Escalated to Operator (HUMAN)** | 0 / 70 | 0 / 70 | 40 / 70 |
+| **95% Clopper-Pearson CI** | [1.58%, 13.99%] | [17.80%, 38.97%] | [1.58%, 13.99%] |
+| **Automated Scrap on Good Boards** | 27.00% (27 / 100) | 9.00% (9 / 100) | **0.00%** (0 / 100) [ZERO SCRAP] |
+| **Human Review on Good Boards** | 0.00% (0 / 100) | 0.00% (0 / 100) | **18.00%** (18 / 100) |
+| **Total Good Boards Cleared (PASS)** | 73.00% (73 / 100) | 91.00% (91 / 100) | **82.00%** (82 / 100) |
+| **Total Defect Interception Rate (FAIL + HUMAN)** | 94.29% (66 / 70) | 72.86% (51 / 70) | **92.86%** (65 / 70) |
+| **Automated Rejection (FAIL)** | 66 / 70 | 51 / 70 | 10 / 70 |
+| **Escalated to Operator (HUMAN)** | 0 / 70 | 0 / 70 | 55 / 70 |
 | **Optical Retakes (RETAKE)** | 0 / 70 | 0 / 70 | 1 / 70 (041.JPG focus boundary) |
 
 #### Table 2: Development Split Evaluation Results (297 Normals, 26 Defects)
 
 | Metric | Cautious Baseline ($t_{\text{pass}}=2.04$) | Default Baseline ($t_{\text{fail}}=2.29$) | SureInspect Final Hardened |
 | :--- | :---: | :---: | :---: |
-| **Defect Escapes (PASS on Defect)** | **0.00%** (0 / 26) | 11.54% (3 / 26) | **0.00%** (0 / 26) [100% INTERCEPTION] |
-| **Automated Scrap on Good Boards** | 19.87% (59 / 297) | 5.05% (15 / 297) | **0.00%** (0 / 297) [ZERO SCRAP] |
-| **Human Review on Good Boards** | 0.00% (0 / 297) | 0.00% (0 / 297) | **8.08%** (24 / 297) |
-| **Total Good Boards Cleared (PASS)** | 80.13% (238 / 297) | 94.95% (282 / 297) | **91.92%** (273 / 297) |
-| **Total Defect Interception Rate** | 100.00% (26 / 26) | 88.46% (23 / 26) | **100.00%** (26 / 26) |
+| **Defect Escapes (PASS on Defect)** | **0.00%** (0 / 26) | 11.54% (3 / 26) | **0.00%** (0 / 26) |
+| **Automated Scrap on Good Boards** | 20.54% (61 / 297) | 4.38% (13 / 297) | **0.00%** (0 / 297) [ZERO SCRAP] |
+| **Human Review on Good Boards** | 0.00% (0 / 297) | 0.00% (0 / 297) | **11.78%** (35 / 297) |
+| **Total Good Boards Cleared (PASS)** | 79.46% (236 / 297) | 95.62% (284 / 297) | **87.88%** (261 / 297) |
+| **Total Defect Interception Rate (FAIL + HUMAN)** | 100.00% (26 / 26) | 88.46% (23 / 26) | **92.31%** (24 / 26) |
 | **Optical Retakes (RETAKE)** | 0 / 26 | 0 / 26 | 2 / 26 (043.JPG, 050.JPG) |
 
 ### Key Operational Finding
-> On the benchmark test split, SureInspect matches the cautious baseline's defect escape rate of 4/70 (5.71%) while completely eliminating automated good-board scrap (0.0% vs. 27.0% for the baseline). On the development split, defect escapes are 0/26 (0.0%), achieving 100% defect interception. T1 template alignment latency was reduced by 24x (from 1073 ms to 44 ms) via pre-extracted keypoint caching.
+> On the previously seen test regression split, SureInspect matches the cautious baseline's defect escape rate of 4/70 (5.71%) while eliminating automated good-board scrap (0/100 versus 27/100). It routes 18/100 normal boards and 55/70 defective boards to HUMAN, with one defective RETAKE. On development, no defect is passed, 24/26 route to FAIL or HUMAN, and 2/26 route to RETAKE. Human interception assumes reviewers catch flagged defects.
 
-### Controlled Optimization Experiments (5 Hypotheses Tested)
-In accordance with rigorous ML engineering and competition directives, we conducted up to five controlled, hypothesis-driven optimization experiments on the development split (297 normals, 26 defects) to investigate whether defect escapes could be reduced without inducing an unacceptable false alarm burden.
+### Historical Optimization Notes (Not Canonical Evidence)
+The table below is retained as historical engineering context. Its intermediate numbers and outcome labels are not canonical current metrics and must not be copied into submission claims. Current measured results come only from `eval/results/measured_e1_results_v2.json`; new controlled experiments are registered in `docs/EXPERIMENT_LOG.md` before execution.
 
 | Attempt | Targeted Failure Mode | Engineering Hypothesis | Exact Change (Code Diff Summary) | Dev Defect Escapes (Before $\to$ After) | Dev Good Review Rate (Before $\to$ After) | Dev Good Auto-Scrap | Outcome | Decision Rationale |
 | :---: | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :--- |
@@ -302,7 +302,7 @@ Latency was measured across 50 real VisA PCB1 images (25 Fast-Pass and 25 Multi-
 ### Reproducibility Commands
 To reproduce all tests and benchmarks locally:
 ```bash
-# 1. Run the complete automated test suite (163 passed, 5 skipped)
+# 1. Run the complete automated test suite (currently 171 passed, 5 skipped)
 .venv\Scripts\python.exe -m pytest
 
 # 2. Run the real measured E1 evaluation benchmark

@@ -78,3 +78,11 @@ def test_generate_markdown_report():
     assert "Experiment E2" in md
     assert "Experiment E3" in md
     assert "Experiment E4" in md
+    test_counts = e1["final_test_split"]["agent"]["counts"]
+    expected_escapes = (
+        test_counts["defective_pass_fast"] + test_counts["defective_pass_cleared"]
+    )
+    assert f"passed {expected_escapes}/70 defects" in md
+    assert f"{test_counts['normal_human']}/100 normal boards to human review" in md
+    assert "Final Held-Out Test Split" not in md
+    assert "8/70 against 4/70" not in md

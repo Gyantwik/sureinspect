@@ -1,8 +1,23 @@
 {
+  "schema_version": "sureinspect.measured_e1.v1",
   "benchmark_type": "measured_real_images",
   "pipeline_version": "v2_unified",
-  "commit": "6557d1874351a5ec849ebd45ac95fda96b8ccca0",
-  "timestamp": "2026-10-21T17:20:11Z",
+  "commit": "536618b43ee52d1369011f868a722f5a4fcdb214",
+  "timestamp": "2026-10-22T13:42:32Z",
+  "provenance": {
+    "generator": "eval.run_real_e1",
+    "dataset": "Amazon VisA pcb1",
+    "dataset_root": "datasets/VisA_pytorch/1cls",
+    "snapshot_id": "pcb1-wide_resnet50_2-256-edc526f4da11",
+    "snapshot_manifest_sha256": "55b2f93a8c2ecc7b46c90f229525b79d613ea239a12f8f749f693d295cf14ee0",
+    "splits_sha256": "1bacaf66f05b8965837e2f4f72b82e07ee4ebf3d91ccda353926858427e6ce78",
+    "model_sha256": "48642eec4d02294b8e230c04289aadf296fd1b827bafe9a4fc9f9115875a3939",
+    "bank_sha256": "5d02a7f53f8116280b072ce556e7edd5436a2653eb67e0b416f1afe5b20c98e7",
+    "calibration_sha256": "f6bddbe0f2be695f83654d4fb2118aa4a8d0ca748a49653ae324f8d388310b4b",
+    "quality_gate_sha256": "b484aef445e1bf2a988ad1bb24e57570f28468a78c5b166138719d4d1888af94",
+    "prediction_cache_commit": "536618b43ee52d1369011f868a722f5a4fcdb214",
+    "prediction_count": 493
+  },
   "thresholds": {
     "t_pass": 2.0405399799346924,
     "t_fail": 2.2862818241119385
@@ -177,48 +192,48 @@
       "n_normal": 297,
       "n_defective": 26,
       "counts": {
-        "normal_pass_fast": 235,
-        "normal_pass_cleared": 45,
+        "normal_pass_fast": 212,
+        "normal_pass_cleared": 49,
         "normal_fail": 0,
-        "normal_human": 16,
+        "normal_human": 35,
         "normal_retake": 1,
         "defective_pass_fast": 0,
-        "defective_pass_cleared": 1,
-        "defective_fail": 4,
-        "defective_human": 19,
+        "defective_pass_cleared": 0,
+        "defective_fail": 3,
+        "defective_human": 21,
         "defective_retake": 2
       },
       "coverage": {
-        "rate": 0.8823529411764706,
-        "numerator": 285,
+        "rate": 0.8173374613003096,
+        "numerator": 264,
         "denominator": 323,
         "ci_95": [
-          0.8426417336345201,
-          0.9130763472087816
+          0.771552508541341,
+          0.855662902684881
         ]
       },
       "defect_escapes": {
-        "rate": 0.038461538461538464,
-        "numerator": 1,
+        "rate": 0.0,
+        "numerator": 0,
         "denominator": 26,
         "fast_pass_escapes": 0,
-        "agent_cleared_escapes": 1,
+        "agent_cleared_escapes": 0,
         "ci_95": [
-          0.006821984993543487,
-          0.18892778903034757
+          0.0,
+          0.1287289218592153
         ],
         "exact_ci": [
-          0.0009732878933350311,
-          0.19636964676253896
+          0.0,
+          0.13227460449775408
         ]
       },
       "defect_recall": {
-        "rate": 0.15384615384615385,
-        "numerator": 4,
+        "rate": 0.11538461538461539,
+        "numerator": 3,
         "denominator": 26,
         "ci_95": [
-          0.06150033723578355,
-          0.3353119932821348
+          0.04003244623610615,
+          0.2897590321171364
         ]
       },
       "false_fail": {
@@ -231,12 +246,12 @@
         ]
       },
       "review_burden": {
-        "rate": 0.10835913312693499,
-        "numerator": 35,
+        "rate": 0.17337461300309598,
+        "numerator": 56,
         "denominator": 323,
         "ci_95": [
-          0.07895102549247413,
-          0.14697336943321274
+          0.13599256025713521,
+          0.2184345042856313
         ]
       },
       "retake_rate": {
@@ -249,12 +264,12 @@
         ]
       },
       "selective_accuracy": {
-        "rate": 0.9964912280701754,
-        "numerator": 284,
-        "denominator": 285,
+        "rate": 1.0,
+        "numerator": 264,
+        "denominator": 264,
         "ci_95": [
-          0.9803958984204054,
-          0.9993803468438859
+          0.9856577139416427,
+          1.0
         ]
       }
     },
@@ -431,48 +446,48 @@
       "n_normal": 100,
       "n_defective": 70,
       "counts": {
-        "normal_pass_fast": 73,
-        "normal_pass_cleared": 15,
+        "normal_pass_fast": 61,
+        "normal_pass_cleared": 21,
         "normal_fail": 0,
-        "normal_human": 12,
+        "normal_human": 18,
         "normal_retake": 0,
-        "defective_pass_fast": 3,
-        "defective_pass_cleared": 5,
-        "defective_fail": 11,
-        "defective_human": 50,
+        "defective_pass_fast": 1,
+        "defective_pass_cleared": 3,
+        "defective_fail": 10,
+        "defective_human": 55,
         "defective_retake": 1
       },
       "coverage": {
-        "rate": 0.6294117647058823,
-        "numerator": 107,
+        "rate": 0.5647058823529412,
+        "numerator": 96,
         "denominator": 170,
         "ci_95": [
-          0.5547017376450134,
-          0.6984024430175699
+          0.4895610771573027,
+          0.6369910131739889
         ]
       },
       "defect_escapes": {
-        "rate": 0.11428571428571428,
-        "numerator": 8,
+        "rate": 0.05714285714285714,
+        "numerator": 4,
         "denominator": 70,
-        "fast_pass_escapes": 3,
-        "agent_cleared_escapes": 5,
+        "fast_pass_escapes": 1,
+        "agent_cleared_escapes": 3,
         "ci_95": [
-          0.059061289466376454,
-          0.20964221582154374
+          0.02244377910071125,
+          0.1379195047483823
         ],
         "exact_ci": [
-          0.05065219879035647,
-          0.21282804216909035
+          0.015787082153243166,
+          0.13989417409797877
         ]
       },
       "defect_recall": {
-        "rate": 0.15714285714285714,
-        "numerator": 11,
+        "rate": 0.14285714285714285,
+        "numerator": 10,
         "denominator": 70,
         "ci_95": [
-          0.09007620559861788,
-          0.2598824657684222
+          0.07948941717066599,
+          0.2433841988366675
         ]
       },
       "false_fail": {
@@ -485,12 +500,12 @@
         ]
       },
       "review_burden": {
-        "rate": 0.36470588235294116,
-        "numerator": 62,
+        "rate": 0.4294117647058823,
+        "numerator": 73,
         "denominator": 170,
         "ci_95": [
-          0.29607972201746413,
-          0.4393113618352896
+          0.35737336097766403,
+          0.5045698132063813
         ]
       },
       "retake_rate": {
@@ -503,12 +518,12 @@
         ]
       },
       "selective_accuracy": {
-        "rate": 0.9252336448598131,
-        "numerator": 99,
-        "denominator": 107,
+        "rate": 0.9583333333333334,
+        "numerator": 92,
+        "denominator": 96,
         "ci_95": [
-          0.8593625455360884,
-          0.9616298968965648
+          0.8977180853334191,
+          0.9836792924637118
         ]
       }
     },

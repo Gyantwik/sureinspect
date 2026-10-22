@@ -52,9 +52,19 @@ def find_snapshot_dir(base_dir: Path | str = "artifacts") -> Path | None:
     p = Path(base_dir)
     snapshots_dir = p / "snapshots"
     if snapshots_dir.is_dir():
+        candidates = []
         for d in sorted(snapshots_dir.iterdir()):
             if d.is_dir() and (d / "model.onnx").is_file() and (d / "bank.npz").is_file():
-                return d
+                manifest = d / "manifest.json"
+                readiness = ""
+                if manifest.is_file():
+                    try:
+                        readiness = json.loads(manifest.read_text(encoding="utf-8")).get("readiness", "")
+                    except (OSError, json.JSONDecodeError):
+                        pass
+                candidates.append((readiness == "agent_ready", d))
+        if candidates:
+            return sorted(candidates, key=lambda item: (item[0], item[1].name), reverse=True)[0][1]
     if (p / "model.onnx").is_file() and (p / "bank.npz").is_file():
         return p
     return None

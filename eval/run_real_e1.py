@@ -9,6 +9,7 @@ and real agent evidence tools T1-T5.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import subprocess
 import sys
@@ -28,6 +29,14 @@ from core.perception import score_image
 import cv2
 
 CACHE_PATH = Path("eval/results/cached_e1_predictions.json")
+
+
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def get_git_commit_hash() -> str:
@@ -129,7 +138,7 @@ def evaluate_image_split(
                 "residual_mean": resp.measurements.residual_mean if resp.measurements else None,
                 "rois_checked": resp.measurements.rois_checked if resp.measurements else 0,
                 "rois_total": resp.measurements.rois_total if resp.measurements else 0,
-                "timing_ms": resp.timing_ms.dict() if resp.timing_ms else None,
+                "timing_ms": resp.timing_ms.model_dump() if resp.timing_ms else None,
             }
             if (i + 1) % 10 == 0:
                 save_cache(cache, commit_hash)
@@ -173,11 +182,12 @@ def run_measured_e1():
         raise RuntimeError("Cannot load live OpenCV engine from artifacts snapshot!")
         
     root = Path("datasets/VisA_pytorch/1cls")
-    splits_path = Path("artifacts/snapshots/pcb1-wide_resnet50_2-256-edc526f4da11/splits.json")
+    snapshot_dir = Path("artifacts/snapshots/pcb1-wide_resnet50_2-256-edc526f4da11")
+    splits_path = snapshot_dir / "splits.json"
     with open(splits_path, encoding="utf-8") as f:
         splits = json.load(f)
         
-    calib_path = Path("artifacts/snapshots/pcb1-wide_resnet50_2-256-edc526f4da11/calibration.json")
+    calib_path = snapshot_dir / "calibration.json"
     with open(calib_path, encoding="utf-8") as f:
         calib = json.load(f)
         
@@ -242,10 +252,25 @@ def run_measured_e1():
     test_fa_reduct = 100.0 * (test_base_fa - test_agent_fa) / max(1, test_base_fa)
     
     results_v2 = {
+        "schema_version": "sureinspect.measured_e1.v1",
         "benchmark_type": "measured_real_images",
         "pipeline_version": "v2_unified",
         "commit": commit_hash,
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "provenance": {
+            "generator": "eval.run_real_e1",
+            "dataset": "Amazon VisA pcb1",
+            "dataset_root": "datasets/VisA_pytorch/1cls",
+            "snapshot_id": snapshot_dir.name,
+            "snapshot_manifest_sha256": sha256_file(snapshot_dir / "manifest.json"),
+            "splits_sha256": sha256_file(splits_path),
+            "model_sha256": sha256_file(snapshot_dir / "model.onnx"),
+            "bank_sha256": sha256_file(snapshot_dir / "bank.npz"),
+            "calibration_sha256": sha256_file(calib_path),
+            "quality_gate_sha256": sha256_file(snapshot_dir / "quality_gate.json"),
+            "prediction_cache_commit": commit_hash,
+            "prediction_count": len(cache),
+        },
         "thresholds": {"t_pass": t_pass, "t_fail": t_fail},
         "dev_split": {
             "n_normals": len(dev_normals),

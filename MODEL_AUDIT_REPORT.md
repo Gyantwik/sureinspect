@@ -23,7 +23,7 @@ This audit evaluates the machine learning artifacts, perception backbone, split-
 
 3. **Measured Improvement Across 5 Controlled Attempts:**  
    Through five controlled, leak-free interventions (caching reference descriptors, lowering the residual floor to $r_{\text{low}} = 0.30$, coupling secondary contour geometry guards, tightening $t_{\text{pass}} = 2.00$, and unifying fail-safe routing):
-   - **Development Set (323 boards: 297 normal, 26 defect):** Defect escapes were reduced from $1/26$ ($3.85\%$) to **$0/26$ ($0.00\%$ escapes, $100\%$ interception)**. Automated normal-board scrap remained at **$0.00\%$** ($0/297$), with a modest review routing rate of $5.38\%$ ($16/297$).
+   - **Development Set (323 boards: 297 normal, 26 defect):** The current rerun passes **$0/26$ defects**, routes 24/26 defects to FAIL or HUMAN, and routes 2/26 to RETAKE. Automated normal-board scrap is **$0.00\%$** ($0/297$), with a review routing rate of $11.78\%$ ($35/297$) and one normal RETAKE.
    - **Final Test Split (170 boards: 100 normal, 70 defect):** Defect escapes were cut in half from **$8/70$ ($11.43\%$) down to $4/70$ ($5.71\%$)**, perfectly matching the Cautious Baseline while keeping automated good-board scrap at **$0.00\%$** (compared to $27.00\%$ scrap under the Cautious Baseline).
    - **Line Throughput:** p95 total inspection latency is **$599.0\text{ ms}$** (mean $399.4\text{ ms}$), well within the $2.0\text{ s}$ factory conveyor budget.
 
@@ -187,7 +187,7 @@ Each modification was executed as a controlled hypothesis, evaluated against the
 - **Hypothesis:** The legacy residual floor ($r_{\text{low}} = 0.35$) was too lenient, allowing subtle structural anomalies like `048.JPG` ($r = 0.3217$) to receive `AGENT_CLEARED`. Lowering $r_{\text{low}}$ to $0.30$ will intercept micro-anomalies while keeping normal board false reviews minimal.
 - **Implementation:** Updated default fallback `r_low` from $0.35$ to $0.30$ in `core/agent.py` and `core/tools.py`.
 - **Empirical Result:**
-  - Dev defect escapes: Reduced from $1/26$ down to **$0/26$ ($100\%$ interception)**.
+  - Dev defect escapes: Reduced from $1/26$ to **$0/26$ passed**; 24/26 route to FAIL or HUMAN and 2/26 route to RETAKE.
   - Dev normal review impact: Routed only $4$ additional normal boards to review ($+1.35\%$), with **$0.00\%$ false scrap**.
 - **Regression Status:** PASSED.
 
@@ -216,7 +216,7 @@ Each modification was executed as a controlled hypothesis, evaluated against the
 - **Hypothesis:** Integrating all interventions into a unified state machine will achieve real-time continuous conveyor processing ($>2.0\text{ FPS}$) without pipeline stalls or memory leakage.
 - **Implementation:** Verified `eval/conveyor_stream_simulation.py` simulating continuous $2.4\text{ FPS}$ line feed over 100 boards with realistic camera jitter, optical degradations, and defect injections.
 - **Empirical Result:** Processed $100$ boards in $41.2\text{ s}$ ($2.43\text{ FPS}$). Mean latency $399.4\text{ ms}$, p95 latency $485.7\text{ ms}$. Automated good-board scrap remained exactly **$0.00\%$**.
-- **Regression Status:** PASSED. Entire test suite (163 passed, 5 skipped, 0 failed) passes.
+- **Regression Status:** PASSED. Entire test suite (171 passed, 5 skipped, 0 failed) passes.
 
 ---
 

@@ -145,13 +145,13 @@ Before pressing Record (e.g. in OBS Studio or screen recorder):
 * **Visual on Screen:**
   - Display the benchmark comparison table from `eval/results/BENCHMARK_REPORT.md`:
     - Cautious Baseline vs Default Baseline vs SureInspect
-    - Test Defect Interception: `87.14%` (61/70 caught)
+    - Test Defect Interception: `92.86%` (65/70 routed to FAIL or HUMAN; 1 RETAKE)
     - Good-board review reduction: `27% -> 12%`
     - Escaped Defect Breakdown Table (Table 1.3)
 * **Spoken Script:**
   > "We evaluated SureInspect across all 493 images of the Amazon VisA PCB1 benchmark with zero simulated or fabricated metrics.
   >
-  > Compared to a single-threshold cautious baseline, SureInspect cuts operator review on good boards from **27% down to 12%**, while eliminating catastrophic automated scrap. Total defect interception on the test set is **87.14%** (61 of 70 defects intercepted).
+  > Compared with a cautious binary baseline that rejects 27% of good boards, SureInspect routes **18%** of good boards to review and automatically scraps none. On the previously seen test regression split, **65 of 70** defects route to FAIL or HUMAN, 4 pass, and 1 requires RETAKE.
   >
   > In the spirit of scientific integrity and responsible AI, we document all 9 defect escapes openly:
   > Three escapes occurred because faint micro-scratches fell just below the initial deep feature threshold. Six escapes occurred due to *micro-anomaly dilution*—where a defect occupying less than 2% of a 256×256 window was averaged down when computing mean residual.
@@ -181,6 +181,6 @@ Before pressing Record (e.g. in OBS Studio or screen recorder):
 
 ## Technical Notes for the Speaker
 
-1. **Avoid Overpromising:** Never claim SureInspect achieves "100% defect detection" or "0% false alarms". Stick to the verified measured metrics: 87.14% defect interception (61/70 test defects caught), 12% good-board review, and 8 escapes on the seen test set.
+1. **Avoid Overpromising:** Never claim SureInspect achieves "100% defect detection" or "0% false alarms". Use the current measured regression metrics: 65/70 test defects route to FAIL or HUMAN, 18/100 good boards route to HUMAN, 4 defects pass, and 1 defect routes to RETAKE. State that interception assumes human reviewers catch HUMAN-routed defects.
 2. **Emphasize CPU Performance:** Highlight that all benchmarks run on an ordinary Intel Core i5 CPU without requiring expensive GPUs, making it ideal for edge industrial deployment.
 3. **OpenCV 5 Visibility:** Explicitly mention `cv2.dnn.readNetFromONNX`, `cv2.estimateAffinePartial2D`, `cv2.findTransformECC`, and `cv2.Laplacian`.
