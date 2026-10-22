@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from enum import Enum
 from typing import List, Literal, Optional, Tuple, Dict, Any
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 # ---------------------------------------------------------------------------
@@ -48,6 +48,11 @@ class HealthResponse(BaseModel):
     model_version: str
     enabled_categories: List[str]
     loaded_categories: List[str]
+    opencv_version: str
+    python_version: str
+    architecture: str
+    deployment_provider: Literal["aws", "local_or_unspecified"]
+    aws_region: Optional[str] = None
 
 
 class CategoryInfo(BaseModel):
@@ -171,6 +176,9 @@ class AlignmentInfo(BaseModel):
     quality: float
     q_min: float
     rotation_deg: float
+    scale: Optional[float] = None
+    overlap: Optional[float] = None
+    translation_px: Optional[Tuple[float, float]] = None
 
 
 class MeasurementStats(BaseModel):
@@ -229,6 +237,47 @@ class ExperimentalShadowInfo(BaseModel):
     note: str
 
 
+class NextActionInfo(BaseModel):
+    action: Literal[
+        "CONTINUE_LINE",
+        "QUARANTINE_PENDING_CONFIRMATION",
+        "REVIEW_EVIDENCE",
+        "REQUEST_RETAKE",
+    ]
+    execution_mode: Literal["recommendation_only"] = "recommendation_only"
+    requires_human_confirmation: bool
+    external_actuation_performed: bool = False
+    reversible: bool = True
+    reason: str
+
+
+def next_action_for_decision(decision: str | DecisionEnum) -> dict[str, Any]:
+    value = decision.value if isinstance(decision, DecisionEnum) else str(decision)
+    if value == "PASS":
+        return {
+            "action": "CONTINUE_LINE",
+            "requires_human_confirmation": False,
+            "reason": "Agent recommends normal line flow; the service does not actuate factory equipment.",
+        }
+    if value == "FAIL":
+        return {
+            "action": "QUARANTINE_PENDING_CONFIRMATION",
+            "requires_human_confirmation": True,
+            "reason": "Agent recommends reversible quarantine; an operator must confirm disposition.",
+        }
+    if value == "RETAKE":
+        return {
+            "action": "REQUEST_RETAKE",
+            "requires_human_confirmation": False,
+            "reason": "Admission checks require a new frame before any defect decision.",
+        }
+    return {
+        "action": "REVIEW_EVIDENCE",
+        "requires_human_confirmation": True,
+        "reason": "The agent abstained and routed its evidence trace to a trained reviewer.",
+    }
+
+
 # ---------------------------------------------------------------------------
 # Master Inspection Response
 # ---------------------------------------------------------------------------
@@ -244,6 +293,7 @@ class InspectionResponse(BaseModel):
     image: ImageMetadata
     decision: DecisionEnum
     decision_path: DecisionPathEnum
+    next_action: NextActionInfo
     suggested_decision: Optional[Literal["PASS", "FAIL"]] = None
     anomaly_score: Optional[float] = None
     thresholds: ThresholdsInfo
@@ -259,6 +309,14 @@ class InspectionResponse(BaseModel):
     grounded_report: str
     counterfactuals: List[CounterfactualItem] = Field(default_factory=list)
     experimental_shadow: Optional[ExperimentalShadowInfo] = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def populate_next_action(cls, data: Any) -> Any:
+        if isinstance(data, dict) and "next_action" not in data and data.get("decision") is not None:
+            data = dict(data)
+            data["next_action"] = next_action_for_decision(data["decision"])
+        return data
 
 
 # ---------------------------------------------------------------------------

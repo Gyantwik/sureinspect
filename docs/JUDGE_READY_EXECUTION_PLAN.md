@@ -7,9 +7,10 @@ Prepare SureInspect for the OpenCV AI Competition 2026 without fabricating resul
 ## Current Frozen Starting Point
 
 - Audit start: 2026-10-22 IST
-- Working-tree commit: `536618b43ee52d1369011f868a722f5a4fcdb214`
-- Commit subject: `docs: generate comprehensive MODEL_AUDIT_REPORT with artifact audit and escape analysis`
-- Working tree at audit start: clean
+- Audit-start commit: `536618b43ee52d1369011f868a722f5a4fcdb214`
+- Current base commit: `d749f32d70ecf53cbc7fdd5f07c91f644a52efad`
+- Current pipeline fingerprint: `a241045168624da082502a1b36d78e6588902afad264f3cbe166ef6e3cbc8094`
+- Working tree: intentionally modified for the current hardening pass; no PR or push performed
 - Python: 3.11.9
 - OpenCV: 5.0.0
 - NumPy: 2.4.6
@@ -17,10 +18,10 @@ Prepare SureInspect for the OpenCV AI Competition 2026 without fabricating resul
 - Pydantic: 2.14.1
 - Node.js: 24.4.0
 - npm: 11.4.2
-- Verified Python test run: 171 passed, 5 skipped, with 2 warnings
+- Verified Python test run: 180 passed, 5 skipped, with 2 warnings
 - Current snapshot: `pcb1-wide_resnet50_2-256-edc526f4da11`
-- Current measured-result commit: `536618b43ee52d1369011f868a722f5a4fcdb214`
-- The measured result matches the audit-start commit. Subsequent uncommitted work is limited to documentation and evaluation safeguards.
+- Current measured-result commit: `d749f32d70ecf53cbc7fdd5f07c91f644a52efad`
+- The measured result matches current inference content through its pipeline fingerprint, including uncommitted changes.
 
 ## Non-Negotiable Evaluation Rules
 
@@ -38,19 +39,19 @@ Prepare SureInspect for the OpenCV AI Competition 2026 without fabricating resul
 | Phase | Purpose | Status | Exit condition |
 |---|---|---|---|
 | P0.1 | Establish trusted baseline and provenance | Complete | Canonical schema, provenance record, discrepancy inventory, and verified commands exist |
-| P0.2 | Reconcile conflicting metrics | In progress | All tracked headline metrics are generated from one canonical result |
-| P0.3 | Complete reproducibility and test reliability | In progress | Full suite finishes repeatedly; frontend, API drift, checksums, archive, and smoke test pass |
-| P0.4 | Publish agent-ready snapshot metadata | Not started | Snapshot is complete, versioned, checksum-valid, and accurately marked |
-| P0.5 | Prove live OpenCV 5 execution | Not started | Health, logs, and a reproducible inspection prove OpenCV 5 DNN execution |
-| P1 | Development-only controlled improvements | Blocked by P0 | Up to five registered experiments are accepted or rejected against fixed criteria |
-| P2 | Freeze and independent final evaluation | Blocked by P1 | Immutable candidate and independent final evidence exist |
-| P3 | Agentic Vision proof | Not started | Real traces show OpenCV evidence changing later actions |
-| P4 | Operator UX and policy consistency | Not started | UI, retention, feedback, accessibility, and failure states agree with implementation |
+| P0.2 | Reconcile conflicting metrics | Complete | All tracked headline metrics are generated from one canonical result |
+| P0.3 | Complete reproducibility and test reliability | Complete locally | Full suite, frontend, API drift, checksums, and browser smoke pass |
+| P0.4 | Publish agent-ready snapshot metadata | Complete | Snapshot is versioned, checksum-valid, and accurately marked |
+| P0.5 | Prove live OpenCV 5 execution | Complete locally | Health, runtime proof, and reproducible inspection prove OpenCV 5 DNN execution |
+| P1 | Development-only controlled improvements | Complete for acquisition hardening | Declared regression assertions pass without model/threshold tuning |
+| P2 | Freeze and independent final evaluation | External data pending | Current candidate is fingerprinted; genuinely independent data is still required |
+| P3 | Agentic Vision proof | Complete locally | Real traces show OpenCV evidence changing later actions |
+| P4 | Operator UX and policy consistency | Complete locally | UI, retention, feedback, accessibility, and failure states agree with implementation |
 | P5 | Additional category or dataset | Optional | Added only with complete calibration and evaluation |
 | P6 | AWS eligibility | Not started | Meaningful live workload and judge-accessible proof exist |
-| P7 | Authoritative report generation | Blocked by canonical results | All reports agree with canonical evidence |
+| P7 | Authoritative report generation | Complete locally | Reports map to canonical evidence and distinguish pending external proof |
 | P8 | Five-minute video and live demonstration | Not started | Video and endpoint or screen-share are judge-accessible |
-| P9 | Submission verification | Not started | Clean archive passes every submission gate |
+| P9 | Submission verification | Final archive rebuild pending | Local judge command passes; archive must be rebuilt after current changes |
 
 ## P0 Work Queue
 
@@ -72,7 +73,7 @@ Prepare SureInspect for the OpenCV AI Competition 2026 without fabricating resul
 ### P0.3 Reproducibility
 
 - Record that the admission-queue test stalls only in the restricted Windows sandbox because `asyncio` cannot create its loopback socket pair; it passes outside that sandbox.
-- Repeat the full Python suite before the final freeze. Latest verified run: 171 passed, 5 skipped.
+- Repeat the full Python suite before the final freeze. Latest verified run: 180 passed, 5 skipped.
 - Repeat frontend tests, type checking, and production build before the final freeze. Latest verified runs pass.
 - Repeat OpenAPI drift, snapshot checksums, split integrity, archive contents, API health, and one deterministic inspection before the final freeze. OpenAPI, checksum, archive, and local inference checks currently pass.
 - Consolidate these checks into one judge command.
@@ -117,3 +118,14 @@ P0 is complete only when:
 - Validated the regenerated artifact: test defect escapes 4/70, test normal HUMAN 18/100, development defect escapes 0/26, and development normal HUMAN 35/297.
 - Updated the generated benchmark report to derive its headline and per-escape table from commit-matched evidence rather than stale hard-coded prose.
 - No detection code, thresholds, policy, model artifact, or benchmark output was changed.
+
+### 2026-10-23 — Agentic and acquisition hardening
+
+- Added bounded 0.60x–1.60x OpenCV alignment recovery while retaining overlap, quality, rotation, and safety gates.
+- Added a conservative autonomy rule for strong acquisition-scale shifts so resampling cannot silently erase a small defect and still receive automatic clearance.
+- Added measured scale, overlap, and translation evidence to the API and operator UI.
+- Added a structured recommendation-only next action with explicit human-confirmation and external-actuation fields.
+- Added content-addressed cache and candidate compatibility across inference code, snapshot artifacts, and templates.
+- Regenerated all 493 real-image predictions from an empty cache; canonical outcomes were reproduced.
+- Added and passed a 15-case acquisition benchmark; the 0.729x known-good screenshot is recovered while transformed known defects never pass.
+- Verified 180 Python tests, 4 frontend tests, TypeScript, production build, all consolidated judge gates, and a live browser inspection with no console errors.

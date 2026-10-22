@@ -11,10 +11,11 @@ This document records which artifacts exist, where reported metrics came from, a
 | Audit date | 2026-10-22 IST |
 | Working-tree commit | `536618b43ee52d1369011f868a722f5a4fcdb214` |
 | Working tree | Clean |
-| Measured v2 embedded commit | `536618b43ee52d1369011f868a722f5a4fcdb214` |
-| Commit match | Yes, against the audit-start commit; subsequent uncommitted changes are documentation and evaluation safeguards |
+| Current measured v2 embedded commit | `d749f32d70ecf53cbc7fdd5f07c91f644a52efad` |
+| Current pipeline fingerprint | `a241045168624da082502a1b36d78e6588902afad264f3cbe166ef6e3cbc8094` |
+| Candidate match | Yes; content fingerprint includes uncommitted inference files, snapshot artifacts, and templates |
 
-The measured v2 result was regenerated from scratch against the audit-start commit after rejecting the older cache. It describes the current detection implementation; subsequent uncommitted changes do not alter detection policy, model weights, thresholds, or runtime inference.
+The measured v2 result was regenerated again from an empty cache after the acquisition-safety hardening. Model weights and conformal thresholds are unchanged; the pipeline fingerprint proves the reported predictions match the current inference content rather than merely the current Git commit.
 
 ## Runtime Inventory
 
@@ -30,7 +31,7 @@ The measured v2 result was regenerated from scratch against the audit-start comm
 
 ## Snapshot Inventory
 
-Snapshot directory: `artifacts/snapshots/pcb1-wide_resnet50_2-256-edc526f4da11`
+Snapshot directory: `artifacts/snapshots/pcb1-wide_resnet50_2-256-edc526f4da11-agent-v1`
 
 | File | Bytes | SHA-256 |
 |---|---:|---|
@@ -48,10 +49,11 @@ Snapshot directory: `artifacts/snapshots/pcb1-wide_resnet50_2-256-edc526f4da11`
 
 | File | Bytes | SHA-256 | Current disposition |
 |---|---:|---|---|
-| `eval/results/measured_e1_results_v2.json` | 13,228 | `6744108b974c0d20aa4f018e33546d996440191cf0c61e361584f800ce7dc1d7` | Current canonical regression evidence; generated from the audit-start commit |
+| `eval/results/measured_e1_results_v2.json` | 13,437 | `1266842676083b9e4cb54566e1bb02cc436ba4e7f395e5cee779983e82950d95` | Current canonical regression evidence; fingerprint-matched to the current candidate |
 | `eval/results/measured_e1_results.json` | 7,159 | `be170b94106503c1b654f43134868b88e27bd726e4d2fea3a15062dbce571367` | Superseded candidate pending provenance confirmation |
 | `eval/results/benchmark_summary.json` | 31,088 | `4cd76890ec532263da216379e96f4b6dd54fe952108ed5af43cd457f7abd56b6` | Generated summary linked to the canonical regression result |
-| `eval/results/cached_e1_predictions.json` | 236,037 | `72ce1bd9c8fe1e760bd62fba73f912b1edc99ffee5f782bf07595b50a2b114ca` | Per-image cache bound to the measured implementation commit |
+| `eval/results/cached_e1_predictions.json` | 236,148 | `96fb807d38719eab5e5f341f873d1315e518386a2245d5bfd9f86af350d07deb` | Per-image cache bound to the measured pipeline fingerprint |
+| `eval/results/acquisition_robustness.json` | 9,950 | `5f3d874f41209aa71db51139bf71408b7bc56f15bfe2648ba49fa0ae21ad71bd` | 15-case real-engine upload/resampling safety regression |
 | `eval/results/BENCHMARK_REPORT.md` | 15,430 | `36fd6dde24637fbf227b00c80f7b3061b8d13833b592e7413b3c236ee96313bd` | Generated human-readable report, never canonical |
 
 ## Current Measured v2 Evidence Candidate
@@ -96,7 +98,7 @@ Snapshot directory: `artifacts/snapshots/pcb1-wide_resnet50_2-256-edc526f4da11`
 - Total HUMAN burden: 73/170, 42.94%
 - Selective accuracy: 92/96, 95.83%
 
-These values describe the audit-start commit and a previously seen regression split. They are canonical regression evidence, but they are not an independent final evaluation.
+These values describe the current fingerprint-matched candidate and a previously seen regression split. They are canonical regression evidence, but they are not an independent final evaluation.
 
 ## Confirmed Claim Conflicts
 
@@ -104,7 +106,7 @@ These values describe the audit-start commit and a previously seen regression sp
 |---|---|---|---|---|
 | Test normal HUMAN | 18/100 | 17/100 | `FINAL_SUBMISSION_REPORT.md` | Corrected to 18/100 |
 | Development normal HUMAN | 35/297, plus one RETAKE | 24/297 | `FINAL_SUBMISSION_REPORT.md` | Corrected to 35/297 |
-| Python test result | 171 passed, 5 skipped | 156 tests | `README.md` | Corrected to the verified result on 2026-10-22 |
+| Python test result | 180 passed, 5 skipped | Earlier counts | `README.md` | Corrected to the latest verified result on 2026-10-23 |
 | Snapshot readiness | `perception_only` | Full agent-ready behavior described | snapshot manifest and reports | Publish a new correctly versioned snapshot rather than rewriting history |
 | Snapshot evaluation | `pending` | Final hardened/evaluated wording | snapshot manifest and reports | Publish a new evaluated snapshot after verified evaluation |
 
@@ -112,7 +114,7 @@ These values describe the audit-start commit and a previously seen regression sp
 
 `eval/results/measured_e1_results_v2.json` is the canonical evidence for the current regression evaluation.
 
-It is machine-readable, validated for count/rate arithmetic, generated from a clean cache against the audit-start commit, and now drives the benchmark report. It is deliberately limited because:
+It is machine-readable, validated for count/rate arithmetic, regenerated from a clean cache against the current pipeline fingerprint, and drives the benchmark report. It is deliberately limited because:
 
 - its final-test split was previously seen;
 - the complete current test suite must remain green after the candidate is frozen;
@@ -120,9 +122,9 @@ It is machine-readable, validated for count/rate arithmetic, generated from a cl
 
 ## Verification Record
 
-Verified on 2026-10-22 against the audit-start working tree plus documentation and verifier changes:
+Verified on 2026-10-23 against the current fingerprint-matched working candidate:
 
-- Python: 171 passed, 5 skipped, 2 warnings in 56.24 seconds.
+- Python: 180 passed, 5 skipped, 2 warnings in 56.53 seconds.
 - The admission-queue cancellation test passes outside the restricted Windows sandbox; the sandbox cannot create the `asyncio` loopback socket pair used by the test runtime.
 - Frontend: 4 tests passed.
 - TypeScript: type checking passed.
@@ -131,6 +133,8 @@ Verified on 2026-10-22 against the audit-start working tree plus documentation a
 - OpenAPI: regeneration produced the same file hash.
 - Snapshot: all recorded checksums matched.
 - Submission archive: required structure, internal checksums, and local OpenCV 5 inference passed.
+- Acquisition robustness: all 15 declared cases passed, including 0.729x recovery with no known-bad PASS.
+- Browser smoke test: real live inspection rendered the trace, recovered geometry, and structured next action with no console errors.
 
 These local checks do not prove AWS deployment, public endpoint availability, video eligibility, or competition eligibility.
 

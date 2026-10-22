@@ -29,6 +29,18 @@ from core.perception import score_image
 import cv2
 
 CACHE_PATH = Path("eval/results/cached_e1_predictions.json")
+PIPELINE_INPUTS = (
+    Path("core/agent.py"),
+    Path("core/perception.py"),
+    Path("core/preprocess.py"),
+    Path("core/quality.py"),
+    Path("core/tools.py"),
+    Path("backend/live_runner.py"),
+)
+PIPELINE_ROOTS = (
+    Path("artifacts/snapshots/pcb1-wide_resnet50_2-256-edc526f4da11-agent-v1"),
+    Path("data/templates/pcb1"),
+)
 
 
 def sha256_file(path: Path) -> str:
@@ -47,24 +59,43 @@ def get_git_commit_hash() -> str:
         return "latest"
 
 
-def load_cache(current_commit: str) -> Dict[str, Any]:
+def get_pipeline_fingerprint(_current_commit: str | None = None) -> str:
+    """Fingerprint inference code, including uncommitted evaluation-critical edits."""
+    relative_paths = list(PIPELINE_INPUTS)
+    for relative_root in PIPELINE_ROOTS:
+        root = ROOT / relative_root
+        if root.is_dir():
+            relative_paths.extend(path.relative_to(ROOT) for path in root.rglob("*") if path.is_file())
+    digest = hashlib.sha256()
+    for relative_path in sorted(relative_paths, key=lambda path: path.as_posix()):
+        digest.update(relative_path.as_posix().encode("utf-8"))
+        path = ROOT / relative_path
+        digest.update(sha256_file(path).encode("ascii") if path.is_file() else b"missing")
+    return digest.hexdigest()
+
+
+def load_cache(pipeline_fingerprint: str) -> Dict[str, Any]:
     if CACHE_PATH.is_file():
         try:
             data = json.loads(CACHE_PATH.read_text(encoding="utf-8"))
-            if isinstance(data, dict) and data.get("__commit__") == current_commit:
+            if isinstance(data, dict) and data.get("__pipeline_fingerprint__") == pipeline_fingerprint:
                 return data.get("predictions", {})
             else:
-                old_commit = data.get("__commit__") if isinstance(data, dict) else "unknown"
-                print(f"[CACHE] Invalidated old prediction cache (cache commit {old_commit} != current {current_commit})")
+                old_fingerprint = data.get("__pipeline_fingerprint__", "legacy") if isinstance(data, dict) else "unknown"
+                print(
+                    "[CACHE] Invalidated prediction cache "
+                    f"(pipeline {old_fingerprint[:12]} != current {pipeline_fingerprint[:12]})"
+                )
         except Exception:
             return {}
     return {}
 
 
-def save_cache(cache: Dict[str, Any], current_commit: str):
+def save_cache(cache: Dict[str, Any], current_commit: str, pipeline_fingerprint: str):
     CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
     payload = {
         "__commit__": current_commit,
+        "__pipeline_fingerprint__": pipeline_fingerprint,
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "predictions": cache,
     }
@@ -79,6 +110,7 @@ def evaluate_image_split(
     t_fail: float,
     cache: Dict[str, Any],
     commit_hash: str,
+    pipeline_fingerprint: str,
     desc: str = "",
 ) -> Dict[str, Any]:
     """Runs live inference over a list of image items and records predictions."""
@@ -141,7 +173,7 @@ def evaluate_image_split(
                 "timing_ms": resp.timing_ms.model_dump() if resp.timing_ms else None,
             }
             if (i + 1) % 10 == 0:
-                save_cache(cache, commit_hash)
+                save_cache(cache, commit_hash, pipeline_fingerprint)
                 
         raw_scores.append(score)
         ground_truth.append(true_label)
@@ -159,7 +191,7 @@ def evaluate_image_split(
             rate = (i + 1) / max(elapsed, 0.001)
             print(f"  [{i+1}/{total}] processed ({elapsed:.1f}s, {rate:.1f} img/s)")
             
-    save_cache(cache, commit_hash)
+    save_cache(cache, commit_hash, pipeline_fingerprint)
     return {
         "scores": raw_scores,
         "baseline_preds": baseline_preds,
@@ -175,7 +207,9 @@ def run_measured_e1():
     print("=" * 70)
     
     commit_hash = get_git_commit_hash()
+    pipeline_fingerprint = get_pipeline_fingerprint(commit_hash)
     print(f"Active Git Commit: {commit_hash}")
+    print(f"Pipeline Fingerprint: {pipeline_fingerprint}")
     
     engine = get_live_engine("artifacts")
     if engine is None:
@@ -195,8 +229,8 @@ def run_measured_e1():
     t_fail = float(calib.get("t_fail_default", 2.2862818241119385))
     print(f"Conformal Thresholds: t_pass={t_pass:.4f}, t_fail={t_fail:.4f}")
     
-    cache = load_cache(commit_hash)
-    print(f"Loaded {len(cache)} existing cached predictions for commit {commit_hash[:8]}")
+    cache = load_cache(pipeline_fingerprint)
+    print(f"Loaded {len(cache)} cached predictions for pipeline {pipeline_fingerprint[:12]}")
     
     # =========================================================================
     # Part 1: Development Split (297 normals, 26 anomalies)
@@ -205,10 +239,10 @@ def run_measured_e1():
     dev_anomalies = splits["splits"]["dev_anomalies"]
     
     dev_norm_res = evaluate_image_split(
-        engine, dev_normals, true_label="good", root=root, t_fail=t_fail, cache=cache, commit_hash=commit_hash, desc="Dev Normals"
+        engine, dev_normals, true_label="good", root=root, t_fail=t_fail, cache=cache, commit_hash=commit_hash, pipeline_fingerprint=pipeline_fingerprint, desc="Dev Normals"
     )
     dev_anom_res = evaluate_image_split(
-        engine, dev_anomalies, true_label="bad", root=root, t_fail=t_fail, cache=cache, commit_hash=commit_hash, desc="Dev Anomalies"
+        engine, dev_anomalies, true_label="bad", root=root, t_fail=t_fail, cache=cache, commit_hash=commit_hash, pipeline_fingerprint=pipeline_fingerprint, desc="Dev Anomalies"
     )
     
     dev_all_scores = dev_norm_res["scores"] + dev_anom_res["scores"]
@@ -232,10 +266,10 @@ def run_measured_e1():
     test_anomalies = splits["splits"]["final_test"]["anomalies"]
     
     test_norm_res = evaluate_image_split(
-        engine, test_normals, true_label="good", root=root, t_fail=t_fail, cache=cache, commit_hash=commit_hash, desc="Test Normals (re-run after fixes)"
+        engine, test_normals, true_label="good", root=root, t_fail=t_fail, cache=cache, commit_hash=commit_hash, pipeline_fingerprint=pipeline_fingerprint, desc="Test Normals (re-run after fixes)"
     )
     test_anom_res = evaluate_image_split(
-        engine, test_anomalies, true_label="bad", root=root, t_fail=t_fail, cache=cache, commit_hash=commit_hash, desc="Test Anomalies (re-run after fixes)"
+        engine, test_anomalies, true_label="bad", root=root, t_fail=t_fail, cache=cache, commit_hash=commit_hash, pipeline_fingerprint=pipeline_fingerprint, desc="Test Anomalies (re-run after fixes)"
     )
     
     test_all_scores = test_norm_res["scores"] + test_anom_res["scores"]
@@ -256,6 +290,7 @@ def run_measured_e1():
         "benchmark_type": "measured_real_images",
         "pipeline_version": "v2_unified",
         "commit": commit_hash,
+        "pipeline_fingerprint": pipeline_fingerprint,
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "provenance": {
             "generator": "eval.run_real_e1",
@@ -269,6 +304,7 @@ def run_measured_e1():
             "calibration_sha256": sha256_file(calib_path),
             "quality_gate_sha256": sha256_file(snapshot_dir / "quality_gate.json"),
             "prediction_cache_commit": commit_hash,
+            "prediction_cache_pipeline_fingerprint": pipeline_fingerprint,
             "prediction_count": len(cache),
         },
         "thresholds": {"t_pass": t_pass, "t_fail": t_fail},

@@ -10,6 +10,12 @@ SureInspect is a human-centered visual inspection assistant for PCB manufacturin
 
 OpenCV 5 performs image standardization, DNN feature inference, anomaly heatmap generation, ORB/ECC alignment, photometric normalization, structural residual comparison, contour extraction, and geometric measurement. The frozen policy returns four distinct outcomes: PASS, FAIL, HUMAN, or RETAKE. Every inspection includes a bounded, downloadable execution trace.
 
+The agent also emits an explicit next action. PASS recommends continued line flow; FAIL recommends reversible quarantine pending operator confirmation; uncertainty routes the evidence to a reviewer; and failed admission checks request a retake. These are recommendations only—the prototype records that it did not actuate external factory equipment.
+
+## Acquisition robustness
+
+The reproducible acquisition benchmark runs 15 cases through the real engine: built-in sample routing, exact uploaded bytes, PNG re-encoding, a 0.729× browser-style resize, and JPEG quality 90. Exact file upload matches the sample route. The resized known-good board is recovered using OpenCV geometry, while every transformed known defect is failed or escalated and never passed. This is a declared narrow regression test, not a general robustness claim.
+
 ## Verified regression results
 
 On the 297-normal/26-defect development regression set: 212 FAST_PASS, 49 AGENT_CLEARED, 0 automated FAIL, 35 HUMAN, and 1 RETAKE for normals; 3 FAIL, 21 HUMAN, 2 RETAKE, and 0 PASS for defects. This is 0/26 defect escapes and 264/264 selective accuracy on automated decisions.

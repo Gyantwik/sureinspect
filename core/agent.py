@@ -219,6 +219,26 @@ def decide(
             suggested_decision="PASS",
         )
 
+    # A strong geometric scale correction means the frame was captured outside
+    # the calibrated optical fixture (for example, a browser screenshot). The
+    # OpenCV evidence tools may recover geometry, but resampling can erase a
+    # small scratch. Keep autonomous clearance only in the lower half of the
+    # ambiguous score band; otherwise preserve human control.
+    alignment_scale = evidence.get("alignment_scale") if isinstance(evidence, dict) else None
+    if alignment_scale is not None and not 0.85 <= float(alignment_scale) <= 1.15:
+        recovery_pass_limit = t_pass + 0.5 * (t_fail - t_pass)
+        if score > recovery_pass_limit:
+            return DecisionResult(
+                decision="HUMAN",
+                decision_path="INCONCLUSIVE",
+                reason=(
+                    f"OpenCV recovered acquisition scale {float(alignment_scale):.3f}x, but score "
+                    f"{score:.4f} exceeds conservative recovery clearance limit "
+                    f"{recovery_pass_limit:.4f}; possible resampling information loss requires review"
+                ),
+                suggested_decision=None,
+            )
+
     return DecisionResult(
         decision="PASS",
         decision_path="AGENT_CLEARED",
@@ -533,6 +553,9 @@ def inspect_standardized(
                 "q_min": float(q_min),
                 "method": align_res.method,
                 "rotation_deg": round(float(align_res.rotation_deg), 2) if align_res.rotation_deg is not None else 0.0,
+                "scale": round(float(align_res.scale), 4) if align_res.scale is not None else None,
+                "overlap": round(float(align_res.overlap), 4) if align_res.overlap is not None else None,
+                "translation_px": tuple(round(float(v), 2) for v in align_res.translation_px),
             }
 
             ref_item = next(t for t in templates_bundle["items"] if t["id"] == align_res.template_id)
@@ -635,6 +658,7 @@ def inspect_standardized(
 
             evidence_payload = {
                 "alignment_valid": True,
+                "alignment_scale": float(align_res.scale) if align_res.scale is not None else None,
                 "residual_p95": r_p95_val,
                 "residual_mean": r_mean_val,
                 "r_low": r_low,
@@ -846,6 +870,9 @@ def run_inspection(
             quality=al.get("quality"),
             q_min=float(al.get("q_min", 0.65)),
             rotation_deg=float(al.get("rotation_deg", 0.0)),
+            scale=float(al["scale"]) if al.get("scale") is not None else None,
+            overlap=float(al["overlap"]) if al.get("overlap") is not None else None,
+            translation_px=tuple(al["translation_px"]) if al.get("translation_px") is not None else None,
         )
 
     measurements_obj = None

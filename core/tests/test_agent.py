@@ -63,6 +63,38 @@ def test_decide_agent_cleared_ambiguous():
     assert res.decision_path == "AGENT_CLEARED"
 
 
+def test_decide_scale_recovery_uses_conservative_clearance_margin():
+    evidence = {
+        "alignment_valid": True,
+        "alignment_scale": 0.729,
+        "residual_p95": 0.20,
+        "r_low": 0.38,
+        "r_high": 0.48,
+    }
+    review = decide(
+        score=1.65,
+        lighting_shift=False,
+        evidence=evidence,
+        t_pass=1.2,
+        t_fail=2.0,
+        budget_state={"steps": 3, "budget": 4},
+    )
+    assert review.decision == "HUMAN"
+    assert review.decision_path == "INCONCLUSIVE"
+    assert "resampling information loss" in review.reason
+
+    cleared = decide(
+        score=1.55,
+        lighting_shift=False,
+        evidence=evidence,
+        t_pass=1.2,
+        t_fail=2.0,
+        budget_state={"steps": 3, "budget": 4},
+    )
+    assert cleared.decision == "PASS"
+    assert cleared.decision_path == "AGENT_CLEARED"
+
+
 def test_interfaces_delegation_no_longer_raises():
     """Verify that core.interfaces successfully delegates to core.agent without NotImplementedError."""
     res = I.decide(1.0, False, None, 1.2, 2.0, {"steps": 0, "budget": 4})

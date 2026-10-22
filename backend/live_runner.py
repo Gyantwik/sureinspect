@@ -393,6 +393,9 @@ class LiveEngine:
                 quality=al.get("quality"),
                 q_min=float(al.get("q_min", 0.65)),
                 rotation_deg=float(al.get("rotation_deg", 0.0)),
+                scale=float(al["scale"]) if al.get("scale") is not None else None,
+                overlap=float(al["overlap"]) if al.get("overlap") is not None else None,
+                translation_px=tuple(al["translation_px"]) if al.get("translation_px") is not None else None,
             )
 
         measurement_stats = None

@@ -27,7 +27,7 @@ An experiment may be kept only when all applicable conditions hold:
 
 Status: frozen for this submission cycle.
 
-The canonical baseline is `eval/results/measured_e1_results_v2.json`, produced from implementation commit `536618b43ee52d1369011f868a722f5a4fcdb214`. Its exact artifact and dependency hashes are recorded in `docs/BENCHMARK_PROVENANCE.md`. No new threshold or model experiment was selected after this freeze; the working-tree changes since that run are verification, documentation, packaging, and user-interface changes only.
+The canonical regression evidence is `eval/results/measured_e1_results_v2.json`, rerun from an empty cache at commit `d749f32d70ecf53cbc7fdd5f07c91f644a52efad` with pipeline fingerprint `a241045168624da082502a1b36d78e6588902afad264f3cbe166ef6e3cbc8094`. The fingerprint includes current inference files, snapshot artifacts, and templates, including uncommitted inference changes. This hardening pass changed acquisition recovery and conservative autonomy behavior, not model weights or conformal thresholds; its dedicated 15-case acquisition benchmark is recorded separately.
 
 The baseline registration must contain:
 

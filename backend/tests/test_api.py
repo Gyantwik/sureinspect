@@ -49,6 +49,22 @@ def test_all_ten_paths_validate_schema():
         assert reparsed.decision_path == path
 
 
+def test_next_action_contract_preserves_human_control():
+    passed = build_mock_inspection(DecisionPathEnum.AGENT_CLEARED)
+    assert passed.next_action.action == "CONTINUE_LINE"
+    assert passed.next_action.requires_human_confirmation is False
+    assert passed.next_action.external_actuation_performed is False
+
+    failed = build_mock_inspection(DecisionPathEnum.AGENT_CONFIRMED)
+    assert failed.next_action.action == "QUARANTINE_PENDING_CONFIRMATION"
+    assert failed.next_action.requires_human_confirmation is True
+    assert failed.next_action.reversible is True
+
+    review = build_mock_inspection(DecisionPathEnum.INCONCLUSIVE)
+    assert review.next_action.action == "REVIEW_EVIDENCE"
+    assert review.next_action.requires_human_confirmation is True
+
+
 def test_quality_rejected_null_rules():
     """RETAKE: score, thresholds t_pass/t_fail, alignment, measurements null; input asset + quality trace exist."""
     insp = build_mock_inspection(DecisionPathEnum.QUALITY_REJECTED)

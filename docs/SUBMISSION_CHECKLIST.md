@@ -30,7 +30,7 @@
 
 - [ ] Clean-environment dependency installation succeeds.
 - [x] Python dependency check succeeds.
-- [x] Complete Python test suite finishes without hanging outside the restricted Windows sandbox: 171 passed, 5 skipped.
+- [x] Complete Python test suite finishes without hanging outside the restricted Windows sandbox: 180 passed, 5 skipped.
 - [x] Frontend tests pass: 4 passed.
 - [x] TypeScript type checking passes.
 - [x] Frontend production build passes.
@@ -129,8 +129,8 @@
 - [x] Resolve test defect escapes: fresh current-code rerun gives 4/70.
 - [x] Resolve test normal HUMAN: fresh current-code rerun gives 18/100.
 - [x] Resolve development defect escapes: fresh current-code rerun gives 0/26.
-- [x] Replace stale manual test counts with the verified result: 171 passed, 5 skipped.
-- [x] Resolve measured-result commit versus implementation commit: fresh rerun embeds `536618b...`.
+- [x] Replace stale manual test counts with the verified result: 180 passed, 5 skipped.
+- [x] Resolve measured-result compatibility: fresh rerun embeds pipeline fingerprint `a24104516862...`, including uncommitted inference files and immutable artifacts.
 - [x] Diagnose the earlier admission-queue test stall: the restricted Windows sandbox blocks `asyncio` loopback socket-pair creation; the test passes outside it.
 - [x] Replace perception-only/pending snapshot status with a newly published, verified agent-ready snapshot.
 - [x] Explicitly retain regression-only claims and document the independent-test protocol.

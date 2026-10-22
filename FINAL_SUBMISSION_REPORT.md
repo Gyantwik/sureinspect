@@ -217,7 +217,7 @@ To prevent misrepresenting deployment readiness, the following table explicitly 
 | Component | Status | Verification & Evidence |
 | :--- | :--- | :--- |
 | **Docker Container Build** | **Implemented & Tested** | `deploy/Dockerfile` tested locally with OpenCV 5.0.0.93 headless. |
-| **Admission Queue** | **Implemented & Tested** | Complete suite passes (171 passed, 5 skipped), including concurrency tests in `backend/tests/test_admission_queue.py`. |
+| **Admission Queue** | **Implemented & Tested** | Complete suite passes (180 passed, 5 skipped), including concurrency tests in `backend/tests/test_admission_queue.py`. |
 | **Storage & Audit Cache** | **Implemented & Tested** | Thread-safe LRU cache with 200 MiB ceiling tested in `backend/tests/test_storage.py`. |
 | **Reverse Proxy Config** | **Implemented & Tested** | `deploy/Caddyfile` with edge 10 MiB body limit and header forwarding. |
 | **EC2 Bootstrap Script** | **Implemented & Tested** | Shell script `deploy/setup_ec2.sh` for Ubuntu 22.04 LTS Graviton setup. |
@@ -304,7 +304,7 @@ Latency was measured across 50 real VisA PCB1 images (25 Fast-Pass and 25 Multi-
 ### Reproducibility Commands
 To reproduce all tests and benchmarks locally:
 ```bash
-# 1. Run the complete automated test suite (currently 171 passed, 5 skipped)
+# 1. Run the complete automated test suite (currently 180 passed, 5 skipped)
 .venv\Scripts\python.exe -m pytest
 
 # 2. Run the real measured E1 evaluation benchmark

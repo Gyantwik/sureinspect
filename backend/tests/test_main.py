@@ -24,6 +24,9 @@ def test_main_health_endpoint():
     data = response.json()
     assert data["status"] == "healthy"
     assert data["engine"] in ("mock", "live")
+    assert data["opencv_version"].startswith("5.")
+    assert data["architecture"]
+    assert data["deployment_provider"] in ("aws", "local_or_unspecified")
 
 
 def test_main_serves_root_spa():
