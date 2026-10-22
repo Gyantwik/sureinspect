@@ -1,0 +1,13 @@
+{
+  "schema_version": "sureinspect.candidate-compatibility.v1",
+  "measured_inference_commit": "536618b43ee52d1369011f868a722f5a4fcdb214",
+  "candidate_commit": "501845519edbe168527c0d2c3a584605cd300afc",
+  "critical_scopes": [
+    "core",
+    "artifacts/snapshots/pcb1-wide_resnet50_2-256-edc526f4da11"
+  ],
+  "critical_files_changed": [],
+  "uncommitted_critical_files_changed": [],
+  "compatible": true,
+  "interpretation": "Cached measured inference is candidate-compatible only when no inference-critical file changed."
+}

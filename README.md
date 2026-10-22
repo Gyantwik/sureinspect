@@ -54,3 +54,7 @@ python -m eval.verify_project
 ```
 
 To include a freshly built submission archive, add `--archive path/to/submission.zip`. This local command does not prove AWS deployment, endpoint availability, video access, eligibility, or an independent holdout evaluation.
+
+The judge gate also executes and records a real OpenCV 5 ONNX forward pass, ORB feature extraction, Laplacian focus measurement, Otsu thresholding, and contour extraction in `eval/results/opencv5_runtime_proof.json`. Candidate/result compatibility is recorded separately in `eval/results/candidate_compatibility.json`, and all ten frozen policy paths are regenerated into `eval/results/agentic_policy_matrix.json`.
+
+Known defect escapes are documented visually in `docs/failure_cases/DEFECT_ESCAPE_EVIDENCE.md`; they are retained as limitations rather than hidden from the evaluation.

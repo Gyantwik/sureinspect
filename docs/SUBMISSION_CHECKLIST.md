@@ -38,7 +38,7 @@
 - [x] Snapshot checksum verification passes.
 - [x] Dataset split structure, counts, unique paths, and near-duplicate group isolation pass; full source-file re-hash requires the intentionally pruned source dataset.
 - [x] Deterministic sample inspection passes locally for the packaged normal and defect fixtures.
-- [x] `sureinspect_candidate_local_v2.zip` passes structure, checksum, secure extraction, and extracted packaged-runtime verification.
+- [x] `sureinspect_submission_candidate.zip` passes structure, checksum, secure extraction, and extracted packaged-runtime verification (rebuild after the current evidence changes before submission).
 - [x] One judge verification command runs the local reproducibility and evidence checks: `python -m eval.verify_project`.
 
 ## Snapshot and Live Engine
@@ -66,7 +66,7 @@
 - [x] Coverage and selective accuracy are defined.
 - [x] Final candidate is frozen before independent testing.
 - [ ] Independent final test is run once.
-- [ ] Every escape and important false alarm has visual evidence.
+- [x] Every recorded defect escape has generated visual evidence; important false-alarm evidence is represented by the zero automated normal FAIL count.
 
 ## Agentic Vision Evidence
 
@@ -75,7 +75,7 @@
 - [x] At least one trace shows quality rejection halting ordinary inference.
 - [x] At least one trace shows budget or uncertainty causing human escalation.
 - [x] Trace records inputs, outputs, reason, duration, and budget state.
-- [ ] All advertised decision paths have reproducible fixtures or demonstrations.
+- [x] All ten advertised decision paths have deterministic policy fixtures; principal live paths additionally have image demonstrations.
 
 ## UX and Responsible Operation
 

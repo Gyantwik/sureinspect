@@ -1,0 +1,183 @@
+{
+  "schema_version": "sureinspect.agentic-policy-matrix.v1",
+  "opencv_version": "5.0.0",
+  "thresholds": {
+    "t_pass": 2.0,
+    "t_fail": 2.3
+  },
+  "note": "Deterministic policy-contract fixtures; live-image evidence is documented separately.",
+  "paths": [
+    {
+      "fixture": "quality_rejected",
+      "inputs": {
+        "score": null,
+        "lighting_shift": false,
+        "evidence": null,
+        "budget_state": {}
+      },
+      "decision": "RETAKE",
+      "decision_path": "QUALITY_REJECTED",
+      "suggested_decision": null,
+      "reason": "Quality gate rejected frame before perception scoring"
+    },
+    {
+      "fixture": "fast_pass",
+      "inputs": {
+        "score": 1.8,
+        "lighting_shift": false,
+        "evidence": null,
+        "budget_state": {}
+      },
+      "decision": "PASS",
+      "decision_path": "FAST_PASS",
+      "suggested_decision": null,
+      "reason": "Perception score 1.8000 <= t_pass (2.0000) with normal illumination"
+    },
+    {
+      "fixture": "agent_cleared",
+      "inputs": {
+        "score": 2.1,
+        "lighting_shift": false,
+        "evidence": {
+          "alignment_valid": true,
+          "residual_p95": 0.2,
+          "r_low": 0.3,
+          "r_high": 0.48,
+          "rois_total": 1,
+          "rois_checked": 1
+        },
+        "budget_state": {}
+      },
+      "decision": "PASS",
+      "decision_path": "AGENT_CLEARED",
+      "suggested_decision": null,
+      "reason": "Ambiguous perception score 2.1000 cleared: structural residual 0.2000 <= r_low (0.3000) confirms normal assembly"
+    },
+    {
+      "fixture": "agent_confirmed",
+      "inputs": {
+        "score": 2.5,
+        "lighting_shift": false,
+        "evidence": {
+          "alignment_valid": true,
+          "residual_p95": 0.6,
+          "r_low": 0.3,
+          "r_high": 0.48,
+          "rois_total": 1,
+          "rois_checked": 1
+        },
+        "budget_state": {}
+      },
+      "decision": "FAIL",
+      "decision_path": "AGENT_CONFIRMED",
+      "suggested_decision": null,
+      "reason": "Perception score 2.5000 > t_fail (2.3000) and structural residual 0.6000 >= r_high (0.4800) confirm defect"
+    },
+    {
+      "fixture": "suspected_defect",
+      "inputs": {
+        "score": 2.1,
+        "lighting_shift": false,
+        "evidence": {
+          "alignment_valid": true,
+          "residual_p95": 0.6,
+          "r_low": 0.3,
+          "r_high": 0.48,
+          "rois_total": 1,
+          "rois_checked": 1
+        },
+        "budget_state": {}
+      },
+      "decision": "HUMAN",
+      "decision_path": "SUSPECTED_DEFECT",
+      "suggested_decision": "FAIL",
+      "reason": "Structural residual 0.6000 >= r_high (0.4800) indicates defect, but score (2.1000) or lighting shift requires human review"
+    },
+    {
+      "fixture": "evidence_conflict",
+      "inputs": {
+        "score": 2.5,
+        "lighting_shift": false,
+        "evidence": {
+          "alignment_valid": true,
+          "residual_p95": 0.2,
+          "r_low": 0.3,
+          "r_high": 0.48,
+          "rois_total": 1,
+          "rois_checked": 1
+        },
+        "budget_state": {}
+      },
+      "decision": "HUMAN",
+      "decision_path": "EVIDENCE_CONFLICT",
+      "suggested_decision": null,
+      "reason": "Perception score 2.5000 > t_fail (2.3000) indicates anomaly, but structural residual 0.2000 <= r_low (0.3000) shows normal variation"
+    },
+    {
+      "fixture": "lighting_shift_review",
+      "inputs": {
+        "score": 1.8,
+        "lighting_shift": true,
+        "evidence": null,
+        "budget_state": {}
+      },
+      "decision": "HUMAN",
+      "decision_path": "LIGHTING_SHIFT_REVIEW",
+      "suggested_decision": "PASS",
+      "reason": "Perception score 1.8000 <= t_pass (2.0000), but factory illumination covariate shift requires review"
+    },
+    {
+      "fixture": "alignment_failed",
+      "inputs": {
+        "score": 2.1,
+        "lighting_shift": false,
+        "evidence": {
+          "alignment_valid": false,
+          "reason": "insufficient inliers"
+        },
+        "budget_state": {}
+      },
+      "decision": "HUMAN",
+      "decision_path": "ALIGN_FAILED",
+      "suggested_decision": null,
+      "reason": "Secondary verification required but template alignment failed (insufficient inliers)"
+    },
+    {
+      "fixture": "inconclusive",
+      "inputs": {
+        "score": 2.1,
+        "lighting_shift": false,
+        "evidence": {
+          "alignment_valid": true,
+          "residual_p95": 0.4,
+          "r_low": 0.3,
+          "r_high": 0.48,
+          "rois_total": 1,
+          "rois_checked": 1
+        },
+        "budget_state": {}
+      },
+      "decision": "HUMAN",
+      "decision_path": "INCONCLUSIVE",
+      "suggested_decision": null,
+      "reason": "Structural residual 0.4000 lies in indeterminate zone (0.3000, 0.4800)"
+    },
+    {
+      "fixture": "budget_exhausted",
+      "inputs": {
+        "score": 2.1,
+        "lighting_shift": false,
+        "evidence": null,
+        "budget_state": {
+          "steps": 4,
+          "budget": 4,
+          "exhausted": true
+        }
+      },
+      "decision": "HUMAN",
+      "decision_path": "BUDGET_EXHAUSTED",
+      "suggested_decision": null,
+      "reason": "Processing budget (4 steps or latency ceiling) exhausted before reaching a conclusive automated verdict"
+    }
+  ]
+}

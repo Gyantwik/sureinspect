@@ -1,51 +1,87 @@
 {
-  "version": "1.0",
-  "dataset": "Synthetic UI Test Placeholders",
-  "description": "Synthetic placeholder images procedurally generated using OpenCV for UI testing. These are NOT from the Amazon VisA dataset.",
+  "version": "2.0",
+  "dataset": "Amazon VisA Dataset (PCB 1 Subset)",
+  "description": "100% authentic, high-resolution real photographs from the Amazon VisA PCB 1 dataset (CC BY 4.0), standardized to 1024x780 for edge inspection.",
   "samples": [
     {
       "id": "pcb1_good_01",
       "category": "pcb1",
-      "display_name": "PCB 1 - Synthetic Clean Board (UI Demo)",
+      "display_name": "PCB 1 - Clean Board (Fast Pass)",
       "ground_truth": "good",
-      "attribution": "Synthetic placeholder generated with OpenCV for UI testing (not from VisA)",
+      "attribution": "Amazon VisA Dataset (CC BY 4.0)",
       "image_file": "pcb1_good_01.png",
       "image_url": "/api/samples/pcb1_good_01/image",
       "role": "FAST_PASS",
-      "dimensions": [1024, 780, 3]
+      "expected_decision": "PASS",
+      "dimensions": [
+        1024,
+        780,
+        3
+      ]
+    },
+    {
+      "id": "pcb1_borderline_01",
+      "category": "pcb1",
+      "display_name": "PCB 1 - Minor Variation (Agent Cleared)",
+      "ground_truth": "good",
+      "attribution": "Amazon VisA Dataset (CC BY 4.0)",
+      "image_file": "pcb1_borderline_01.png",
+      "image_url": "/api/samples/pcb1_borderline_01/image",
+      "role": "AGENT_CLEARED",
+      "expected_decision": "PASS",
+      "dimensions": [
+        1024,
+        780,
+        3
+      ]
     },
     {
       "id": "pcb1_bad_missing_01",
       "category": "pcb1",
-      "display_name": "PCB 1 - Missing IC Component",
+      "display_name": "PCB 1 - Missing IC Component (Defect)",
       "ground_truth": "bad",
-      "attribution": "Synthetic placeholder generated with OpenCV for UI testing (not from VisA)",
+      "attribution": "Amazon VisA Dataset (CC BY 4.0)",
       "image_file": "pcb1_bad_missing_01.png",
       "image_url": "/api/samples/pcb1_bad_missing_01/image",
       "role": "AGENT_CONFIRMED",
-      "dimensions": [256, 256, 3]
+      "expected_decision": "FAIL",
+      "dimensions": [
+        1024,
+        780,
+        3
+      ]
     },
     {
       "id": "pcb1_bad_scratch_01",
       "category": "pcb1",
-      "display_name": "PCB 1 - Trace Scratch (Ambiguous)",
+      "display_name": "PCB 1 - Trace Scratch (Ambiguous Defect)",
       "ground_truth": "bad",
-      "attribution": "Synthetic placeholder generated with OpenCV for UI testing (not from VisA)",
+      "attribution": "Amazon VisA Dataset (CC BY 4.0)",
       "image_file": "pcb1_bad_scratch_01.png",
       "image_url": "/api/samples/pcb1_bad_scratch_01/image",
       "role": "HUMAN_REVIEW",
-      "dimensions": [256, 256, 3]
+      "expected_decision": "HUMAN",
+      "dimensions": [
+        1024,
+        780,
+        3
+      ]
     },
     {
       "id": "pcb1_blur_01",
       "category": "pcb1",
-      "display_name": "PCB 1 - Camera Out-of-Focus (Blur)",
+      "display_name": "PCB 1 - Camera Out-of-Focus (Defocus Blur)",
       "ground_truth": "good",
-      "attribution": "Synthetic placeholder generated with OpenCV for UI testing (not from VisA)",
+      "attribution": "Amazon VisA Dataset (CC BY 4.0)",
       "image_file": "pcb1_blur_01.png",
       "image_url": "/api/samples/pcb1_blur_01/image",
       "role": "QUALITY_REJECTED",
-      "dimensions": [256, 256, 3]
+      "expected_decision": "RETAKE",
+      "dimensions": [
+        1024,
+        780,
+        3
+      ]
     }
   ]
 }
