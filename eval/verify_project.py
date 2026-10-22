@@ -112,6 +112,15 @@ def main(argv: list[str] | None = None) -> int:
     results.append(
         run_command("Dataset split integrity", [sys.executable, "-m", "eval.validate_split_integrity"])
     )
+    results.append(
+        run_command("Candidate/result compatibility", [sys.executable, "-m", "eval.verify_candidate_compatibility"])
+    )
+    results.append(
+        run_command("OpenCV 5 runtime proof", [sys.executable, "-m", "eval.verify_opencv5_runtime"])
+    )
+    results.append(
+        run_command("Agentic path matrix", [sys.executable, "-m", "eval.generate_agentic_evidence"])
+    )
     results.append(verify_openapi())
 
     if not args.skip_frontend:

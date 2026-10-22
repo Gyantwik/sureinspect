@@ -151,10 +151,10 @@ The key OpenCV 5 modules and APIs employed include:
 ### Concrete Agent Evidence Tool Progression Example
 To illustrate how measured OpenCV outputs dynamically steer agent decisions, consider an ambiguous board (`test/bad/025.JPG`, solder melt anomaly):
 1. **Perception Output:** The OpenCV 5 DNN forward pass yields an anomaly score of $s = 2.0637$. This exceeds $t_{\text{pass}} = 2.0405$, so the agent **refuses** to emit `FAST_PASS`.
-2. **Tool T1 Dispatched:** The agent calls `align_to_templates()`. OpenCV extracts ORB features, finds 42 inliers, and computes affine matrix $M$. Alignment quality evaluates to $q = 0.8636$, exceeding $q_{\text{min}} = 0.65$. Alignment is marked valid.
-3. **Tool T2 Dispatched:** The agent warps the golden template using `cv2.warpAffine` and computes the structural residual across candidate ROI 0. The 95th percentile residual evaluates to $r_{95} = 0.289$, falling below $r_{\text{low}} = 0.38$.
-4. **Tool T3 Dispatched:** Rather than immediately clearing the board, the agent dispatches `measure()` to evaluate defect geometry. OpenCV's `minAreaRect` isolates an elongated difference contour occupying $0.097\%$ of the board area.
-5. **Policy Decision:** Under SureInspect's decision rule, because $r \le r_{\text{low}}$ across all checked ROIs, the board is evaluated under the low-residual branch. If any candidate ROI had remained unchecked due to budget limits, the agent would have escalated to `INCONCLUSIVE`. Because all ROIs were evaluated, the agent logs the complete OpenCV evidence trace in the audit log.
+2. **Tool T1 Dispatched:** The agent calls `align_to_templates()`. OpenCV extracts ORB features, estimates affine matrix $M$, and reports alignment quality $q = 0.8628$, exceeding the frozen $q_{\text{min}} = 0.74$.
+3. **Tool T2 Dispatched:** The agent warps the golden template with `cv2.warpAffine` and measures ROI structural residual. The recorded residual mean is $0.0826$, below the active $r_{\text{low}} = 0.30$.
+4. **Tool T3 Dispatched:** The agent does not clear solely from the low residual. `measure()` uses OpenCV contours and `minAreaRect` and finds an elongated physical difference with elongation $14.99$ and area $0.0993\%$.
+5. **Policy Decision:** The physical-contour guard overrides automated clearance and returns `HUMAN / SUSPECTED_DEFECT` with a suggested FAIL. This is the central agentic behavior: measured evidence changes the action, and uncertainty does not silently become PASS.
 
 ---
 
@@ -204,7 +204,7 @@ SureInspect's cloud deployment architecture is designed for edge-to-cloud manufa
      MKL_NUM_THREADS=1
      ```
    - Memory footprint: Peak RSS under full load stays under **1.1 GiB**, comfortably fitting within the 2 GiB physical RAM envelope of an AWS `t4g.small` instance ($0.0168/hr or Free Tier eligible).
-2. **Admission Queue & Concurrency Guard (`backend/admission_queue.py`):**
+2. **Admission Queue & Concurrency Guard (`backend/admission.py`):**
    - An asynchronous semaphore admits at most 1 running CPU inference job and queues up to 4 pending jobs. Excess requests receive immediate HTTP 503 (`QUEUE_SATURATED`) with a `Retry-After: 1` header, preventing memory starvation.
 3. **Decompression Bomb Guard:**
    - Enforced via `OPENCV_IO_MAX_IMAGE_PIXELS=25000000` to prevent memory exhaustion from maliciously crafted or inflated image headers.
@@ -237,7 +237,9 @@ SureInspect was evaluated across the complete Amazon VisA PCB1 benchmark dataset
 | **Calibration Fit Set** | 99 | 0 | 99 |
 | **Development Split (`dev`)** | 297 | 26 | 323 |
 | **Test Split (`test`)** | 100 | 70 | 170 |
-| **Total Benchmark Images** | **496** | **96** | **592** |
+| **Evaluation predictions (dev + test)** | **397** | **96** | **493** |
+| **Separate calibration-fit normals** | **99** | **0** | **99** |
+| **All disjoint images used across calibration and evaluation** | **496** | **96** | **592** |
 
 *(Note: 323 dev images + 170 test images = 493 total evaluation images outside the 99 calibration fit images).*
 

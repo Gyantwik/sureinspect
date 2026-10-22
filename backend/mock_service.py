@@ -57,6 +57,15 @@ MOCK_SAMPLES = [
         role="FAST_PASS",
     ),
     SampleItem(
+        id="pcb1_borderline_01",
+        category="pcb1",
+        display_name="PCB 1 - Borderline Variation (Agent Cleared)",
+        ground_truth="good",
+        attribution="Amazon VisA Dataset (CC BY 4.0)",
+        image_url="/api/samples/pcb1_borderline_01/image",
+        role="AGENT_CLEARED",
+    ),
+    SampleItem(
         id="pcb1_bad_missing_01",
         category="pcb1",
         display_name="PCB 1 - Missing IC Component",
@@ -632,7 +641,11 @@ def generate_mock_inspection(
     if sample_id == "pcb1_good_01":
         return build_mock_inspection(DecisionPathEnum.FAST_PASS, category=category, alpha_fail=alpha_fail)
 
-    if sample_id == "pcb1_bad_scratch_01":
+    if sample_id == "pcb1_borderline_01":
+        return build_mock_inspection(DecisionPathEnum.AGENT_CLEARED, category=category, alpha_fail=alpha_fail)
+
+    if sample_id == "pcb1_bad_missing_01":
+        return build_mock_inspection(DecisionPathEnum.AGENT_CONFIRMED, category=category, alpha_fail=alpha_fail)
         return build_mock_inspection(DecisionPathEnum.SUSPECTED_DEFECT, category=category, alpha_fail=alpha_fail)
 
     if simulate_darken:

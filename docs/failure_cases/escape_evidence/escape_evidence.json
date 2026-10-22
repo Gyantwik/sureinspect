@@ -1,0 +1,86 @@
+{
+  "cache_commit": "536618b43ee52d1369011f868a722f5a4fcdb214",
+  "count": 4,
+  "escapes": [
+    {
+      "image": "pcb1/test/bad/015.JPG",
+      "evidence_file": "015_escape.jpg",
+      "score": 1.9064,
+      "raw_score": 1.9064,
+      "decision": "PASS",
+      "decision_path": "FAST_PASS",
+      "ground_truth": "bad",
+      "alignment_quality": null,
+      "alignment_method": null,
+      "residual_mean": null,
+      "rois_checked": 0,
+      "rois_total": 0,
+      "timing_ms": {
+        "quality": 18.0,
+        "perception": 271.1,
+        "tools": 0.0,
+        "total": 340.63
+      }
+    },
+    {
+      "image": "pcb1/test/bad/058.JPG",
+      "evidence_file": "058_escape.jpg",
+      "score": 2.211,
+      "raw_score": 2.211,
+      "decision": "PASS",
+      "decision_path": "AGENT_CLEARED",
+      "ground_truth": "bad",
+      "alignment_quality": 0.8041,
+      "alignment_method": "orb_ransac",
+      "residual_mean": 0.1131,
+      "rois_checked": 1,
+      "rois_total": 1,
+      "timing_ms": {
+        "quality": 22.9,
+        "perception": 263.9,
+        "tools": 54.1,
+        "total": 394.22
+      }
+    },
+    {
+      "image": "pcb1/test/bad/061.JPG",
+      "evidence_file": "061_escape.jpg",
+      "score": 2.2357,
+      "raw_score": 2.2357,
+      "decision": "PASS",
+      "decision_path": "AGENT_CLEARED",
+      "ground_truth": "bad",
+      "alignment_quality": 0.7558,
+      "alignment_method": "orb_ransac",
+      "residual_mean": 0.062,
+      "rois_checked": 2,
+      "rois_total": 2,
+      "timing_ms": {
+        "quality": 18.1,
+        "perception": 275.7,
+        "tools": 56.8,
+        "total": 401.29
+      }
+    },
+    {
+      "image": "pcb1/test/bad/062.JPG",
+      "evidence_file": "062_escape.jpg",
+      "score": 2.1965,
+      "raw_score": 2.1965,
+      "decision": "PASS",
+      "decision_path": "AGENT_CLEARED",
+      "ground_truth": "bad",
+      "alignment_quality": 0.8386,
+      "alignment_method": "orb_ransac",
+      "residual_mean": 0.0435,
+      "rois_checked": 1,
+      "rois_total": 1,
+      "timing_ms": {
+        "quality": 17.6,
+        "perception": 278.4,
+        "tools": 91.4,
+        "total": 449.76
+      }
+    }
+  ]
+}
