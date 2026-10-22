@@ -39,6 +39,7 @@ from core.tools import (
     load_templates,
     measure,
     nearest_order,
+    normalize_lighting,
     prepare_comparison,
     roi_residual,
 )
@@ -71,126 +72,158 @@ def decide(
             decision="RETAKE",
             decision_path="QUALITY_REJECTED",
             reason="Quality gate rejected frame before perception scoring",
+            suggested_decision=None,
         )
 
     # 1. Check budget exhaustion
     if isinstance(budget_state, dict):
         steps = budget_state.get("steps", 0)
         budget = budget_state.get("budget", 4)
-        if budget_state.get("exhausted", False) or (budget > 0 and steps >= budget):
+        is_exhausted = (
+            budget_state.get("exhausted", False)
+            or budget_state.get("timed_out", False)
+            or (budget > 0 and steps >= budget and not evidence)
+        )
+        if is_exhausted:
             return DecisionResult(
                 decision="HUMAN",
                 decision_path="BUDGET_EXHAUSTED",
-                reason=f"Step budget ({budget}) exhausted before reaching a conclusive automated verdict",
-                suggested_decision="HUMAN",
+                reason=f"Processing budget ({budget} steps or latency ceiling) exhausted before reaching a conclusive automated verdict",
+                suggested_decision=None,
             )
 
-    # 2. Fast pass zone: score <= t_pass
-    if score <= t_pass:
-        if lighting_shift:
-            # Under lighting shift, normal coverage guarantee does not hold
-            if isinstance(evidence, dict) and evidence.get("alignment_valid") and evidence.get("residual_p95", 1.0) <= evidence.get("r_low", 0.38):
-                return DecisionResult(
-                    decision="PASS",
-                    decision_path="AGENT_CLEARED",
-                    reason=f"Lighting shift detected, but template alignment and residual ({evidence.get('residual_p95'):.3f}) confirmed normal",
-                )
-            return DecisionResult(
-                decision="HUMAN",
-                decision_path="LIGHTING_SHIFT_REVIEW",
-                reason=f"Perception score {score:.3f} <= t_pass ({t_pass:.3f}), but factory illumination covariate shift requires review",
-                suggested_decision="PASS",
-            )
+    # 2. Fast pass zone: score <= t_pass and normal illumination
+    if score <= t_pass and not lighting_shift:
         return DecisionResult(
             decision="PASS",
             decision_path="FAST_PASS",
-            reason=f"Perception score {score:.3f} is below pass threshold {t_pass:.3f} with normal illumination",
+            reason=f"Perception score {score:.4f} <= t_pass ({t_pass:.4f}) with normal illumination",
+            suggested_decision=None,
         )
 
-    # 3. Defect zone: score > t_fail
-    if score > t_fail:
-        if not evidence:
-            return DecisionResult(
-                decision="FAIL",
-                decision_path="SUSPECTED_DEFECT",
-                reason=f"Perception score {score:.3f} exceeds fail threshold {t_fail:.3f}; secondary evidence not evaluated",
-            )
+    # Lighting shift with score <= t_pass and no evidence routes to LIGHTING_SHIFT_REVIEW
+    if score <= t_pass and lighting_shift and not evidence:
+        return DecisionResult(
+            decision="HUMAN",
+            decision_path="LIGHTING_SHIFT_REVIEW",
+            reason=f"Perception score {score:.4f} <= t_pass ({t_pass:.4f}), but factory illumination covariate shift requires review",
+            suggested_decision="PASS",
+        )
 
-        if isinstance(evidence, dict):
-            if not evidence.get("alignment_valid", True):
-                return DecisionResult(
-                    decision="HUMAN",
-                    decision_path="ALIGN_FAILED",
-                    reason=f"Perception score {score:.3f} exceeds fail threshold {t_fail:.3f}, but template alignment failed ({evidence.get('reason', 'unaligned')})",
-                    suggested_decision="FAIL",
-                )
+    # Defect score with no secondary evidence routes to SUSPECTED_DEFECT
+    if score > t_fail and not evidence:
+        return DecisionResult(
+            decision="HUMAN",
+            decision_path="SUSPECTED_DEFECT",
+            reason=f"Perception score {score:.4f} > t_fail ({t_fail:.4f}); secondary evidence not evaluated",
+            suggested_decision="FAIL",
+        )
 
-            r_p95 = evidence.get("residual_p95", 0.0)
-            r_high = evidence.get("r_high", 0.48)
-            r_low = evidence.get("r_low", 0.38)
-
-            if r_p95 >= r_low:
-                return DecisionResult(
-                    decision="FAIL",
-                    decision_path="AGENT_CONFIRMED",
-                    reason=f"Perception score {score:.3f} > t_fail ({t_fail:.3f}) and structural residual {r_p95:.3f} >= r_low ({r_low:.3f}) confirm defect",
-                )
-            else:
-                # Perception scored high, but residual is low: evidence conflict
-                return DecisionResult(
-                    decision="HUMAN",
-                    decision_path="EVIDENCE_CONFLICT",
-                    reason=f"Perception score {score:.3f} > t_fail ({t_fail:.3f}), but structural residual {r_p95:.3f} < r_low ({r_low:.3f}) contradicts defect",
-                    suggested_decision="HUMAN",
-                )
-
-    # 4. Ambiguous zone: t_pass < score <= t_fail
+    # Ambiguous score with no secondary evidence routes to INCONCLUSIVE
     if not evidence:
         return DecisionResult(
             decision="HUMAN",
             decision_path="INCONCLUSIVE",
-            reason=f"Perception score {score:.3f} is in ambiguous range ({t_pass:.3f}, {t_fail:.3f}] with no secondary evidence",
-            suggested_decision="HUMAN",
+            reason=f"Perception score {score:.4f} in ambiguous range ({t_pass:.4f}, {t_fail:.4f}] with no secondary evidence",
+            suggested_decision=None,
         )
 
-    if isinstance(evidence, dict):
-        if not evidence.get("alignment_valid", True):
-            return DecisionResult(
-                decision="HUMAN",
-                decision_path="ALIGN_FAILED",
-                reason=f"Ambiguous score ({score:.3f}) and template alignment failed ({evidence.get('reason', 'unaligned')})",
-                suggested_decision="HUMAN",
-            )
+    # 3. Any path past FAST_PASS requires evidence with alignment_valid=True
+    if not isinstance(evidence, dict) or not evidence.get("alignment_valid", False):
+        reason_msg = "template alignment failed"
+        if isinstance(evidence, dict) and evidence.get("reason"):
+            reason_msg = f"template alignment failed ({evidence.get('reason')})"
+        return DecisionResult(
+            decision="HUMAN",
+            decision_path="ALIGN_FAILED",
+            reason=f"Secondary verification required but {reason_msg}",
+            suggested_decision=None,
+        )
 
-        r_p95 = evidence.get("residual_p95", 0.0)
-        r_high = evidence.get("r_high", 0.48)
-        r_low = evidence.get("r_low", 0.38)
+    # 4. Resolve active residual thresholds (CLAHE copy thresholds under lighting shift)
+    if lighting_shift:
+        r_low = float(evidence.get("clahe_r_low", evidence.get("r_low", 0.30)))
+        r_high = float(evidence.get("clahe_r_high", evidence.get("r_high", 0.48)))
+    else:
+        r_low = float(evidence.get("r_low", 0.30))
+        r_high = float(evidence.get("r_high", 0.48))
 
-        if r_p95 <= r_low:
-            return DecisionResult(
-                decision="PASS",
-                decision_path="AGENT_CLEARED",
-                reason=f"Ambiguous score {score:.3f} cleared to PASS: structural residual {r_p95:.3f} <= r_low ({r_low:.3f}) shows defect-free normal variation",
-            )
-        elif r_p95 >= r_high:
+    r_val = float(evidence.get("residual_p95", evidence.get("residual_mean", 0.0)))
+    rois_total = int(evidence.get("rois_total", 1))
+    rois_checked = int(evidence.get("rois_checked", 1))
+
+    # 5. High residual branch (r_val >= r_high)
+    if r_val >= r_high:
+        if not lighting_shift and score > t_fail:
             return DecisionResult(
                 decision="FAIL",
                 decision_path="AGENT_CONFIRMED",
-                reason=f"Ambiguous score {score:.3f} confirmed to FAIL: structural residual {r_p95:.3f} >= r_high ({r_high:.3f}) confirms defect",
+                reason=f"Perception score {score:.4f} > t_fail ({t_fail:.4f}) and structural residual {r_val:.4f} >= r_high ({r_high:.4f}) confirm defect",
+                suggested_decision=None,
             )
         else:
             return DecisionResult(
                 decision="HUMAN",
-                decision_path="INCONCLUSIVE",
-                reason=f"Ambiguous score {score:.3f} and structural residual {r_p95:.3f} is in gray zone ({r_low:.3f}, {r_high:.3f})",
-                suggested_decision="HUMAN",
+                decision_path="SUSPECTED_DEFECT",
+                reason=f"Structural residual {r_val:.4f} >= r_high ({r_high:.4f}) indicates defect, but score ({score:.4f}) or lighting shift requires human review",
+                suggested_decision="FAIL",
             )
 
+    # 6. Mid-band residual branch (r_low < r_val < r_high)
+    if r_low < r_val < r_high:
+        return DecisionResult(
+            decision="HUMAN",
+            decision_path="INCONCLUSIVE",
+            reason=f"Structural residual {r_val:.4f} lies in indeterminate zone ({r_low:.4f}, {r_high:.4f})",
+            suggested_decision=None,
+        )
+
+    # 7. Low residual branch (r_val <= r_low across all checked ROIs)
+    # Check unchecked candidate ROIs: if candidate ROIs exist and not all were checked, force INCONCLUSIVE
+    if rois_total > 1 and rois_checked < rois_total:
+        return DecisionResult(
+            decision="HUMAN",
+            decision_path="INCONCLUSIVE",
+            reason=f"Checked {rois_checked} of {rois_total} candidate defect ROIs; remaining unchecked region requires operator review",
+            suggested_decision=None,
+        )
+
+    # Physical contour anomaly guard: if T3 detected a prominent defect contour (area >= 0.20% or elongation >= 10.0)
+    if isinstance(evidence, dict):
+        meas = evidence.get("measure") or {}
+        if isinstance(meas, dict) and meas.get("available", False):
+            area_pct = float(meas.get("area_pct") or 0.0)
+            elongation = float(meas.get("elongation") or 0.0)
+            shape_class = meas.get("shape_class")
+            if area_pct >= 0.20 or (shape_class == "elongated" and elongation >= 10.0):
+                return DecisionResult(
+                    decision="HUMAN",
+                    decision_path="SUSPECTED_DEFECT",
+                    reason=f"Residual {r_val:.4f} <= r_low ({r_low:.4f}), but physical anomaly contour (area={area_pct:.3f}%, shape={shape_class}, elongation={elongation:.2f}) requires operator review",
+                    suggested_decision="FAIL",
+                )
+
+    if score > t_fail:
+        return DecisionResult(
+            decision="HUMAN",
+            decision_path="EVIDENCE_CONFLICT",
+            reason=f"Perception score {score:.4f} > t_fail ({t_fail:.4f}) indicates anomaly, but structural residual {r_val:.4f} <= r_low ({r_low:.4f}) shows normal variation",
+            suggested_decision=None,
+        )
+
+    if lighting_shift:
+        return DecisionResult(
+            decision="HUMAN",
+            decision_path="LIGHTING_SHIFT_REVIEW",
+            reason=f"Structural residual {r_val:.4f} <= r_low ({r_low:.4f}) confirms geometry, but factory illumination covariate shift requires review",
+            suggested_decision="PASS",
+        )
+
     return DecisionResult(
-        decision="HUMAN",
-        decision_path="INCONCLUSIVE",
-        reason="Secondary evidence is inconclusive",
-        suggested_decision="HUMAN",
+        decision="PASS",
+        decision_path="AGENT_CLEARED",
+        reason=f"Ambiguous perception score {score:.4f} cleared: structural residual {r_val:.4f} <= r_low ({r_low:.4f}) confirms normal assembly",
+        suggested_decision=None,
     )
 
 
@@ -203,13 +236,18 @@ _TEMPLATES_CACHE: dict[str, dict[str, Any]] = {}
 
 
 def find_default_snapshot(category: str = "pcb1", root_dir: Path | str = "artifacts") -> Path:
-    """Finds the published snapshot directory for category."""
+    """Finds the published snapshot directory for category, verifying weight files exist."""
     snaps_dir = Path(root_dir) / "snapshots"
     if snaps_dir.is_dir():
-        for d in snaps_dir.iterdir():
-            if d.is_dir() and d.name.startswith(f"{category}-"):
+        for d in sorted(snaps_dir.iterdir()):
+            if (
+                d.is_dir()
+                and d.name.startswith(f"{category}-")
+                and (d / "model.onnx").is_file()
+                and (d / "bank.npz").is_file()
+            ):
                 return d
-    raise FileNotFoundError(f"No published snapshot found for category '{category}' in {snaps_dir}")
+    raise FileNotFoundError(f"No published snapshot with weights found for category '{category}' in {snaps_dir}")
 
 
 def load_snapshot_bundle(snapshot_path: Path | str) -> dict[str, Any]:
@@ -278,7 +316,7 @@ def get_evidence_thresholds(category: str = "pcb1") -> dict[str, Any]:
     return {
         "thresholds": {
             "q_min": 0.74,
-            "r_low": 0.38,
+            "r_low": 0.30,
             "r_high": 0.48,
         }
     }
@@ -375,7 +413,7 @@ def inspect_standardized(
     perc_duration = (time.time() - t0) * 1000.0
 
     # Resolve conformal calibration thresholds
-    t_pass = float(calib["t_pass"]["threshold"])
+    t_pass = min(float(calib["t_pass"]["threshold"]), 2.00)
     alpha_key = f"{alpha_fail:g}"
     if alpha_key in calib.get("t_fail_options", {}):
         t_fail = float(calib["t_fail_options"][alpha_key]["threshold"])
@@ -396,6 +434,14 @@ def inspect_standardized(
     step_num += 1
 
     # 4. Fast Pass Check
+    templates_bundle = get_category_templates(category)
+    default_ref_bgr = None
+    if templates_bundle and templates_bundle.get("items"):
+        first_tmpl = templates_bundle["items"][0]
+        default_ref_bgr = first_tmpl.get("bgr")
+        if default_ref_bgr is None and "gray" in first_tmpl:
+            default_ref_bgr = cv2.cvtColor(first_tmpl["gray"], cv2.COLOR_GRAY2BGR)
+
     if score <= t_pass and not is_lighting_shift:
         dec_res = decide(score, False, None, t_pass, t_fail, {"steps": 0, "budget": 4})
         return {
@@ -410,6 +456,7 @@ def inspect_standardized(
             "rois": [],
             "alignment": None,
             "measurements": None,
+            "reference_aligned": default_ref_bgr,
             "trace": trace,
             "steps_used": 0,
             "timing_ms": {
@@ -418,7 +465,7 @@ def inspect_standardized(
                 "tools": 0.0,
                 "total": round((time.time() - t_start) * 1000.0, 1),
             },
-            "grounded_report": f"Score {score:.3f} <= pass threshold {t_pass:.3f} with normal illumination. Fast pass emitted.",
+            "grounded_report": f"Score {score:.4f} <= pass threshold {t_pass:.4f} with normal illumination. Fast pass emitted.",
         }
 
     # 5. Extract ROIs
@@ -426,24 +473,44 @@ def inspect_standardized(
     rois = find_rois(heatmap, patch_map, patch_thr=patch_thr, max_rois=3)
     primary_roi = rois[0]["box"] if rois else [0, 0, std_w, std_h]
 
-    # 6. Execute Evidence Tools T1-T3
+    # 6. Execute Evidence Tools T1-T5
     t_tools_start = time.time()
     steps_used = 0
-    templates_bundle = get_category_templates(category)
     evidence_thresholds = get_evidence_thresholds(category)
     th = evidence_thresholds.get("thresholds", {})
-    q_min = float(th.get("q_min", 0.74))
-    r_low = float(th.get("r_low", 0.38))
+    q_min = float(th.get("q_min", 0.65))
+    r_low = float(th.get("r_low", 0.30))
     r_high = float(th.get("r_high", 0.48))
+    clahe_r_low = float(th.get("clahe_r_low", r_low))
+    clahe_r_high = float(th.get("clahe_r_high", r_high))
 
     alignment_info = None
     measurements_info = None
     evidence_payload: dict[str, Any] = {}
+    warped_ref = default_ref_bgr
+    rois_checked = 0
 
-    if templates_bundle is not None:
+    test_gray = cv2.cvtColor(image_std, cv2.COLOR_BGR2GRAY)
+    if is_lighting_shift:
         t0 = time.time()
-        test_gray = cv2.cvtColor(image_std, cv2.COLOR_BGR2GRAY)
-        order = nearest_order(feats.mean(axis=0), templates_bundle["embeddings"])
+        test_gray = normalize_lighting(test_gray)
+        t4_duration = (time.time() - t0) * 1000.0
+        steps_used += 1
+        trace.append({
+            "step": step_num,
+            "tool": "T4_LIGHT_NORMALIZE",
+            "reason": "Lighting shift detected; compute normalized reference comparison",
+            "status": "COMPLETED",
+            "counts_toward_budget": True,
+            "duration_ms": round(t4_duration, 1),
+            "overlay": None,
+        })
+        step_num += 1
+
+    if templates_bundle is not None and templates_bundle.get("items"):
+        t0 = time.time()
+        feat_mean = feats.mean(axis=0) if feats is not None else None
+        order = nearest_order(feat_mean, templates_bundle.get("embeddings"), len(templates_bundle["items"]))
         align_res, tried = align_to_templates(test_gray, templates_bundle["items"], order, q_min=q_min)
         t1_duration = (time.time() - t0) * 1000.0
         steps_used += 1
@@ -459,67 +526,123 @@ def inspect_standardized(
         })
         step_num += 1
 
-        if align_res is not None and align_res.valid:
+        if align_res is not None and align_res.valid and align_res.M is not None:
             alignment_info = {
                 "template_id": align_res.template_id,
-                "quality": float(align_res.quality) if align_res.quality is not None else None,
+                "quality": round(float(align_res.quality), 4) if align_res.quality is not None else None,
+                "q_min": float(q_min),
                 "method": align_res.method,
-                "scale": float(align_res.scale) if align_res.scale is not None else 1.0,
-                "rotation_deg": float(align_res.rotation_deg) if align_res.rotation_deg is not None else 0.0,
-                "translation_px": [float(v) for v in align_res.translation_px] if align_res.translation_px else [0.0, 0.0],
-                "valid": True,
+                "rotation_deg": round(float(align_res.rotation_deg), 2) if align_res.rotation_deg is not None else 0.0,
             }
 
-            # T2: ROI Compare
-            t0 = time.time()
             ref_item = next(t for t in templates_bundle["items"] if t["id"] == align_res.template_id)
-            cmp = prepare_comparison(test_gray, ref_item["gray"], align_res.m, match=True)
-            res_dict = roi_residual(cmp, primary_roi)
+            ref_gray = ref_item["gray"]
+            if is_lighting_shift:
+                ref_gray = normalize_lighting(ref_gray)
+
+            warped_ref = cv2.warpAffine(
+                ref_item["bgr"] if "bgr" in ref_item else cv2.cvtColor(ref_item["gray"], cv2.COLOR_GRAY2BGR),
+                align_res.M[:2],
+                (std_w, std_h),
+                flags=cv2.INTER_LINEAR,
+            )
+
+            # T2: ROI 0 residual
+            t0 = time.time()
+            cmp = prepare_comparison(test_gray, ref_gray, align_res.M, match=True)
+            res_dict0 = roi_residual(cmp, primary_roi)
             t2_duration = (time.time() - t0) * 1000.0
             steps_used += 1
+
+            active_res = res_dict0
+            active_roi = primary_roi
+            rois_checked = 1
+            r0 = float(res_dict0.get("residual_p95", 0.0))
+            r_low_active = clahe_r_low if is_lighting_shift else r_low
+            r_high_active = clahe_r_high if is_lighting_shift else r_high
 
             trace.append({
                 "step": step_num,
                 "tool": "T2_ROI_COMPARE",
-                "reason": f"Computed structural residual p95={res_dict.get('residual_p95', 0):.3f} over ROI",
-                "status": "COMPLETED" if res_dict.get("available") else "FAILED",
+                "reason": f"Computed structural residual p95={r0:.3f} over ROI",
+                "status": "COMPLETED" if res_dict0.get("available") else "FAILED",
                 "counts_toward_budget": True,
                 "duration_ms": round(t2_duration, 1),
                 "overlay": None,
             })
             step_num += 1
 
-            # T3: Defect Measurement
-            t0 = time.time()
-            meas_dict = measure(cmp, primary_roi, image_area=float(std_w * std_h))
-            t3_duration = (time.time() - t0) * 1000.0
-            steps_used += 1
+            # T5: Next ROI compare (if ROI 0 clean, multiple ROIs, and budget permits)
+            if r0 <= r_low_active and len(rois) >= 2 and steps_used < 4 and ((time.time() - t_start) < 2.0):
+                t0 = time.time()
+                second_roi = rois[1]["box"]
+                res_dict1 = roi_residual(cmp, second_roi)
+                t5_duration = (time.time() - t0) * 1000.0
+                steps_used += 1
+                rois_checked = 2
+                r1 = float(res_dict1.get("residual_p95", 0.0))
+                if r1 > r0:
+                    active_res = res_dict1
+                    active_roi = second_roi
 
-            if meas_dict.get("available"):
-                measurements_info = {
-                    "area_px": float(meas_dict["area_px"]),
-                    "area_pct": float(meas_dict["area_pct"]),
-                    "elongation": float(meas_dict["elongation"]),
-                    "shape_class": str(meas_dict["shape_class"]),
-                    "contour_bbox": [int(v) for v in meas_dict["contour_bbox"]],
-                }
+                trace.append({
+                    "step": step_num,
+                    "tool": "T5_NEXT_ROI_COMPARE",
+                    "reason": f"Compare secondary proposed candidate ROI: residual p95={r1:.3f}",
+                    "status": "COMPLETED" if res_dict1.get("available") else "FAILED",
+                    "counts_toward_budget": True,
+                    "duration_ms": round(t5_duration, 1),
+                    "overlay": None,
+                })
+                step_num += 1
 
-            trace.append({
-                "step": step_num,
-                "tool": "T3_ROI_ZOOM_MEASURE",
-                "reason": f"Measured defect: area={meas_dict.get('area_pct', 0):.3f}%, shape={meas_dict.get('shape_class', 'none')}" if meas_dict.get("available") else "No measurable difference contour found",
-                "status": "COMPLETED" if meas_dict.get("available") else "SKIPPED",
-                "counts_toward_budget": True,
-                "duration_ms": round(t3_duration, 1),
-                "overlay": None,
-            })
-            step_num += 1
+            # T3: Zoom measure
+            meas_dict = {"available": False}
+            if steps_used < 4 and ((time.time() - t_start) < 2.0):
+                t0 = time.time()
+                meas_dict = measure(cmp, active_roi, image_area=float(std_w * std_h))
+                t3_duration = (time.time() - t0) * 1000.0
+                steps_used += 1
+
+                trace.append({
+                    "step": step_num,
+                    "tool": "T3_ROI_ZOOM_MEASURE",
+                    "reason": f"Measured defect: area={meas_dict.get('area_pct', 0):.3f}%, shape={meas_dict.get('shape_class', 'none')}" if meas_dict.get("available") else "No measurable difference contour found",
+                    "status": "COMPLETED" if meas_dict.get("available") else "SKIPPED",
+                    "counts_toward_budget": True,
+                    "duration_ms": round(t3_duration, 1),
+                    "overlay": None,
+                })
+                step_num += 1
+
+            r_p95_val = float(active_res.get("residual_p95", 0.0))
+            r_mean_val = float(active_res.get("residual_mean", r_p95_val))
+            raw_shape = meas_dict.get("shape_class")
+            valid_shape = raw_shape if raw_shape in ("elongated", "compact", "irregular") else None
+            measurements_info = {
+                "roi_bbox": [int(v) for v in (meas_dict.get("contour_bbox") or active_roi)],
+                "roi_source": "threshold" if rois else "peak_fallback",
+                "rois_checked": rois_checked,
+                "rois_total": len(rois) if rois else 1,
+                "residual_mean": round(r_mean_val, 4),
+                "r_low": float(r_low_active),
+                "r_high": float(r_high_active),
+                "area_pct": round(float(meas_dict["area_pct"]), 4) if meas_dict.get("area_pct") is not None else None,
+                "area_denominator": "image",
+                "elongation": round(float(meas_dict["elongation"]), 2) if meas_dict.get("elongation") is not None else None,
+                "shape_class": valid_shape,
+            }
 
             evidence_payload = {
                 "alignment_valid": True,
-                "residual_p95": float(res_dict.get("residual_p95", 0.0)),
+                "residual_p95": r_p95_val,
+                "residual_mean": r_mean_val,
                 "r_low": r_low,
                 "r_high": r_high,
+                "clahe_r_low": clahe_r_low,
+                "clahe_r_high": clahe_r_high,
+                "rois_total": len(rois) if rois else 1,
+                "rois_checked": rois_checked,
                 "measure": meas_dict,
             }
         else:
@@ -533,7 +656,14 @@ def inspect_standardized(
     tools_duration = (time.time() - t_tools_start) * 1000.0
 
     # 7. Final Decision via decide()
-    budget_state = {"steps": steps_used, "budget": 4}
+    budget_exhausted = (steps_used >= 4) or ((time.time() - t_start) >= 2.0)
+    has_unchecked_rois = (rois_checked < len(rois)) if rois else False
+    budget_state = {
+        "steps": steps_used,
+        "budget": 4,
+        "exhausted": budget_exhausted and has_unchecked_rois,
+        "timed_out": ((time.time() - t_start) >= 2.0) and has_unchecked_rois,
+    }
     dec_res = decide(score, is_lighting_shift, evidence_payload, t_pass, t_fail, budget_state)
 
     total_duration = (time.time() - t_start) * 1000.0
@@ -555,6 +685,7 @@ def inspect_standardized(
         "rois": rois,
         "alignment": alignment_info,
         "measurements": measurements_info,
+        "reference_aligned": warped_ref,
         "trace": trace,
         "steps_used": steps_used,
         "timing_ms": {
@@ -711,23 +842,27 @@ def run_inspection(
         al = res["alignment"]
         alignment_obj = AlignmentInfo(
             template_id=al["template_id"],
-            quality=al.get("quality"),
             method=al.get("method", "orb_ecc"),
-            scale=al.get("scale", 1.0),
-            rotation_deg=al.get("rotation_deg", 0.0),
-            translation_px=tuple(al.get("translation_px", [0.0, 0.0])),  # type: ignore[arg-type]
-            valid=al.get("valid", True),
+            quality=al.get("quality"),
+            q_min=float(al.get("q_min", 0.65)),
+            rotation_deg=float(al.get("rotation_deg", 0.0)),
         )
 
     measurements_obj = None
     if res.get("measurements"):
         ms = res["measurements"]
         measurements_obj = MeasurementStats(
-            area_px=ms["area_px"],
-            area_pct=ms["area_pct"],
-            elongation=ms["elongation"],
-            shape_class=ms["shape_class"],
-            contour_bbox=tuple(ms["contour_bbox"]),  # type: ignore[arg-type]
+            roi_bbox=tuple(ms.get("roi_bbox", [0, 0, 0, 0])),
+            roi_source=ms.get("roi_source", "peak_fallback"),
+            rois_checked=int(ms.get("rois_checked", 1)),
+            rois_total=int(ms.get("rois_total", 1)),
+            residual_mean=float(ms.get("residual_mean", 0.0)),
+            r_low=float(ms.get("r_low", 0.04)),
+            r_high=float(ms.get("r_high", 0.12)),
+            area_pct=float(ms["area_pct"]) if ms.get("area_pct") is not None else None,
+            area_denominator=ms.get("area_denominator", "image"),
+            elongation=float(ms["elongation"]) if ms.get("elongation") is not None else None,
+            shape_class=ms.get("shape_class"),
         )
 
     th = res.get("thresholds", {})
@@ -755,7 +890,7 @@ def run_inspection(
         ),
         decision=DecisionEnum(res["decision"]),
         decision_path=DecisionPathEnum(res["decision_path"]),
-        suggested_decision=DecisionEnum(res["suggested_decision"]) if res.get("suggested_decision") else None,
+        suggested_decision=res.get("suggested_decision"),
         anomaly_score=res.get("score"),
         thresholds=ThresholdsInfo(
             t_pass=t_pass_val,

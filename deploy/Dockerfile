@@ -45,12 +45,13 @@ RUN useradd -m -u 1000 appuser && \
     mkdir -p /app/data /app/artifacts /app/logs && \
     chown -R appuser:appuser /app
 
-# Copy application code and curated data
+# Copy application code, configuration, contracts, templates, and model artifacts
 COPY backend/ ./backend/
 COPY core/ ./core/
 COPY config/ ./config/
-COPY data/samples/ ./data/samples/
+COPY data/ ./data/
 COPY contracts/ ./contracts/
+COPY artifacts/ ./artifacts/
 
 # Copy built frontend assets from Stage 1 into public static directory
 COPY --from=frontend-builder --chown=appuser:appuser /app/frontend/dist ./frontend/dist

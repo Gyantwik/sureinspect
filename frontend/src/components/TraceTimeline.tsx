@@ -10,7 +10,7 @@ export default function TraceTimeline({ r }: { r: Inspection | null }) {
         {r && (
           <div className="flex items-center gap-3">
             <span className="label">Budget {r.steps_used}/{r.step_budget} · {Math.round(r.timing_ms.total)} ms</span>
-            <button className="text-muted hover:text-ink" title="Download trace JSON" aria-label="Download trace" onClick={() => downloadTrace(r.inspection_id)}><Download size={16} /></button>
+            <button type="button" className="min-h-11 min-w-11 grid place-items-center text-muted hover:text-ink" title="Download trace JSON" aria-label="Download trace" onClick={() => downloadTrace(r.inspection_id)}><Download aria-hidden="true" size={16} /></button>
           </div>
         )}
       </div>
@@ -18,7 +18,7 @@ export default function TraceTimeline({ r }: { r: Inspection | null }) {
         <ol className="relative border-l border-line ml-2 flex flex-col gap-4">
           {r.execution_trace.map((s) => (
             <li key={s.step} className="pl-5 relative">
-              <span className={`absolute -left-[5px] top-1.5 h-2.5 w-2.5 rounded-full ${s.status.toLowerCase().includes("fail") ? "bg-fail" : "bg-accent"}`} />
+              <span aria-hidden="true" className={`absolute -left-[5px] top-1.5 h-2.5 w-2.5 rounded-full ${s.status.toLowerCase().includes("fail") ? "bg-fail" : "bg-accent"}`} />
               <div className="flex items-baseline justify-between gap-3">
                 <span className="font-mono text-xs">{s.step}. {s.tool}</span>
                 <span className="font-mono text-xs text-muted">{s.duration_ms.toFixed(0)} ms{s.counts_toward_budget ? "" : " · free"}</span>

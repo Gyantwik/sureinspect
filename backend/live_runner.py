@@ -52,9 +52,19 @@ def find_snapshot_dir(base_dir: Path | str = "artifacts") -> Path | None:
     p = Path(base_dir)
     snapshots_dir = p / "snapshots"
     if snapshots_dir.is_dir():
+        candidates = []
         for d in sorted(snapshots_dir.iterdir()):
             if d.is_dir() and (d / "model.onnx").is_file() and (d / "bank.npz").is_file():
-                return d
+                manifest = d / "manifest.json"
+                readiness = ""
+                if manifest.is_file():
+                    try:
+                        readiness = json.loads(manifest.read_text(encoding="utf-8")).get("readiness", "")
+                    except (OSError, json.JSONDecodeError):
+                        pass
+                candidates.append((readiness == "agent_ready", d))
+        if candidates:
+            return sorted(candidates, key=lambda item: (item[0], item[1].name), reverse=True)[0][1]
     if (p / "model.onnx").is_file() and (p / "bank.npz").is_file():
         return p
     return None
@@ -81,6 +91,16 @@ class LiveEngine:
             if manifest_path.is_file()
             else {}
         )
+
+        self.bundle = {
+            "path": self.snapshot_dir,
+            "manifest": self.manifest,
+            "net": self.net,
+            "bank": self.bank,
+            "calibration": self.calibration,
+            "quality_gate": self.quality_gate,
+            "input_size": self.manifest.get("preprocessing", {}).get("backbone_input_size", 256),
+        }
 
         self.templates = self._load_templates()
 
@@ -143,7 +163,6 @@ class LiveEngine:
         std = standardize(img)
         std_bgr = std.image
         std_w, std_h = std.standardized_size
-        std_gray = to_gray(std_bgr)
 
         image_meta = ImageMetadata(
             original_size=orig_dims,
@@ -152,8 +171,9 @@ class LiveEngine:
             scale_y=float(std.scale_y),
         )
 
-        # 3. Apply simulated degradations if requested (after standardization)
+        # 3. Apply simulated degradations if requested
         sim_step = None
+        applied_effects = []
         if simulate_blur or simulate_darken or simulate_glare:
             t_deg_start = time.perf_counter()
             std_bgr, applied_effects = apply_degradations(
@@ -162,7 +182,6 @@ class LiveEngine:
                 darken=simulate_darken,
                 glare=simulate_glare,
             )
-            std_gray = to_gray(std_bgr)
             t_deg_ms = (time.perf_counter() - t_deg_start) * 1000.0
             reasons = []
             if "blur" in applied_effects:
@@ -181,16 +200,40 @@ class LiveEngine:
                 overlay_url=None,
             )
 
+        # 4. Delegate core inspection to inspect_standardized
+        from core.agent import inspect_standardized
+        res = inspect_standardized(
+            image_std=std_bgr,
+            category=category,
+            flags={"degradations": applied_effects} if applied_effects else {},
+            alpha_fail=alpha_fail,
+            snapshot=self.bundle,
+        )
+
+        # Force override if path requested (for UI contract tests)
+        if path is not None:
+            forced_path = DecisionPathEnum(path)
+            if forced_path in (DecisionPathEnum.FAST_PASS, DecisionPathEnum.AGENT_CLEARED):
+                decision = DecisionEnum.PASS
+            elif forced_path in (DecisionPathEnum.AGENT_CONFIRMED, DecisionPathEnum.SUSPECTED_DEFECT):
+                decision = DecisionEnum.FAIL
+            elif forced_path == DecisionPathEnum.QUALITY_REJECTED:
+                decision = DecisionEnum.RETAKE
+            else:
+                decision = DecisionEnum.HUMAN
+            decision_path = forced_path
+            suggested_decision = None
+        else:
+            decision = DecisionEnum(res["decision"])
+            decision_path = DecisionPathEnum(res["decision_path"])
+            suggested_decision = res.get("suggested_decision")
+
         assets_to_store: dict[str, tuple[bytes, str]] = {}
         input_asset_key = f"{insp_id}_input.png"
         _, input_png_bytes = cv2.imencode(".png", std_bgr)
         assets_to_store[input_asset_key] = (input_png_bytes.tobytes(), "image/png")
 
-        # 4. Quality Gate validation
-        t_qg_start = time.perf_counter()
-        qg_raw = check_quality(std_bgr, self.quality_gate)
-        t_qg_ms = (time.perf_counter() - t_qg_start) * 1000.0
-
+        qg_raw = res["quality_gate"]
         qg_result = QualityGateResult(
             status=qg_raw["status"],
             action=qg_raw.get("action"),
@@ -206,23 +249,6 @@ class LiveEngine:
             lighting_shift_detected=bool(qg_raw["lighting_shift_detected"]),
         )
 
-        trace_steps: list[TraceStep] = []
-        if sim_step:
-            trace_steps.append(sim_step)
-
-        qg_step_num = len(trace_steps) + 1
-        trace_steps.append(
-            TraceStep(
-                step=qg_step_num,
-                tool=ToolEnum.QUALITY_GATE,
-                reason=qg_result.reason,
-                status="PASSED" if qg_result.status == "PASSED" else "REJECTED",
-                counts_toward_budget=False,
-                duration_ms=round(t_qg_ms, 2),
-                overlay_url=None,
-            )
-        )
-
         snapshot_info = SnapshotInfo(
             model_version=self.manifest.get("snapshot_id", "pcb1-wide_resnet50_2-256-edc526f4da11"),
             bank_version="coreset_10240_v1",
@@ -230,9 +256,25 @@ class LiveEngine:
             policy_version="sureinspect_agentic_v1",
         )
 
-        # Handle Quality Gate Failure -> RETAKE
-        if qg_result.status == "FAILED":
+        if decision == DecisionEnum.RETAKE:
             t_total_ms = (time.perf_counter() - t_start) * 1000.0
+            trace_steps = []
+            if sim_step:
+                trace_steps.append(sim_step)
+            for st in res.get("trace", []):
+                tool_val = st["tool"]
+                tool_enum = ToolEnum(tool_val) if tool_val in ToolEnum._value2member_map_ else ToolEnum.QUALITY_GATE
+                trace_steps.append(
+                    TraceStep(
+                        step=len(trace_steps) + 1,
+                        tool=tool_enum,
+                        reason=st["reason"],
+                        status=st["status"],
+                        counts_toward_budget=st.get("counts_toward_budget", False),
+                        duration_ms=st.get("duration_ms", 0.0),
+                        overlay_url=None,
+                    )
+                )
             return (
                 InspectionResponse(
                     schema_version="1.0",
@@ -272,7 +314,7 @@ class LiveEngine:
                     steps_used=0,
                     step_budget=4,
                     timing_ms=TimingInfo(
-                        quality=round(t_qg_ms, 2),
+                        quality=res["timing_ms"]["quality"],
                         perception=0.0,
                         tools=0.0,
                         total=round(t_total_ms, 2),
@@ -286,242 +328,99 @@ class LiveEngine:
                 assets_to_store,
             )
 
-        # 5. Perception: WideResNet-50-2 + Coreset Memory Bank
-        t_perc_start = time.perf_counter()
-        score_res = score_image(self.net, std_bgr, self.bank, size=256)
-        t_perc_ms = (time.perf_counter() - t_perc_start) * 1000.0
-        score = float(score_res.score)
-
-        # 6. Conformal Calibration Evaluation
-        t_pass = float(self.calibration["t_pass"]["threshold"])
-        t_fail_opts = self.calibration.get("t_fail_options", {})
-        alpha_key = f"{alpha_fail:g}"
-        if alpha_key in t_fail_opts:
-            t_fail = float(t_fail_opts[alpha_key]["threshold"])
-        else:
-            t_fail = float(self.calibration.get("t_fail_default", 2.2863))
-
-        sorted_calib = np.array(self.calibration.get("sorted_calibration_scores", []))
-        n_calib = len(sorted_calib) if len(sorted_calib) > 0 else 300
-        p_val = float(np.sum(sorted_calib >= score) + 1) / (n_calib + 1)
-
-        # Generate Anomaly Heatmap & Extract Candidate Defect ROIs
-        heat = make_heatmap(score_res.patch_map, (std_w, std_h))
-        patch_thr = float(self.calibration.get("heatmap", {}).get("patch_thr", 2.0202))
-        rois = find_rois(heat, score_res.patch_map, patch_thr)
-
-        perc_step_num = len(trace_steps) + 1
-        trace_steps.append(
-            TraceStep(
-                step=perc_step_num,
-                tool=ToolEnum.PATCHCORE_PERCEPTION,
-                reason=(
-                    f"OpenCV DNN WideResNet-50 PatchCore extracted 1024 patch descriptors. "
-                    f"Max coreset distance = {score:.4f} (p-value={p_val:.4f})."
-                ),
-                status="COMPLETED",
-                counts_toward_budget=False,
-                duration_ms=round(t_perc_ms, 2),
-                overlay_url=f"/api/assets/{insp_id}_heatmap.jpg",
-            )
-        )
-
-        # 7. Agentic Verification & Tool Execution Loop
-        t_tools_start = time.perf_counter()
-        alignment_info: AlignmentInfo | None = None
-        measurement_stats: MeasurementStats | None = None
-        aligned_bgr: np.ndarray | None = None
-        steps_used = 0
-
-        # Forced path override (used for UI contract fixture validation)
-        if path is not None:
-            forced_path = DecisionPathEnum(path)
-            if forced_path in (DecisionPathEnum.FAST_PASS, DecisionPathEnum.AGENT_CLEARED):
-                decision = DecisionEnum.PASS
-            elif forced_path in (DecisionPathEnum.AGENT_CONFIRMED, DecisionPathEnum.SUSPECTED_DEFECT):
-                decision = DecisionEnum.FAIL
-            elif forced_path == DecisionPathEnum.QUALITY_REJECTED:
-                decision = DecisionEnum.RETAKE
-            else:
-                decision = DecisionEnum.HUMAN
-            decision_path = forced_path
-
-        elif score <= t_pass:
-            # FAST_PASS: Provably normal with conformal guarantee
-            decision = DecisionEnum.PASS
-            decision_path = DecisionPathEnum.FAST_PASS
-
-        elif score > t_fail:
-            # Clear defect: confirm with alignment and geometry measurement
-            decision = DecisionEnum.FAIL
-            decision_path = DecisionPathEnum.AGENT_CONFIRMED
-
-            if self.templates:
-                ref_template = self.templates[0]
-                align_res = align(std_gray, ref_template["gray"])
-                if align_res.valid and align_res.M is not None:
-                    steps_used += 1
-                    alignment_info = AlignmentInfo(
-                        template_id=align_res.template_id or ref_template["id"],
-                        method=align_res.method,
-                        quality=round(float(align_res.quality or 0.85), 3),
-                        q_min=0.60,
-                        rotation_deg=round(float(align_res.rotation_deg or 0.0), 2),
-                    )
-                    warped_ref = cv2.warpAffine(
-                        ref_template["bgr"],
-                        align_res.M[:2],
-                        (std_w, std_h),
-                        flags=cv2.INTER_LINEAR,
-                    )
-                    aligned_bgr = warped_ref
-                    cmp = prepare_comparison(std_gray, ref_template["gray"], align_res.M, match=True)
-                    target_roi = rois[0]["box"] if rois else [0, 0, std_w, std_h]
-                    m_dict = measure(cmp, target_roi, float(std_w * std_h))
-                    if m_dict.get("available"):
-                        measurement_stats = MeasurementStats(
-                            roi_bbox=tuple(m_dict.get("contour_bbox", target_roi)),  # type: ignore[arg-type]
-                            roi_source=rois[0]["source"] if rois else "peak_fallback",
-                            rois_checked=1,
-                            rois_total=len(rois),
-                            residual_mean=round(float(rois[0]["peak"]), 4) if rois else 0.25,
-                            r_low=0.04,
-                            r_high=0.12,
-                            area_pct=round(float(m_dict.get("area_pct", 0.5)), 4),
-                            elongation=round(float(m_dict.get("elongation", 1.2)), 2),
-                            shape_class=m_dict.get("shape_class", "irregular"),
-                        )
-
-        else:
-            # Ambiguous zone: t_pass < score <= t_fail -> Agent tools T1-T5
-            if not self.templates:
-                decision = DecisionEnum.HUMAN
-                decision_path = DecisionPathEnum.INCONCLUSIVE
-            else:
-                ref_template = self.templates[0]
-                steps_used += 1
-                align_res = align(std_gray, ref_template["gray"])
-
-                trace_steps.append(
-                    TraceStep(
-                        step=len(trace_steps) + 1,
-                        tool=ToolEnum.T1_ALIGN_REFERENCE,
-                        reason=f"ORB/RANSAC subpixel alignment against golden template {ref_template['id']}.",
-                        status="ALIGNED" if align_res.valid else "FAILED",
-                        counts_toward_budget=True,
-                        duration_ms=round(align_res.ms, 2),
-                        overlay_url=f"/api/assets/{insp_id}_reference.jpg" if align_res.valid else None,
-                    )
-                )
-
-                if not align_res.valid or align_res.M is None:
-                    decision = DecisionEnum.HUMAN
-                    decision_path = DecisionPathEnum.ALIGN_FAILED
-                else:
-                    alignment_info = AlignmentInfo(
-                        template_id=align_res.template_id or ref_template["id"],
-                        method=align_res.method,
-                        quality=round(float(align_res.quality or 0.85), 3),
-                        q_min=0.60,
-                        rotation_deg=round(float(align_res.rotation_deg or 0.0), 2),
-                    )
-                    warped_ref = cv2.warpAffine(
-                        ref_template["bgr"],
-                        align_res.M[:2],
-                        (std_w, std_h),
-                        flags=cv2.INTER_LINEAR,
-                    )
-                    aligned_bgr = warped_ref
-
-                    # T2: ROI residual comparison
-                    steps_used += 1
-                    t2_start = time.perf_counter()
-                    cmp = prepare_comparison(std_gray, ref_template["gray"], align_res.M, match=True)
-                    target_roi = rois[0]["box"] if rois else [0, 0, std_w, std_h]
-                    res_info = roi_residual(cmp, target_roi)
-                    t2_ms = (time.perf_counter() - t2_start) * 1000.0
-
-                    trace_steps.append(
-                        TraceStep(
-                            step=len(trace_steps) + 1,
-                            tool=ToolEnum.T2_ROI_COMPARE,
-                            reason=f"Residual comparison on peak ROI {target_roi}: mean residual={res_info.get('residual_mean', 0.0):.4f}.",
-                            status="COMPLETED",
-                            counts_toward_budget=True,
-                            duration_ms=round(t2_ms, 2),
-                            overlay_url=None,
-                        )
-                    )
-
-                    # T3: Defect geometry measurement
-                    steps_used += 1
-                    t3_start = time.perf_counter()
-                    m_dict = measure(cmp, target_roi, float(std_w * std_h))
-                    t3_ms = (time.perf_counter() - t3_start) * 1000.0
-
-                    if m_dict.get("available"):
-                        measurement_stats = MeasurementStats(
-                            roi_bbox=tuple(m_dict.get("contour_bbox", target_roi)),  # type: ignore[arg-type]
-                            roi_source=rois[0]["source"] if rois else "peak_fallback",
-                            rois_checked=1,
-                            rois_total=len(rois),
-                            residual_mean=round(float(res_info.get("residual_mean", 0.1)), 4),
-                            r_low=0.04,
-                            r_high=0.12,
-                            area_pct=round(float(m_dict.get("area_pct", 0.5)), 4),
-                            elongation=round(float(m_dict.get("elongation", 1.2)), 2),
-                            shape_class=m_dict.get("shape_class", "irregular"),
-                        )
-
-                    trace_steps.append(
-                        TraceStep(
-                            step=len(trace_steps) + 1,
-                            tool=ToolEnum.T3_ROI_ZOOM_MEASURE,
-                            reason=f"Rotated rect measurement: area={m_dict.get('area_pct', 0.0):.3f}%, shape={m_dict.get('shape_class', 'unknown')}.",
-                            status="COMPLETED" if m_dict.get("available") else "UNAVAILABLE",
-                            counts_toward_budget=True,
-                            duration_ms=round(t3_ms, 2),
-                            overlay_url=f"/api/assets/{insp_id}_mask.png",
-                        )
-                    )
-
-                    mean_res = float(res_info.get("residual_mean", 0.0))
-                    if mean_res > 0.12:
-                        decision = DecisionEnum.FAIL
-                        decision_path = DecisionPathEnum.AGENT_CONFIRMED
-                    elif mean_res < 0.05:
-                        decision = DecisionEnum.PASS
-                        decision_path = DecisionPathEnum.AGENT_CLEARED
-                    else:
-                        decision = DecisionEnum.HUMAN
-                        decision_path = DecisionPathEnum.INCONCLUSIVE
-
-        t_tools_ms = (time.perf_counter() - t_tools_start) * 1000.0
-
-        # 8. Encode Visual Assets
-        # Reference asset (aligned or fallback to golden template)
-        ref_bgr = aligned_bgr if aligned_bgr is not None else (
-            self.templates[0]["bgr"] if self.templates else std_bgr
-        )
+        # Build visual assets
+        # Reference asset
+        ref_bgr = res.get("reference_aligned")
+        if ref_bgr is None:
+            ref_bgr = self.templates[0]["bgr"] if self.templates else std_bgr
         ref_key = f"{insp_id}_reference.jpg"
         _, ref_jpg = cv2.imencode(".jpg", ref_bgr, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
         assets_to_store[ref_key] = (ref_jpg.tobytes(), "image/jpeg")
 
-        # Anomaly Heatmap asset (JET overlay blended with input)
-        heat_norm = np.clip((heat / max(t_fail * 1.1, 1e-6)) * 255.0, 0, 255).astype(np.uint8)
-        heat_color = cv2.applyColorMap(heat_norm, cv2.COLORMAP_JET)
-        heat_blend = cv2.addWeighted(std_bgr, 0.65, heat_color, 0.35, 0)
+        # Anomaly Heatmap asset
         heat_key = f"{insp_id}_heatmap.jpg"
-        _, heat_jpg = cv2.imencode(".jpg", heat_blend, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
-        assets_to_store[heat_key] = (heat_jpg.tobytes(), "image/jpeg")
+        heat = res.get("heatmap")
+        if heat is not None:
+            t_fail_val = res.get("thresholds", {}).get("t_fail") or 2.2863
+            heat_norm = np.clip((heat / max(t_fail_val * 1.1, 1e-6)) * 255.0, 0, 255).astype(np.uint8)
+            heat_color = cv2.applyColorMap(heat_norm, cv2.COLORMAP_JET)
+            heat_blend = cv2.addWeighted(std_bgr, 0.65, heat_color, 0.35, 0)
+            _, heat_jpg = cv2.imencode(".jpg", heat_blend, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
+            assets_to_store[heat_key] = (heat_jpg.tobytes(), "image/jpeg")
 
-        # Contour Mask asset (binary mask of ROIs)
-        mask_binary = (heat > patch_thr).astype(np.uint8) * 255
+        # Contour Mask asset
         mask_key = f"{insp_id}_mask.png"
-        _, mask_png = cv2.imencode(".png", mask_binary)
-        assets_to_store[mask_key] = (mask_png.tobytes(), "image/png")
+        patch_thr = float(self.calibration.get("heatmap", {}).get("patch_thr", 2.0202))
+        if heat is not None:
+            mask_binary = (heat > patch_thr).astype(np.uint8) * 255
+            _, mask_png = cv2.imencode(".png", mask_binary)
+            assets_to_store[mask_key] = (mask_png.tobytes(), "image/png")
 
-        # 9. Counterfactual sensitivity items across allowed alpha levels
+        # Trace steps
+        trace_steps = []
+        if sim_step:
+            trace_steps.append(sim_step)
+        for st in res.get("trace", []):
+            tool_name = st["tool"]
+            tool_enum = ToolEnum(tool_name) if tool_name in ToolEnum._value2member_map_ else ToolEnum.QUALITY_GATE
+            overlay_url = None
+            if tool_enum == ToolEnum.PATCHCORE_PERCEPTION:
+                overlay_url = f"/api/assets/{heat_key}"
+            elif tool_enum == ToolEnum.T1_ALIGN_REFERENCE:
+                overlay_url = f"/api/assets/{ref_key}"
+            elif tool_enum == ToolEnum.T3_ROI_ZOOM_MEASURE and st.get("status") == "COMPLETED":
+                overlay_url = f"/api/assets/{mask_key}"
+
+            trace_steps.append(
+                TraceStep(
+                    step=len(trace_steps) + 1,
+                    tool=tool_enum,
+                    reason=st["reason"],
+                    status=st["status"],
+                    counts_toward_budget=st.get("counts_toward_budget", False),
+                    duration_ms=st.get("duration_ms", 0.0),
+                    overlay_url=overlay_url,
+                )
+            )
+
+        # Alignment and Measurements objects
+        alignment_info = None
+        if res.get("alignment"):
+            al = res["alignment"]
+            alignment_info = AlignmentInfo(
+                template_id=al["template_id"],
+                method=al.get("method", "ORB+RANSAC_Affine"),
+                quality=al.get("quality"),
+                q_min=float(al.get("q_min", 0.65)),
+                rotation_deg=float(al.get("rotation_deg", 0.0)),
+            )
+
+        measurement_stats = None
+        if res.get("measurements"):
+            ms = res["measurements"]
+            roi_src = ms.get("roi_source", "threshold")
+            valid_roi_src = roi_src if roi_src in ("threshold", "peak_fallback") else "threshold"
+            raw_shape = ms.get("shape_class")
+            valid_shape = raw_shape if raw_shape in ("elongated", "compact", "irregular") else None
+            measurement_stats = MeasurementStats(
+                roi_bbox=tuple(ms.get("roi_bbox", (0, 0, 0, 0))),
+                roi_source=valid_roi_src,
+                rois_checked=int(ms.get("rois_checked", 1)),
+                rois_total=int(ms.get("rois_total", 1)),
+                residual_mean=float(ms.get("residual_mean", 0.0)),
+                r_low=float(ms.get("r_low", 0.04)),
+                r_high=float(ms.get("r_high", 0.12)),
+                area_pct=float(ms["area_pct"]) if ms.get("area_pct") is not None else None,
+                area_denominator=ms.get("area_denominator", "image"),
+                elongation=float(ms["elongation"]) if ms.get("elongation") is not None else None,
+                shape_class=valid_shape,
+            )
+
+        score = float(res.get("score") or 0.0)
+        t_pass = float(res.get("thresholds", {}).get("t_pass") or self.calibration["t_pass"]["threshold"])
+        t_fail = float(res.get("thresholds", {}).get("t_fail") or self.calibration.get("t_fail_default", 2.2863))
+        t_fail_opts = self.calibration.get("t_fail_options", {})
+
         counterfactuals = []
         for a_str, t_obj in t_fail_opts.items():
             a_val = float(a_str)
@@ -541,23 +440,6 @@ class LiveEngine:
 
         t_total_ms = (time.perf_counter() - t_start) * 1000.0
 
-        # Grounded text explanation
-        if decision == DecisionEnum.PASS:
-            report = (
-                f"PASSED ({decision_path.value}): PatchCore distance {score:.4f} is within conformal normal bound "
-                f"t_pass={t_pass:.4f} (p-value={p_val:.4f}). Verified with 95% statistical confidence."
-            )
-        elif decision == DecisionEnum.FAIL:
-            report = (
-                f"DEFECT CONFIRMED ({decision_path.value}): PatchCore distance {score:.4f} exceeds critical defect bound "
-                f"t_fail={t_fail:.4f} (p-value={p_val:.4f}). Detected {len(rois)} candidate defect region(s)."
-            )
-        else:
-            report = (
-                f"HUMAN REVIEW REQUIRED ({decision_path.value}): Distance {score:.4f} lies in ambiguous zone "
-                f"[{t_pass:.4f}, {t_fail:.4f}]. Dispatched to operator console for physical confirmation."
-            )
-
         response = InspectionResponse(
             schema_version="1.0",
             inspection_id=insp_id,
@@ -569,7 +451,7 @@ class LiveEngine:
             image=image_meta,
             decision=decision,
             decision_path=decision_path,
-            suggested_decision=None,
+            suggested_decision=suggested_decision,
             anomaly_score=round(score, 4),
             thresholds={
                 "t_pass": round(t_pass, 4),
@@ -579,8 +461,8 @@ class LiveEngine:
                 "n_calib": int(self.calibration.get("n_calibration", 300)),
             },
             calibration=CalibrationInfo(
-                status="frozen_assumption_dependent",
-                claim="normal_marginal_upper_tail",
+                status="not_applicable_lighting_shift" if qg_result.lighting_shift_detected else "frozen_assumption_dependent",
+                claim=None if qg_result.lighting_shift_detected else "normal_marginal_upper_tail",
                 assumptions=(
                     "Split-conformal coverage: P(score > t_fail | normal) <= alpha_fail. "
                     "Assumes exchangeable optical conditions without unmodeled distribution shift."
@@ -596,15 +478,15 @@ class LiveEngine:
                 contour_mask=f"/api/assets/{mask_key}",
             ),
             execution_trace=trace_steps,
-            steps_used=steps_used,
+            steps_used=res.get("steps_used", 0),
             step_budget=4,
             timing_ms=TimingInfo(
-                quality=round(t_qg_ms, 2),
-                perception=round(t_perc_ms, 2),
-                tools=round(t_tools_ms, 2),
+                quality=res["timing_ms"]["quality"],
+                perception=res["timing_ms"]["perception"],
+                tools=res["timing_ms"]["tools"],
                 total=round(t_total_ms, 2),
             ),
-            grounded_report=report,
+            grounded_report=res["grounded_report"],
             counterfactuals=counterfactuals,
         )
 

@@ -34,7 +34,7 @@ import cv2
 import numpy as np
 
 # ---- fixed, documented constants -------------------------------------------------
-ORB_FEATURES = 2000
+ORB_FEATURES = 1000
 RATIO = 0.75
 MIN_GOOD_MATCHES = 12
 MIN_INLIERS = 10
@@ -141,8 +141,15 @@ class AlignResult:
         d["M"] = None if self.M is None else [[float(x) for x in row] for row in self.M]
         return d
 
+    @property
+    def translation_px(self) -> tuple[float, float]:
+        """Translation (tx, ty) extracted from affine matrix M."""
+        if self.M is None:
+            return (0.0, 0.0)
+        return (float(self.M[0, 2]), float(self.M[1, 2]))
 
-def _finalize(m, test_gray, ref_gray, method, **extra) -> AlignResult:
+
+def _finalize(m, test_gray, ref_gray, method, q_min: float | None = 0.50, **extra) -> AlignResult:
     """Validate a candidate transform: finite, plausible scale/rotation, overlap, quality."""
     res = AlignResult(M=None, method=method, valid=False, **extra)
     if m is None:
@@ -158,21 +165,35 @@ def _finalize(m, test_gray, ref_gray, method, **extra) -> AlignResult:
     warped, valid = warp_reference(ref_gray, m, test_gray.shape)
     res.overlap = float((valid > 0).mean())
     res.quality = alignment_quality(test_gray, warped, valid)
+    rot_diff = min(abs(rot), abs(abs(rot) - 180.0))
     if not (SCALE_RANGE[0] <= scale <= SCALE_RANGE[1]):
         res.reason = f"implausible scale {scale:.3f}"
-    elif abs(rot) > MAX_ROT_DEG:
+    elif rot_diff > MAX_ROT_DEG:
         res.reason = f"implausible rotation {rot:.1f} deg"
     elif res.overlap < MIN_OVERLAP:
         res.reason = f"low overlap {res.overlap:.2f}"
+    elif q_min is not None and res.quality < q_min:
+        res.reason = f"low quality {res.quality:.3f} < {q_min:.2f}"
     else:
         res.valid = True
     return res
 
 
-def _align_orb(test_gray, ref_gray) -> AlignResult:
-    orb = cv2.ORB_create(ORB_FEATURES)
-    kt, dt = orb.detectAndCompute(test_gray, None)
-    kr, dr = orb.detectAndCompute(ref_gray, None)
+def _align_orb(test_gray, ref_gray, test_features=None, ref_features=None) -> AlignResult:
+    orb = None
+    if test_features is not None:
+        kt, dt = test_features
+    else:
+        orb = cv2.ORB_create(ORB_FEATURES)
+        kt, dt = orb.detectAndCompute(test_gray, None)
+
+    if ref_features is not None:
+        kr, dr = ref_features
+    else:
+        if orb is None:
+            orb = cv2.ORB_create(ORB_FEATURES)
+        kr, dr = orb.detectAndCompute(ref_gray, None)
+
     if dt is None or dr is None or len(kt) < 8 or len(kr) < 8:
         return _finalize(None, test_gray, ref_gray, "orb_ransac", reason="too few ORB features")
     pairs = cv2.BFMatcher(cv2.NORM_HAMMING).knnMatch(dr, dt, k=2)
@@ -244,10 +265,10 @@ def _align_rotation_ecc(test_gray, ref_gray) -> AlignResult:
     return res
 
 
-def align(test_gray: np.ndarray, ref_gray: np.ndarray) -> AlignResult:
+def align(test_gray: np.ndarray, ref_gray: np.ndarray, test_features=None, ref_features=None) -> AlignResult:
     """T1: ORB + RANSAC first; deterministic rotation search + ECC as fallback."""
     t0 = time.time()
-    a = _align_orb(test_gray, ref_gray)
+    a = _align_orb(test_gray, ref_gray, test_features=test_features, ref_features=ref_features)
     if a.valid:
         a.ms = (time.time() - t0) * 1000
         return a
@@ -261,10 +282,20 @@ def align(test_gray: np.ndarray, ref_gray: np.ndarray) -> AlignResult:
 
 def align_to_templates(test_gray, templates, order, q_min: float | None = None, max_templates: int = 2):
     """Try up to `max_templates` nearest templates; accept the first valid one with quality >= q_min."""
+    orb = cv2.ORB_create(ORB_FEATURES)
+    kt, dt = orb.detectAndCompute(test_gray, None)
+    test_feat = (kt, dt) if (dt is not None and len(kt) >= 8) else None
+
     best, tried = None, []
     for idx in list(order)[:max_templates]:
         t = templates[idx]
-        r = align(test_gray, t["gray"])
+        ref_feat = (t.get("orb_kp"), t.get("orb_desc"))
+        if ref_feat[0] is None or ref_feat[1] is None:
+            kr, dr = orb.detectAndCompute(t["gray"], None)
+            t["orb_kp"], t["orb_desc"] = kr, dr
+            ref_feat = (kr, dr)
+
+        r = align(test_gray, t["gray"], test_features=test_feat, ref_features=ref_feat)
         r.template_id = t["id"]
         tried.append({"template_id": t["id"], "valid": r.valid, "quality": r.quality, "reason": r.reason})
         ok = r.valid and (q_min is None or (r.quality is not None and r.quality >= q_min))
@@ -372,20 +403,45 @@ def normalize_lighting(gray: np.ndarray) -> np.ndarray:
 # ------------------------------------------------------------------ templates
 
 def load_templates(directory: str | Path) -> dict:
-    """Read data/templates/<category>/ -> {"items": [{id, gray, bgr, embedding}], "embeddings": (k, D)}."""
+    """Read data/templates/<category>/ -> {"items": [{id, gray, bgr, embedding}], "embeddings": (k, D) | None}."""
     d = Path(directory)
     meta = json.loads((d / "templates.json").read_text(encoding="utf-8"))
-    emb = np.load(d / "embeddings.npz")["embeddings"].astype(np.float32)
+    emb_path = d / "embeddings.npz"
+    emb = None
+    if emb_path.is_file():
+        try:
+            emb = np.load(emb_path)["embeddings"].astype(np.float32)
+        except Exception:
+            emb = None
+
     items = []
+    orb = cv2.ORB_create(ORB_FEATURES)
     for i, t in enumerate(meta["templates"]):
         bgr = cv2.imread(str(d / t["file"]))
         if bgr is None:
             raise FileNotFoundError(f"missing template image {d / t['file']}")
-        items.append({"id": t["id"], "bgr": bgr, "gray": to_gray(bgr), "embedding": emb[t["embedding_row"]]})
+        emb_val = None
+        if emb is not None and "embedding_row" in t:
+            row_idx = t["embedding_row"]
+            if 0 <= row_idx < len(emb):
+                emb_val = emb[row_idx]
+        g = to_gray(bgr)
+        kr, dr = orb.detectAndCompute(g, None)
+        items.append({
+            "id": t["id"],
+            "bgr": bgr,
+            "gray": g,
+            "embedding": emb_val,
+            "orb_kp": kr,
+            "orb_desc": dr,
+        })
     return {"items": items, "embeddings": emb, "meta": meta}
 
 
-def nearest_order(embedding: np.ndarray, embeddings: np.ndarray) -> list[int]:
-    """Template indices ordered by embedding distance (ties by index)."""
+def nearest_order(embedding: np.ndarray | None, embeddings: np.ndarray | None, n_items: int = 0) -> list[int]:
+    """Template indices ordered by embedding distance (ties by index). Falls back to sequential [0, 1, ...] if missing."""
+    if embedding is None or embeddings is None:
+        count = n_items if n_items > 0 else (len(embeddings) if embeddings is not None else 0)
+        return list(range(count))
     d = np.sqrt(((embeddings - embedding[None, :]) ** 2).sum(axis=1))
     return [int(i) for i in np.lexsort((np.arange(len(d)), d))]

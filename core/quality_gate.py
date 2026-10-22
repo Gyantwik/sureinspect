@@ -39,6 +39,8 @@ DARK_INTENSITY_THRESHOLD = 15      # Pixels < 15 considered dark
 BRIGHT_INTENSITY_THRESHOLD = 240   # Pixels > 240 considered bright
 GLARE_V_THRESHOLD = 240            # HSV Value >= 240
 GLARE_S_THRESHOLD = 35             # HSV Saturation <= 35
+GLARE_TINTED_V_THRESHOLD = 250     # HSV Value >= 250 for tinted glare (v1.1)
+GLARE_TINTED_S_THRESHOLD = 120     # HSV Saturation <= 120 for tinted glare (v1.1)
 
 REQUIRED_THRESHOLD_KEYS = (
     "blur_thr",
@@ -117,7 +119,10 @@ def assert_live_ready(thresholds: dict[str, Any]) -> None:
         )
 
 
-def compute_frame_metrics(image_std: np.ndarray) -> dict[str, float]:
+def compute_frame_metrics(
+    image_std: np.ndarray,
+    use_v1_1: bool = False,
+) -> dict[str, float]:
     """Computes full-precision quality metrics on a standardized BGR image."""
     validate_standardized_image(image_std)
 
@@ -133,7 +138,14 @@ def compute_frame_metrics(image_std: np.ndarray) -> dict[str, float]:
     hsv = cv2.cvtColor(image_std, cv2.COLOR_BGR2HSV)
     sat = hsv[:, :, 1]
     val = hsv[:, :, 2]
-    glare_mask = (val >= GLARE_V_THRESHOLD) & (sat <= GLARE_S_THRESHOLD)
+    if use_v1_1:
+        # D3: Support warm/tinted specular glare
+        glare_mask = (val >= GLARE_V_THRESHOLD) & (
+            (sat <= GLARE_S_THRESHOLD)
+            | ((sat <= GLARE_TINTED_S_THRESHOLD) & (val >= GLARE_TINTED_V_THRESHOLD))
+        )
+    else:
+        glare_mask = (val >= GLARE_V_THRESHOLD) & (sat <= GLARE_S_THRESHOLD)
     glare_fraction = float(np.mean(glare_mask))
 
     # 3. LAB for illumination statistics
@@ -142,7 +154,7 @@ def compute_frame_metrics(image_std: np.ndarray) -> dict[str, float]:
     l_mean = float(np.mean(l_channel))
     l_std = float(np.std(l_channel))
 
-    return {
+    metrics: dict[str, float] = {
         "blur_variance": blur_variance,
         "dark_fraction": dark_fraction,
         "bright_fraction": bright_fraction,
@@ -150,6 +162,18 @@ def compute_frame_metrics(image_std: np.ndarray) -> dict[str, float]:
         "l_mean": l_mean,
         "l_std": l_std,
     }
+
+    if use_v1_1:
+        # D1: Center tile localized defocus check
+        h, w = gray.shape
+        center_gray = gray[h // 4 : 3 * h // 4, w // 4 : 3 * w // 4]
+        metrics["center_blur_variance"] = float(cv2.Laplacian(center_gray, cv2.CV_64F).var())
+
+        # D2: Pre-filtered median blur for high-frequency sensor noise rejection
+        denoised_gray = cv2.medianBlur(gray, 3)
+        metrics["denoised_blur_variance"] = float(cv2.Laplacian(denoised_gray, cv2.CV_64F).var())
+
+    return metrics
 
 
 def fit_gate_thresholds(
@@ -164,6 +188,7 @@ def fit_gate_thresholds(
       l_mean_ref, l_mean_sd (floored at 2.0 L units),
       l_std_ref (guarded against zero), n_fit, gate_version,
       blur_fit_method ("percentile_1" or "min_small_n")
+      When gate_version == "v1.1", also includes center_blur_thr and denoised_blur_thr.
     """
     if not images_std:
         raise ValueError("Cannot fit gate thresholds from an empty collection of images.")
@@ -182,7 +207,10 @@ def fit_gate_thresholds(
             "blur_fit_method": "stub",
         }
 
+    is_v1_1 = (gate_version == "v1.1")
     blur_vars = []
+    center_blur_vars = []
+    denoised_blur_vars = []
     dark_fracs = []
     bright_fracs = []
     glare_fracs = []
@@ -190,8 +218,11 @@ def fit_gate_thresholds(
     l_stds = []
 
     for img in images_std:
-        metrics = compute_frame_metrics(img)
+        metrics = compute_frame_metrics(img, use_v1_1=is_v1_1)
         blur_vars.append(metrics["blur_variance"])
+        if is_v1_1:
+            center_blur_vars.append(metrics["center_blur_variance"])
+            denoised_blur_vars.append(metrics["denoised_blur_variance"])
         dark_fracs.append(metrics["dark_fraction"])
         bright_fracs.append(metrics["bright_fraction"])
         glare_fracs.append(metrics["glare_fraction"])
@@ -224,7 +255,7 @@ def fit_gate_thresholds(
     mean_std = float(np.mean(l_stds))
     l_std_ref = max(1e-4, mean_std)
 
-    return {
+    out: dict[str, Any] = {
         "blur_thr": blur_thr,
         "dark_max": dark_max,
         "bright_max": bright_max,
@@ -237,10 +268,23 @@ def fit_gate_thresholds(
         "blur_fit_method": blur_fit_method,
     }
 
+    if is_v1_1:
+        if n_images >= 20:
+            base_center = float(np.percentile(center_blur_vars, BLUR_PERCENTILE))
+            base_denoised = float(np.percentile(denoised_blur_vars, BLUR_PERCENTILE))
+        else:
+            base_center = float(np.min(center_blur_vars))
+            base_denoised = float(np.min(denoised_blur_vars))
+        out["center_blur_thr"] = max(10.0, base_center * BLUR_VARIANCE_SAFETY_RATIO)
+        out["denoised_blur_thr"] = max(10.0, base_denoised * BLUR_VARIANCE_SAFETY_RATIO)
+
+    return out
+
 
 def check_quality(
     image_std: np.ndarray,
     thresholds: dict[str, Any],
+    use_v1_1: bool | None = None,
 ) -> dict[str, Any]:
     """
     Evaluates standardized image against quality thresholds.
@@ -253,7 +297,8 @@ def check_quality(
       exposure_ok (bool), lighting_shift_detected (bool)
     """
     validate_thresholds(thresholds)
-    metrics = compute_frame_metrics(image_std)
+    is_v1_1 = use_v1_1 if use_v1_1 is not None else (thresholds.get("gate_version") == "v1.1")
+    metrics = compute_frame_metrics(image_std, use_v1_1=is_v1_1)
 
     blur_variance = metrics["blur_variance"]
     dark_fraction = metrics["dark_fraction"]
@@ -277,6 +322,21 @@ def check_quality(
         failures.append(
             f"Laplacian variance {blur_variance:.1f} is below focus threshold {blur_thr:.1f}"
         )
+
+    if is_v1_1:
+        center_blur_thr = float(thresholds.get("center_blur_thr", blur_thr))
+        center_blur_var = metrics.get("center_blur_variance", blur_variance)
+        if center_blur_var < center_blur_thr:
+            failures.append(
+                f"Center Laplacian variance {center_blur_var:.1f} is below focus threshold {center_blur_thr:.1f}"
+            )
+
+        denoised_blur_thr = float(thresholds.get("denoised_blur_thr", blur_thr * 0.40))
+        denoised_blur_var = metrics.get("denoised_blur_variance", blur_variance)
+        if denoised_blur_var < denoised_blur_thr:
+            failures.append(
+                f"Denoised Laplacian variance {denoised_blur_var:.1f} is below focus threshold {denoised_blur_thr:.1f}"
+            )
 
     # 2. Exposure checks
     dark_failed = dark_fraction > dark_max
@@ -316,7 +376,7 @@ def check_quality(
         else:
             reason = "Focus and illumination within normal parameters"
 
-    return {
+    res_dict: dict[str, Any] = {
         "status": status,
         "action": action,
         "reason": reason,
@@ -330,11 +390,17 @@ def check_quality(
         "exposure_ok": exposure_ok,
         "lighting_shift_detected": lighting_shift_detected,
     }
+    if is_v1_1:
+        res_dict["center_blur_variance"] = metrics.get("center_blur_variance")
+        res_dict["denoised_blur_variance"] = metrics.get("denoised_blur_variance")
+
+    return res_dict
 
 
 def gate_reject_report(
     images_std: Sequence[np.ndarray],
     thresholds: dict[str, Any],
+    use_v1_1: bool | None = None,
 ) -> dict[str, Any]:
     """
     Evaluates a collection of images against quality thresholds and summarizes rejection rates.
@@ -348,6 +414,7 @@ def gate_reject_report(
       lighting_shift_rate: fraction of images with lighting shift detected
     """
     validate_thresholds(thresholds)
+    is_v1_1 = use_v1_1 if use_v1_1 is not None else (thresholds.get("gate_version") == "v1.1")
     n = len(images_std)
     if n == 0:
         return {
@@ -369,7 +436,7 @@ def gate_reject_report(
     per_reason_counts = {"blur": 0, "dark": 0, "bright": 0, "glare": 0}
 
     for img in images_std:
-        res = check_quality(img, thresholds)
+        res = check_quality(img, thresholds, use_v1_1=is_v1_1)
         if res["status"] == "FAILED":
             n_rejected += 1
 

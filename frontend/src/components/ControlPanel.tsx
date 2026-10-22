@@ -31,7 +31,7 @@ export default function ControlPanel({ cats, samples, form, set, busy, onRun }: 
         <label className="flex items-center gap-2 rounded-lg border border-dashed border-line px-3 py-2 text-sm text-muted cursor-pointer hover:border-accent focus-within:outline-2">
           <Upload size={16} />
           <span className="truncate">{form.file ? form.file.name : "or upload an image"}</span>
-          <input type="file" accept="image/*" className="sr-only" onChange={(e) => set({ file: e.target.files?.[0] ?? null, sampleId: "" })} />
+          <input type="file" accept="image/png,image/jpeg" className="sr-only" onChange={(e) => set({ file: e.target.files?.[0] ?? null, sampleId: "" })} />
         </label>
       </div>
 
@@ -40,7 +40,7 @@ export default function ControlPanel({ cats, samples, form, set, busy, onRun }: 
           <span className="label">Fail risk α</span>
           <div className="flex gap-2" role="radiogroup" aria-label="Alpha">
             {(cat.alpha_fail_options ?? cat.alpha_options ?? []).map((a) => (
-              <button key={a} role="radio" aria-checked={form.alpha === a} onClick={() => set({ alpha: a })}
+              <button type="button" key={a} role="radio" aria-checked={form.alpha === a} onClick={() => set({ alpha: a })}
                 className={`flex-1 rounded-lg border px-2 py-1.5 text-sm font-mono ${form.alpha === a ? "bg-ink text-paper border-ink" : "bg-white border-line"}`}>{a}</button>
             ))}
           </div>
@@ -56,13 +56,13 @@ export default function ControlPanel({ cats, samples, form, set, busy, onRun }: 
         ))}
       </fieldset>
 
-      <button disabled={!canRun} onClick={onRun}
+      <button type="button" disabled={!canRun} aria-busy={busy} onClick={onRun}
         className="flex items-center justify-center gap-2 rounded-lg bg-accent text-white py-2.5 text-sm font-medium disabled:opacity-40">
         <Play size={15} /> {busy ? "Inspecting…" : "Run inspection"}
       </button>
 
       <p className="text-xs leading-relaxed text-muted">
-        Uploads are processed for inspection and audit. Local cache is short-lived; audit records become eligible for automatic deletion after 14 days. Do not upload confidential images.
+        PNG and JPEG only. Images and audit feedback expire after 30 idle minutes from the bounded in-memory cache.
       </p>
     </section>
   );

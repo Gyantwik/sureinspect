@@ -11,22 +11,20 @@ from __future__ import annotations
 import math
 from typing import List, Dict, Any, Tuple
 import numpy as np
+from core.calibration import conformal_threshold
 from eval.stats import wilson, clopper_pearson
 
 
-def compute_conformal_threshold(calib_scores: List[float], alpha: float) -> float:
+def compute_conformal_threshold(calib_scores: List[float], alpha: float) -> float | None:
     """
-    Computes standard conformal quantile threshold:
+    Computes standard conformal quantile threshold by delegating to core.calibration:
     ceil((n + 1) * (1 - alpha)) / n quantile.
+    Returns None if k > n (finite sample bound cannot be guaranteed).
     """
-    n = len(calib_scores)
-    if n == 0:
-        raise ValueError("Cannot compute calibration threshold from empty scores list")
-    scores_sorted = sorted(calib_scores)
-    # 1 - alpha quantile with finite sample correction
-    rank = math.ceil((n + 1) * (1 - alpha))
-    rank = min(n, max(1, rank))
-    return scores_sorted[rank - 1]
+    res = conformal_threshold(calib_scores, alpha)
+    if res is None:
+        return None
+    return float(res["threshold"])
 
 
 def evaluate_calibration_split(
@@ -37,6 +35,7 @@ def evaluate_calibration_split(
 ) -> Dict[str, Any]:
     """
     Evaluates empirical coverage of conformal thresholds on test normals.
+    Omits alphas where k > n rather than clipping to n.
     """
     n_calib = len(calib_scores)
     n_test = len(test_normal_scores)
@@ -44,8 +43,13 @@ def evaluate_calibration_split(
         raise ValueError("Calibration and test score lists must be non-empty")
 
     results_by_alpha = {}
+    omitted_alphas: List[float] = []
     for a in alphas:
         thr = compute_conformal_threshold(calib_scores, a)
+        if thr is None:
+            omitted_alphas.append(a)
+            continue
+
         exceedances = sum(1 for s in test_normal_scores if s > thr)
         exceed_rate = exceedances / n_test
 
@@ -64,4 +68,5 @@ def evaluate_calibration_split(
         "n_calib": n_calib,
         "n_test": n_test,
         "alpha_evaluations": results_by_alpha,
+        "omitted_alphas": omitted_alphas,
     }

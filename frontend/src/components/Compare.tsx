@@ -2,9 +2,9 @@ import { useState } from "react";
 import type { Inspection } from "../types";
 import { useAsset } from "../services/useAsset";
 
-function Layer({ url, opacity = 1 }: { url?: string | null; opacity?: number }) {
+function Layer({ url, opacity = 1, alt = "" }: { url?: string | null; opacity?: number; alt?: string }) {
   const { src } = useAsset(url);
-  return src ? <img src={src} alt="" style={{ opacity }} className="absolute inset-0 h-full w-full object-contain" /> : null;
+  return src ? <img src={src} alt={alt} style={{ opacity }} className="absolute inset-0 h-full w-full object-contain" /> : null;
 }
 
 export default function Compare({ r }: { r: Inspection | null }) {
@@ -20,7 +20,7 @@ export default function Compare({ r }: { r: Inspection | null }) {
         {r && (
           <div className="flex rounded-lg border border-line overflow-hidden text-xs">
             {(["input", "reference"] as const).map((b) => (
-              <button key={b} disabled={b === "reference" && !hasRef} onClick={() => setBase(b)}
+              <button type="button" key={b} disabled={b === "reference" && !hasRef} onClick={() => setBase(b)}
                 className={`px-3 py-1.5 capitalize disabled:opacity-40 ${base === b ? "bg-ink text-paper" : "bg-white"}`}>{b}</button>
             ))}
           </div>
@@ -29,7 +29,7 @@ export default function Compare({ r }: { r: Inspection | null }) {
       <div className="relative aspect-[4/3] w-full rounded-lg bg-[#e9e6df] overflow-hidden grid place-items-center">
         {!r && <span className="text-sm text-muted">No image yet</span>}
         {r && probe.failed && <span className="text-sm text-muted">Asset expired or unavailable</span>}
-        {r && !probe.failed && <><Layer url={baseUrl} /><Layer url={r.assets.anomaly_heatmap} opacity={op} /></>}
+        {r && !probe.failed && <><Layer url={baseUrl} alt={`${base} inspection image`} /><Layer url={r.assets.anomaly_heatmap} opacity={op} /></>}
       </div>
       {r && (
         <label className="mt-4 flex items-center gap-3 text-xs text-muted">

@@ -107,7 +107,7 @@ This document analyzes the 6 primary non-pass decision paths and failure recover
 * **Trigger:** Step counter reaches `step_budget` (4 steps) before reaching an automated clear/confirm condition.
 * **Root Cause:** Complex multi-defect board where successive ROIs require iterative alignment attempts without resolving confidence.
 * **Agent Handling:**
-  * Halts processing to enforce latency ceilings ($<200\text{ ms}$).
+  * Halts processing to enforce operational CPU latency bounds (mean ~582 ms multi-tool path, 2.0 s hard watchdog ceiling).
   * Verdict: `HUMAN`.
 
 ---
@@ -122,3 +122,45 @@ This document analyzes the 6 primary non-pass decision paths and failure recover
 | `EVIDENCE_CONFLICT` | `HUMAN` | Perception vs template difference contradiction | Disambiguate component batch variation |
 | `INCONCLUSIVE` | `HUMAN` | Marginal anomaly in score & residual gray zone | Triage subtle defect |
 | `BUDGET_EXHAUSTED` | `HUMAN` | Tool step budget limit reached | Operator manual decision |
+
+---
+
+## 5. Empirical Defect Escape Breakdown & Dilution Analysis
+
+In benchmark experiment E1 across the 96 total defects (26 dev defects and 70 test defects), exactly 9 defect boards received a final automated verdict of `PASS` (1 on dev, 8 on test). This section provides the exhaustive empirical accounting of each escape alongside its root-cause mechanism.
+
+### 5.1 Escaped Defect Breakdown Table
+
+| Split | Image Path | Ground-Truth Defect Type (from VisA) | PatchCore Score | Decision | Decision Path | Alignment Quality ($q$) | Residual Mean ($r_{\text{mean}}$) | Secondary ROIs Checked |
+| :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Dev** | `pcb1/test/bad/048.JPG` | `missing` | 2.2530 | `PASS` | `AGENT_CLEARED` | 0.7679 | 0.1379 | 1 / 1 |
+| **Test** | `pcb1/test/bad/015.JPG` | `melt` | 1.9064 | `PASS` | `FAST_PASS` | N/A | N/A | N/A |
+| **Test** | `pcb1/test/bad/025.JPG` | `melt` | 2.0637 | `PASS` | `AGENT_CLEARED` | 0.8636 | 0.0826 | 1 / 1 |
+| **Test** | `pcb1/test/bad/058.JPG` | `missing` | 2.2110 | `PASS` | `AGENT_CLEARED` | 0.8223 | 0.1100 | 1 / 1 |
+| **Test** | `pcb1/test/bad/061.JPG` | `melt` | 2.2357 | `PASS` | `AGENT_CLEARED` | 0.8826 | 0.0409 | 2 / 2 |
+| **Test** | `pcb1/test/bad/062.JPG` | `melt` | 2.1965 | `PASS` | `AGENT_CLEARED` | 0.8444 | 0.0429 | 1 / 1 |
+| **Test** | `pcb1/test/bad/063.JPG` | `melt` | 2.0085 | `PASS` | `FAST_PASS` | N/A | N/A | N/A |
+| **Test** | `pcb1/test/bad/085.JPG` | `scratch` | 2.1771 | `PASS` | `AGENT_CLEARED` | 0.8554 | 0.0613 | 1 / 1 |
+| **Test** | `pcb1/test/bad/096.JPG` | `scratch` | 2.0057 | `PASS` | `FAST_PASS` | N/A | N/A | N/A |
+
+### 5.2 Micro-Anomaly Photometric Dilution Mechanism
+
+An in-depth investigation into these 9 escapes reveals two distinct failure mechanisms:
+
+#### Mechanism 1: Sub-Threshold Deep Perception ($s \le t_{\text{pass}}$)
+- **Affected Samples:** 3 defect images (`pcb1/test/bad/015.JPG`, `063.JPG`, `096.JPG`).
+- **Explanation:** In these three cases, the deep feature extraction distance produced by the WideResNet-50 backbone fell below the safe pass threshold $t_{\text{pass}} = 2.0405$. For subtle defects (a faint hairline scratch or shallow solder melt seam), the feature activations in layer-2 and layer-3 did not elevate the nearest-neighbor distance above normal calibration board variance. Under SureInspect's decision rule, any sample with $s \le t_{\text{pass}}$ and normal illumination routes directly to `FAST_PASS` to conserve computational budget, bypassing secondary evidence tools.
+
+#### Mechanism 2: Micro-Anomaly Photometric Dilution Across ROI Window ($r_{\text{mean}} \le r_{\text{low}}$)
+- **Affected Samples:** 6 defect images (`pcb1/test/bad/048.JPG` on dev, and `025.JPG`, `058.JPG`, `061.JPG`, `062.JPG`, `085.JPG` on test).
+- **Explanation:** In all 6 cases, the deep PatchCore score correctly flagged the board as anomalous/ambiguous ($s \in (2.04, 2.29]$), appropriately dispatching Evidence Tools T1 (ORB+ECC alignment) and T3 (ROI residual measurement).
+- Alignment succeeded with high confidence ($q \in [0.7679, 0.8826] \ge q_{\text{min}} = 0.65$), producing sub-pixel homography registration against the golden template.
+- However, when the secondary tool extracted the $256 \times 256$ ROI patch centered on the anomaly heatmap peak and computed the mean absolute difference $r_{\text{mean}}$, the physical defect footprint (e.g., a tiny 0402 SMD missing, a single scratched trace, or minor solder bridge) occupied less than 1–3% of the total pixel area in the patch.
+- Consequently, when the absolute differences were averaged across the entire $256 \times 256$ window, the residual was photometrically diluted by the 97–99% matching background pixels, yielding $r_{\text{mean}} \in [0.0409, 0.1379]$, which falls well below the clearance threshold $r_{\text{low}} = 0.38$.
+- Because $r_{\text{mean}} \le r_{\text{low}}$, the agent policy determined that the deviation was benign registration or lighting variance rather than a structural fault, erroneously upgrading the board to `AGENT_CLEARED` (`PASS`).
+
+### 5.3 Engineering Remediation Roadmap
+To eliminate micro-anomaly dilution in future iterations:
+1. **Adaptive Sub-Patch Bounding:** Instead of evaluating the mean residual over a fixed $256 \times 256$ window, compute connected-component bounding boxes directly on thresholded heatmap contours and restrict residual calculation strictly to the bounding hull.
+2. **High-Percentile Residual Thresholding ($r_{95}$ / $r_{99}$):** Rather than evaluating $r_{\text{mean}}$, enforce dual criteria requiring both $r_{\text{mean}} \le r_{\text{low}}$ AND peak residual $r_{95} \le r_{\text{peak}}$ before permitting `AGENT_CLEARED`.
+3. **Multi-Scale Template Differencing:** Evaluate difference maps across multiple pyramid levels to isolate localized high-frequency spatial discrepancies.

@@ -21,10 +21,20 @@ export default function App() {
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
   const set = useCallback((p: Partial<Form>) => setForm((f) => ({ ...f, ...p })), []);
 
-  useEffect(() => {
-    getHealth().then((h) => setEngine(h.engine)).catch(() => setError("Backend unreachable. Start it with: uvicorn backend.main:app"));
-    getCategories().then((c) => { setCats(c); if (c[0]) set({ category: c[0].id, alpha: c[0].alpha_fail_default ?? c[0].default_alpha }); }).catch(() => {});
+  const loadInitialData = useCallback(async () => {
+    setError(null);
+    try {
+      const [health, categories] = await Promise.all([getHealth(), getCategories()]);
+      setEngine(health.engine);
+      setCats(categories);
+      if (categories[0]) set({ category: categories[0].id, alpha: categories[0].alpha_fail_default ?? categories[0].default_alpha });
+    } catch {
+      setEngine(null);
+      setError("Backend or category data is unavailable. Start the API, then retry.");
+    }
   }, [set]);
+
+  useEffect(() => { void loadInitialData(); }, [loadInitialData]);
 
   useEffect(() => { if (form.category) getSamples(form.category).then(setSamples).catch(() => setSamples([])); }, [form.category]);
 
@@ -52,16 +62,18 @@ export default function App() {
     }
   };
 
-  const mock = engine === "mock" || engine == null;
+  const engineLabel = engine === "mock" ? "MOCK ENGINE (Synthetic Evaluation)" : engine ? "LIVE OPENCV INFERENCE" : "ENGINE STATUS UNKNOWN";
+  const engineTone = engine === "mock" ? "bg-human/15 text-human" : engine ? "bg-pass/15 text-pass" : "bg-retake/15 text-retake";
   return (
     <div className="min-h-screen flex flex-col justify-between">
+      <a href="#main-content" className="skip-link">Skip to inspection controls</a>
       <div>
         <header className="border-b border-line">
           <div className="mx-auto max-w-[1400px] px-6 h-14 flex items-center justify-between">
             <div className="font-display text-2xl tracking-tight">SureInspect</div>
             <div className="flex items-center gap-3">
-              <span className={`rounded-full px-3 py-1 text-[11px] font-mono tracking-wider ${mock ? "bg-human/15 text-human" : "bg-pass/15 text-pass"}`}>
-                {mock ? "MOCK ENGINE (Synthetic Evaluation)" : "LIVE OPENCV INFERENCE"}
+              <span className={`rounded-full px-3 py-1 text-[11px] font-mono tracking-wider ${engineTone}`}>
+                {engineLabel}
               </span>
               <button
                 type="button"
@@ -70,17 +82,19 @@ export default function App() {
                 title="Reset session shadow state"
                 className="flex items-center gap-1.5 rounded border border-line bg-surface/50 px-2.5 py-1 text-xs text-muted hover:text-fg hover:border-line-hover transition-colors disabled:opacity-50 cursor-pointer"
               >
-                <RefreshCw size={12} className={resetting ? "animate-spin" : ""} />
+                <RefreshCw aria-hidden="true" size={12} className={resetting ? "animate-spin" : ""} />
                 <span>Reset Session</span>
               </button>
             </div>
           </div>
         </header>
 
-        <main className="mx-auto max-w-[1400px] px-6 py-6">
+        <main id="main-content" className="mx-auto max-w-[1400px] px-4 sm:px-6 py-6">
           {error && (
             <div role="alert" className="mb-5 flex items-start gap-2 rounded-lg border border-fail/40 bg-fail/5 px-4 py-3 text-sm text-fail">
-              <AlertTriangle size={16} className="mt-0.5" /> {error}
+              <AlertTriangle aria-hidden="true" size={16} className="mt-0.5" />
+              <span className="flex-1">{error}</span>
+              <button type="button" className="rounded border border-fail/40 px-3 py-2 font-medium" onClick={() => void loadInitialData()}>Retry</button>
             </div>
           )}
           {statusMsg && (
@@ -97,7 +111,7 @@ export default function App() {
       </div>
 
       <footer className="mt-12 border-t border-line py-4 text-center text-xs text-muted">
-        Uploads are processed for inspection and audit. Local cache is short-lived; audit records become eligible for automatic deletion after 14 days. Do not upload confidential images.
+        Images and audit feedback remain only in the bounded in-memory session cache and expire after 30 idle minutes. Do not upload confidential images.
       </footer>
     </div>
   );
