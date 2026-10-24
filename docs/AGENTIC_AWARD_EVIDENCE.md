@@ -25,6 +25,8 @@ This document maps the official special-award rubric to executable evidence. It 
 - `python -m eval.run_acquisition_robustness` runs 15 real-engine acquisition cases covering exact sample routing, exact uploaded bytes, PNG round trips, 0.729× browser resizing, and JPEG quality 90.
 - Assertions prohibit known-bad transformed samples from escaping as `PASS`, prohibit automatic `FAIL` for the known-good sample, verify exact-route parity, and enforce the tool budget.
 - `docs/INDEPENDENT_FINAL_EVALUATION_PROTOCOL.md` clearly separates the current previously seen regression split from a future genuinely independent evaluation.
+- A separate official VisA PCB2 cross-category stress test covers 100 normal and 100 anomalous images. The frozen PCB1 agent produced no automatic false rejects and no anomalous `PASS` escapes, but abstained on every image. This is evidence of safe behavior under distribution shift—not supported PCB2 accuracy and not a substitute for an independent PCB1 holdout.
+- A rights-cleared external normal-board **development robustness** audit uses HC-SR04 photographs from Wikimedia Commons with exact-hash and perceptual-hash overlap checks against all 1,104 frozen VisA PCB1 images. It now includes three-run decision/path repeatability checks. Because these images informed development and contain no independently labelled defects, they are not final independent evidence and do not close the complete independent-effectiveness gate.
 
 ## 4. Failure handling, observability, security, and human control — 15%
 

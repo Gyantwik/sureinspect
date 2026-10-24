@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-10-22T19:26:31Z",
+  "generated_at": "2026-10-24T04:11:11Z",
   "scope": "curated real VisA PCB samples under declared acquisition transforms",
   "passed": true,
   "failures": [],
@@ -28,7 +28,7 @@
       },
       "steps_used": 3,
       "step_budget": 4,
-      "timing_ms": 1122.88
+      "timing_ms": 1499.69
     },
     {
       "sample_id": "pcb1_borderline_01",
@@ -53,7 +53,7 @@
       },
       "steps_used": 3,
       "step_budget": 4,
-      "timing_ms": 455.89
+      "timing_ms": 597.61
     },
     {
       "sample_id": "pcb1_borderline_01",
@@ -78,7 +78,7 @@
       },
       "steps_used": 3,
       "step_budget": 4,
-      "timing_ms": 502.84
+      "timing_ms": 506.09
     },
     {
       "sample_id": "pcb1_borderline_01",
@@ -103,7 +103,7 @@
       },
       "steps_used": 3,
       "step_budget": 4,
-      "timing_ms": 474.13
+      "timing_ms": 432.92
     },
     {
       "sample_id": "pcb1_borderline_01",
@@ -128,7 +128,7 @@
       },
       "steps_used": 3,
       "step_budget": 4,
-      "timing_ms": 524.71
+      "timing_ms": 580.04
     },
     {
       "sample_id": "pcb1_bad_missing_01",
@@ -153,7 +153,7 @@
       },
       "steps_used": 3,
       "step_budget": 4,
-      "timing_ms": 569.76
+      "timing_ms": 547.63
     },
     {
       "sample_id": "pcb1_bad_missing_01",
@@ -178,7 +178,7 @@
       },
       "steps_used": 3,
       "step_budget": 4,
-      "timing_ms": 555.6
+      "timing_ms": 484.91
     },
     {
       "sample_id": "pcb1_bad_missing_01",
@@ -203,7 +203,7 @@
       },
       "steps_used": 3,
       "step_budget": 4,
-      "timing_ms": 482.81
+      "timing_ms": 547.91
     },
     {
       "sample_id": "pcb1_bad_missing_01",
@@ -228,7 +228,7 @@
       },
       "steps_used": 3,
       "step_budget": 4,
-      "timing_ms": 397.46
+      "timing_ms": 446.6
     },
     {
       "sample_id": "pcb1_bad_missing_01",
@@ -253,7 +253,7 @@
       },
       "steps_used": 3,
       "step_budget": 4,
-      "timing_ms": 448.41
+      "timing_ms": 543.96
     },
     {
       "sample_id": "pcb1_bad_scratch_01",
@@ -278,7 +278,7 @@
       },
       "steps_used": 3,
       "step_budget": 4,
-      "timing_ms": 504.98
+      "timing_ms": 496.53
     },
     {
       "sample_id": "pcb1_bad_scratch_01",
@@ -303,7 +303,7 @@
       },
       "steps_used": 3,
       "step_budget": 4,
-      "timing_ms": 555.5
+      "timing_ms": 548.58
     },
     {
       "sample_id": "pcb1_bad_scratch_01",
@@ -328,7 +328,7 @@
       },
       "steps_used": 3,
       "step_budget": 4,
-      "timing_ms": 521.09
+      "timing_ms": 567.4
     },
     {
       "sample_id": "pcb1_bad_scratch_01",
@@ -353,7 +353,7 @@
       },
       "steps_used": 3,
       "step_budget": 4,
-      "timing_ms": 460.5
+      "timing_ms": 438.49
     },
     {
       "sample_id": "pcb1_bad_scratch_01",
@@ -378,7 +378,7 @@
       },
       "steps_used": 3,
       "step_budget": 4,
-      "timing_ms": 529.62
+      "timing_ms": 471.56
     }
   ]
 }

@@ -22,18 +22,29 @@ from __future__ import annotations
 import json
 import time
 import uuid
+from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 
 import cv2
 import numpy as np
 
-from core.calibration import conformal_threshold
 from core.degrade import apply_degradations
-from core.perception import extract_patch_features, load_backbone, make_heatmap, find_rois, nn_distances
-from core.preprocess import StandardizedImage, standardize, to_blob
-from core.quality_gate import assert_live_ready, check_quality, validate_standardized_image
+from core.perception import (
+    extract_patch_features,
+    find_rois,
+    load_backbone,
+    make_heatmap,
+    nn_distances,
+)
+from core.preprocess import standardize, to_blob
+from core.quality_gate import (
+    assert_live_ready,
+    check_quality,
+    recover_board_framing,
+    validate_standardized_image,
+)
 from core.tools import (
     align_to_templates,
     load_templates,
@@ -75,7 +86,20 @@ def decide(
             suggested_decision=None,
         )
 
-    # 1. Check budget exhaustion
+    # 1. An explicit failed alignment is more informative than a wall-clock
+    # timeout reached while attempting that alignment. Keep the route stable.
+    if isinstance(evidence, dict) and evidence.get("alignment_valid") is False:
+        reason_msg = "template alignment failed"
+        if evidence.get("reason"):
+            reason_msg = f"template alignment failed ({evidence.get('reason')})"
+        return DecisionResult(
+            decision="HUMAN",
+            decision_path="ALIGN_FAILED",
+            reason=f"Secondary verification required but {reason_msg}",
+            suggested_decision=None,
+        )
+
+    # 2. Check budget exhaustion
     if isinstance(budget_state, dict):
         steps = budget_state.get("steps", 0)
         budget = budget_state.get("budget", 4)
@@ -92,7 +116,7 @@ def decide(
                 suggested_decision=None,
             )
 
-    # 2. Fast pass zone: score <= t_pass and normal illumination
+    # 3. Fast pass zone: score <= t_pass and normal illumination
     if score <= t_pass and not lighting_shift:
         return DecisionResult(
             decision="PASS",
@@ -128,7 +152,7 @@ def decide(
             suggested_decision=None,
         )
 
-    # 3. Any path past FAST_PASS requires evidence with alignment_valid=True
+    # 4. Any path past FAST_PASS requires evidence with alignment_valid=True
     if not isinstance(evidence, dict) or not evidence.get("alignment_valid", False):
         reason_msg = "template alignment failed"
         if isinstance(evidence, dict) and evidence.get("reason"):
@@ -140,7 +164,7 @@ def decide(
             suggested_decision=None,
         )
 
-    # 4. Resolve active residual thresholds (CLAHE copy thresholds under lighting shift)
+    # 5. Resolve active residual thresholds (CLAHE copy thresholds under lighting shift)
     if lighting_shift:
         r_low = float(evidence.get("clahe_r_low", evidence.get("r_low", 0.30)))
         r_high = float(evidence.get("clahe_r_high", evidence.get("r_high", 0.48)))
@@ -152,7 +176,7 @@ def decide(
     rois_total = int(evidence.get("rois_total", 1))
     rois_checked = int(evidence.get("rois_checked", 1))
 
-    # 5. High residual branch (r_val >= r_high)
+    # 6. High residual branch (r_val >= r_high)
     if r_val >= r_high:
         if not lighting_shift and score > t_fail:
             return DecisionResult(
@@ -169,7 +193,7 @@ def decide(
                 suggested_decision="FAIL",
             )
 
-    # 6. Mid-band residual branch (r_low < r_val < r_high)
+    # 7. Mid-band residual branch (r_low < r_val < r_high)
     if r_low < r_val < r_high:
         return DecisionResult(
             decision="HUMAN",
@@ -397,6 +421,46 @@ def inspect_standardized(
     })
     step_num += 1
 
+    acquisition_recovered = False
+    recoverable_background_failure = (
+        qg_res["status"] == "FAILED"
+        and "Laplacian variance" not in qg_res["reason"]
+        and "Dark pixel fraction" not in qg_res["reason"]
+    )
+    if recoverable_background_failure:
+        t0 = time.time()
+        recovered, recovery = recover_board_framing(image_std)
+        recovery_duration = (time.time() - t0) * 1000.0
+        trace.append({
+            "step": step_num,
+            "tool": "ACQUISITION_NORMALIZE",
+            "reason": recovery["reason"],
+            "status": "COMPLETED" if recovered is not None else "SKIPPED",
+            "counts_toward_budget": False,
+            "duration_ms": round(recovery_duration, 1),
+            "overlay": None,
+        })
+        step_num += 1
+        if recovered is not None:
+            retry_start = time.time()
+            recovered_qg = check_quality(recovered, gate)
+            retry_duration = (time.time() - retry_start) * 1000.0
+            trace.append({
+                "step": step_num,
+                "tool": "QUALITY_GATE",
+                "reason": f"Reframed board: {recovered_qg['reason']}",
+                "status": recovered_qg["status"],
+                "counts_toward_budget": False,
+                "duration_ms": round(retry_duration, 1),
+                "overlay": None,
+            })
+            step_num += 1
+            qg_duration += recovery_duration + retry_duration
+            if recovered_qg["status"] == "PASSED":
+                image_std = recovered
+                qg_res = recovered_qg
+                acquisition_recovered = True
+
     if qg_res["status"] == "FAILED":
         dec_res = decide(None, False, None, 1.0, 2.0, {})
         return {
@@ -419,6 +483,7 @@ def inspect_standardized(
                 "total": round((time.time() - t_start) * 1000.0, 1),
             },
             "grounded_report": f"Quality gate rejected frame: {qg_res['reason']}. No inference performed.",
+            "analysis_image": image_std,
         }
 
     # 3. Step 2: PatchCore Perception
@@ -486,6 +551,7 @@ def inspect_standardized(
                 "total": round((time.time() - t_start) * 1000.0, 1),
             },
             "grounded_report": f"Score {score:.4f} <= pass threshold {t_pass:.4f} with normal illumination. Fast pass emitted.",
+            "analysis_image": image_std,
         }
 
     # 5. Extract ROIs
@@ -510,7 +576,11 @@ def inspect_standardized(
     warped_ref = default_ref_bgr
     rois_checked = 0
 
-    test_gray = cv2.cvtColor(image_std, cv2.COLOR_BGR2GRAY)
+    # Alignment is geometric, so perform it on the original grayscale pixels.
+    # CLAHE is reserved for the later residual comparison; applying it to only
+    # the test image here makes feature matching needlessly asymmetric.
+    test_gray_raw = cv2.cvtColor(image_std, cv2.COLOR_BGR2GRAY)
+    test_gray = test_gray_raw
     if is_lighting_shift:
         t0 = time.time()
         test_gray = normalize_lighting(test_gray)
@@ -531,14 +601,31 @@ def inspect_standardized(
         t0 = time.time()
         feat_mean = feats.mean(axis=0) if feats is not None else None
         order = nearest_order(feat_mean, templates_bundle.get("embeddings"), len(templates_bundle["items"]))
-        align_res, tried = align_to_templates(test_gray, templates_bundle["items"], order, q_min=q_min)
+        # Recovered camera/web frames have weaker embedding comparability than
+        # calibrated fixture frames.  The bank is tiny (five references), so
+        # exhaust it for recovered inputs while preserving the fast top-two
+        # path for ordinary production captures.
+        max_templates = len(templates_bundle["items"]) if acquisition_recovered else 2
+        align_res, tried = align_to_templates(
+            test_gray_raw,
+            templates_bundle["items"],
+            order,
+            q_min=q_min,
+            max_templates=max_templates,
+        )
         t1_duration = (time.time() - t0) * 1000.0
         steps_used += 1
 
         trace.append({
             "step": step_num,
             "tool": "T1_ALIGN_REFERENCE",
-            "reason": f"Aligned with template {getattr(align_res, 'template_id', 'none')} (quality={getattr(align_res, 'quality', 0):.3f})" if getattr(align_res, 'valid', False) else f"Alignment failed: {getattr(align_res, 'reason', 'failed')}",
+            "reason": (
+                f"Aligned with template {getattr(align_res, 'template_id', 'none')} "
+                f"(quality={getattr(align_res, 'quality', 0):.3f}; tried={len(tried)})"
+                if getattr(align_res, "valid", False)
+                else f"Alignment failed after {len(tried)} template(s): "
+                f"{getattr(align_res, 'reason', 'failed')}"
+            ),
             "status": "COMPLETED" if getattr(align_res, 'valid', False) else "FAILED",
             "counts_toward_budget": True,
             "duration_ms": round(t1_duration, 1),
@@ -719,6 +806,7 @@ def inspect_standardized(
             "total": round(total_duration, 1),
         },
         "grounded_report": report,
+        "analysis_image": image_std,
     }
 
 
@@ -746,7 +834,6 @@ def run_inspection(
         AlignmentInfo,
         AssetsInfo,
         CalibrationInfo,
-        CounterfactualItem,
         DecisionEnum,
         DecisionPathEnum,
         ImageMetadata,
@@ -816,7 +903,7 @@ def run_inspection(
     if res.get("heatmap") is not None:
         norm_heat = (np.clip(res["heatmap"], 0, 3.0) / 3.0 * 255).astype(np.uint8)
         color_heat = cv2.applyColorMap(norm_heat, cv2.COLORMAP_JET)
-        success, heat_bytes = cv2.imencode(".png", color_heat)
+        _success, heat_bytes = cv2.imencode(".png", color_heat)
         heatmap_key = f"{insp_id}_heatmap.png"
         assets_to_store[heatmap_key] = (heat_bytes.tobytes(), "image/png")
 

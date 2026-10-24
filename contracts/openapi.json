@@ -1800,6 +1800,7 @@
         "type": "string",
         "enum": [
           "SIMULATED_DEGRADATION",
+          "ACQUISITION_NORMALIZE",
           "QUALITY_GATE",
           "PATCHCORE_PERCEPTION",
           "T1_ALIGN_REFERENCE",

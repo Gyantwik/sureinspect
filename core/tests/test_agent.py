@@ -5,7 +5,7 @@ Unit tests for the live agent decision engine (core/agent.py).
 import numpy as np
 import pytest
 
-from core import agent, interfaces as I
+from core import interfaces as I
 from core.agent import DecisionResult, decide, inspect_standardized, run_inspection
 
 
@@ -52,6 +52,20 @@ def test_decide_evidence_conflict():
 def test_decide_alignment_failed():
     evidence = {"alignment_valid": False, "reason": "No inliers found"}
     res = decide(score=2.2, lighting_shift=False, evidence=evidence, t_pass=1.2, t_fail=2.0, budget_state={"steps": 1, "budget": 4})
+    assert res.decision == "HUMAN"
+    assert res.decision_path == "ALIGN_FAILED"
+
+
+def test_alignment_failure_route_wins_over_elapsed_budget():
+    evidence = {"alignment_valid": False, "reason": "No inliers found"}
+    res = decide(
+        score=2.2,
+        lighting_shift=False,
+        evidence=evidence,
+        t_pass=1.2,
+        t_fail=2.0,
+        budget_state={"steps": 2, "budget": 4, "exhausted": True, "timed_out": True},
+    )
     assert res.decision == "HUMAN"
     assert res.decision_path == "ALIGN_FAILED"
 

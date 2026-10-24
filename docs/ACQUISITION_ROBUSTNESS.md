@@ -3,7 +3,7 @@
 This measured benchmark exercises the real frozen OpenCV/PatchCore agent through both sample-ID and uploaded-byte paths. Transforms are evaluation-only and never update the model.
 
 **Status:** PASS  
-**Generated:** 2026-10-22T19:26:31Z  
+**Generated:** 2026-10-24T04:11:11Z  
 **Cases:** 15
 
 | Sample | Truth | Acquisition variant | Decision | Path | Scale | Overlap |

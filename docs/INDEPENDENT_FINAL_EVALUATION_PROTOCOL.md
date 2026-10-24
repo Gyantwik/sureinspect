@@ -15,3 +15,7 @@ Run the frozen candidate once. Preserve per-image score, PASS/FAIL/HUMAN/RETAKE 
 Report all four outcomes separately with counts and denominators. Report defect escapes, normal automated failures, review/retake rates, coverage, selective accuracy, Wilson or exact binomial confidence intervals, and mean/median/p95/p99/max latency. Preserve every escape and important false alarm for visual review without using them to revise the submitted candidate.
 
 Until this protocol is completed, all quantitative claims remain regression evidence.
+
+## Current external-data status
+
+`docs/INDEPENDENT_PCB1_DATA_AUDIT.md` records the public-data search. A small rights-cleared external HC-SR04 normal-image development set is available, with zero exact or near-duplicate overlap against the frozen VisA PCB1 manifest. Because it has now informed preprocessing and policy development, contains no independently labelled defective boards, and was not label-blinded, it is robustness evidence only and does not complete this protocol.

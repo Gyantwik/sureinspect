@@ -29,6 +29,7 @@ from core.quality_gate import (
     fit_and_report,
     fit_gate_thresholds,
     gate_reject_report,
+    recover_board_framing,
     validate_standardized_image,
 )
 
@@ -43,6 +44,31 @@ def make_clean_image(seed: int = 42, width: int = 256, height: int = 256) -> np.
         color = (int(rng.randint(60, 200)), int(rng.randint(60, 200)), int(rng.randint(60, 200)))
         cv2.line(base, pt1, pt2, color, thickness=2)
     return base
+
+
+def test_board_framing_recovery_removes_bright_background_without_editing_board():
+    image = np.full((480, 640, 3), 250, dtype=np.uint8)
+    cv2.rectangle(image, (120, 160), (520, 340), (180, 90, 15), -1)
+    cv2.circle(image, (240, 250), 55, (210, 210, 210), -1)
+    cv2.circle(image, (400, 250), 55, (210, 210, 210), -1)
+    cv2.putText(image, "HC-SR04", (260, 190), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (255, 255, 255), 2)
+
+    recovered, metadata = recover_board_framing(image)
+
+    assert recovered is not None
+    assert recovered.shape == image.shape
+    assert metadata["recovered"] is True
+    original_bright = compute_frame_metrics(image)["bright_fraction"]
+    recovered_bright = compute_frame_metrics(recovered)["bright_fraction"]
+    assert recovered_bright < original_bright * 0.35
+    assert np.all(recovered[0, 0] == 32)
+
+
+def test_board_framing_recovery_rejects_non_pcb_grayscale_frame():
+    image = np.full((256, 256, 3), 245, dtype=np.uint8)
+    recovered, metadata = recover_board_framing(image)
+    assert recovered is None
+    assert metadata["recovered"] is False
 
 
 @pytest.fixture

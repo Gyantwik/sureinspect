@@ -209,6 +209,7 @@ class LiveEngine:
             alpha_fail=alpha_fail,
             snapshot=self.bundle,
         )
+        std_bgr = res.get("analysis_image", std_bgr)
 
         # Force override if path requested (for UI contract tests)
         if path is not None:
