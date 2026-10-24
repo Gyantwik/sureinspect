@@ -42,6 +42,15 @@ GLARE_S_THRESHOLD = 35             # HSV Saturation <= 35
 GLARE_TINTED_V_THRESHOLD = 250     # HSV Value >= 250 for tinted glare (v1.1)
 GLARE_TINTED_S_THRESHOLD = 120     # HSV Saturation <= 120 for tinted glare (v1.1)
 
+# Conservative framing recovery. This only removes a uniform surrounding canvas;
+# it never edits pixels inside the detected board crop.
+BOARD_MIN_SATURATION = 55
+BOARD_MIN_VALUE = 25
+BOARD_MIN_BBOX_FRACTION = 0.05
+BOARD_MAX_BBOX_FRACTION = 0.88
+BOARD_MIN_ASPECT = 1.30
+BOARD_MAX_ASPECT = 3.50
+
 REQUIRED_THRESHOLD_KEYS = (
     "blur_thr",
     "dark_max",
@@ -103,6 +112,74 @@ def validate_thresholds(thresholds: Any) -> None:
     gate_version = thresholds["gate_version"]
     if not isinstance(gate_version, str) or not gate_version.strip():
         raise ValueError(f"Threshold 'gate_version' must be a non-empty string, got {gate_version}")
+
+
+def recover_board_framing(image_std: np.ndarray) -> tuple[np.ndarray | None, dict[str, Any]]:
+    """Detect a saturated rectangular PCB and place it on a calibrated dark canvas.
+
+    The recovery is intentionally conservative and is meant for frames where a
+    bright, low-saturation background causes an admission failure. The returned
+    image has the same dimensions as the input and preserves the board aspect
+    ratio. No recovery is returned when the candidate is too small, already fills
+    the frame, or does not resemble a horizontal PCB rectangle.
+    """
+    validate_standardized_image(image_std)
+    height, width = image_std.shape[:2]
+    hsv = cv2.cvtColor(image_std, cv2.COLOR_BGR2HSV)
+    saturation = hsv[:, :, 1]
+    value = hsv[:, :, 2]
+    mask = ((saturation >= BOARD_MIN_SATURATION) & (value >= BOARD_MIN_VALUE)).astype(np.uint8) * 255
+
+    kernel_size = max(5, round(min(height, width) * 0.025))
+    if kernel_size % 2 == 0:
+        kernel_size += 1
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (kernel_size, kernel_size))
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel, iterations=2)
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    if not contours:
+        return None, {"recovered": False, "reason": "no saturated board candidate"}
+
+    contour = max(contours, key=cv2.contourArea)
+    x, y, box_width, box_height = cv2.boundingRect(contour)
+    bbox_fraction = (box_width * box_height) / float(width * height)
+    aspect = box_width / float(max(box_height, 1))
+    if not BOARD_MIN_BBOX_FRACTION <= bbox_fraction <= BOARD_MAX_BBOX_FRACTION:
+        return None, {
+            "recovered": False,
+            "reason": f"board candidate fraction {bbox_fraction:.3f} outside recovery range",
+        }
+    if not BOARD_MIN_ASPECT <= aspect <= BOARD_MAX_ASPECT:
+        return None, {
+            "recovered": False,
+            "reason": f"board candidate aspect {aspect:.3f} outside recovery range",
+        }
+
+    padding = max(4, round(max(box_width, box_height) * 0.04))
+    x0, y0 = max(0, x - padding), max(0, y - padding)
+    x1, y1 = min(width, x + box_width + padding), min(height, y + box_height + padding)
+    crop = image_std[y0:y1, x0:x1]
+    if crop.size == 0:
+        return None, {"recovered": False, "reason": "empty board crop"}
+
+    target_width = max(1, round(width * 0.90))
+    target_height = max(1, round(height * 0.90))
+    scale = min(target_width / crop.shape[1], target_height / crop.shape[0])
+    resized_width = max(1, round(crop.shape[1] * scale))
+    resized_height = max(1, round(crop.shape[0] * scale))
+    interpolation = cv2.INTER_AREA if scale < 1.0 else cv2.INTER_LINEAR
+    resized = cv2.resize(crop, (resized_width, resized_height), interpolation=interpolation)
+    canvas = np.full_like(image_std, 32)
+    offset_x = (width - resized_width) // 2
+    offset_y = (height - resized_height) // 2
+    canvas[offset_y : offset_y + resized_height, offset_x : offset_x + resized_width] = resized
+    return canvas, {
+        "recovered": True,
+        "reason": "detected PCB reframed onto calibrated dark canvas",
+        "source_bbox": [x0, y0, x1 - x0, y1 - y0],
+        "candidate_fraction": bbox_fraction,
+        "candidate_aspect": aspect,
+        "scale": scale,
+    }
 
 
 def assert_live_ready(thresholds: dict[str, Any]) -> None:

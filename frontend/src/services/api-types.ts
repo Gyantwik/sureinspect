@@ -721,7 +721,7 @@ export interface components {
          * ToolEnum
          * @enum {string}
          */
-        ToolEnum: "SIMULATED_DEGRADATION" | "QUALITY_GATE" | "PATCHCORE_PERCEPTION" | "T1_ALIGN_REFERENCE" | "T2_ROI_COMPARE" | "T3_ROI_ZOOM_MEASURE" | "T4_LIGHT_NORMALIZE" | "T5_NEXT_ROI_COMPARE";
+        ToolEnum: "SIMULATED_DEGRADATION" | "ACQUISITION_NORMALIZE" | "QUALITY_GATE" | "PATCHCORE_PERCEPTION" | "T1_ALIGN_REFERENCE" | "T2_ROI_COMPARE" | "T3_ROI_ZOOM_MEASURE" | "T4_LIGHT_NORMALIZE" | "T5_NEXT_ROI_COMPARE";
         /** TraceStep */
         TraceStep: {
             /** Step */
