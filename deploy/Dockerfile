@@ -49,7 +49,7 @@ RUN useradd -m -u 1000 appuser && \
 COPY backend/ ./backend/
 COPY core/ ./core/
 COPY config/ ./config/
-COPY data/samples/ ./data/samples/
+COPY data/ ./data/
 COPY contracts/ ./contracts/
 
 # Copy built frontend assets from Stage 1 into public static directory

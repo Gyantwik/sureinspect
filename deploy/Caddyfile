@@ -1,7 +1,7 @@
 # SureInspect Caddy Reverse Proxy Configuration
 # Automatic TLS/HTTPS, DNS routing, 10MB upload limit, and trusted headers
 
-{$DOMAIN:localhost} {
+{$DOMAIN::80} {
     # Request body limit strictly enforced at reverse proxy edge
     request_body {
         max_size 10MB
