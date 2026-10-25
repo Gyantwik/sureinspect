@@ -3,8 +3,8 @@
 **Target System:** SureInspect Industrial Visual Inspection  
 **Specification Reference:** SureInspect v8.1 Master Architecture  
 **Document Status:** IN PROGRESS (Authoritative Evidence Log)  
-**Last Updated (UTC):** 2026-10-25T17:35:00Z  
-**Git HEAD Commit:** `288714afc38ddbb1714232c555f82b64bbf21909`  
+**Last Updated (UTC):** 2026-10-25T17:55:00Z  
+**Git HEAD Commit:** `fc9006e4c7494862ffab2b93edffa2b4312df69a`  
 
 ---
 
@@ -17,11 +17,11 @@
 | **T1.3** | Backend Entrypoint & Health Route Audit (`backend/main.py`, `app_factory.py`) | **PASS** | Confirmed `/api/health`, `/api/inspect`, 25 MP image ceiling, bounded queue. |
 | **T1.4** | Model Snapshot Manifest & Hash Verification | **BLOCKED** | Model snapshot `pcb1-wide_resnet50_2-256-edc526f4da11-agent-v1` is git-ignored (`.gitignore`). Awaiting S3 artifact transfer to host. |
 | **T1.5** | Frontend Same-Origin API Proxy Verification | **PASS** | Frontend routes mapped to relative `/api/*`, proxied to backend via Caddy. |
-| **T2.1** | Safe Provisioning Authorization & Cost Gate | **PENDING AUTH** | Deployment plan reported below. Awaiting explicit user authorization before paid AWS resource modification. |
-| **T2.2** | Host Infrastructure (EC2 / Security Group / Elastic IP) | **NOT TESTED** | Pending decision between existing `m7i-flex.large` (`i-0025a98d800b7485e`) or new `t3.medium`. |
-| **T3.1** | Host Provisioning & Docker Runtime Setup | **NOT TESTED** | Pending host execution. |
-| **T4.1** | Container Build & Service Startup | **NOT TESTED** | Pending host execution. |
-| **T4.2** | Port 8000 Isolation (Strictly Private) | **NOT TESTED** | Verified in compose file; pending live host network scan. |
+| **T2.1** | Safe Provisioning Authorization & Cost Gate | **PASS** | User explicitly authorized Option A (existing instance `i-0025a98d800b7485e`, $0.00 incremental cost). |
+| **T2.2** | Host Infrastructure (EC2 / Security Group / Elastic IP) | **PASS** | Authorized instance confirmed: `m7i-flex.large`, 30 GiB gp3, IP `3.27.171.151`, Sydney. |
+| **T3.1** | Host Provisioning & Git Connection | **IN PROGRESS** | Awaiting command execution on host via EC2 Instance Connect. |
+| **T4.1** | Container Build & Service Startup | **NOT TESTED** | Awaiting Task 3 completion. |
+| **T4.2** | Port 8000 Isolation (Strictly Private) | **PASS (Config)** | Verified in compose file; pending live host network scan. |
 | **T5.1** | Live OpenCV 5 C++ DNN Inference Verification | **NOT TESTED** | Requires active container runtime with model snapshot. |
 | **T5.2** | 3-Scenario Evaluation (Normal, Defect, Optical Rejection) | **NOT TESTED** | Requires active container runtime with model snapshot. |
 | **T6.1** | Browser-Trusted HTTPS / Domain Verification | **NOT TESTED** | Pending domain binding and ACME TLS issuance. |
@@ -91,3 +91,60 @@ aws ec2 delete-security-group --group-id <SG_ID>
 aws s3 rm s3://sureinspect-production-artifacts --recursive
 aws s3api delete-bucket --bucket sureinspect-production-artifacts
 ```
+
+---
+
+## 5. Host Deployment Runbook (Task 3 & Task 4)
+
+Target Instance: `i-0025a98d800b7485e` (`SureInspect`, `ap-southeast-2`, `3.27.171.151`)
+
+### 5.1 Git Synchronization & Setup
+```bash
+cd /home/ubuntu/sureinspect
+
+# Fetch and checkout deployment branch
+git fetch origin
+git checkout deploy/aws-ec2
+git pull origin deploy/aws-ec2
+
+# Configure environment
+cat << 'EOF' > deploy/.env
+DOMAIN=:80
+AWS_DEFAULT_REGION=ap-southeast-2
+ARTIFACTS_BUCKET=sureinspect-production-artifacts
+USE_MOCK=false
+OPENCV_IO_MAX_IMAGE_PIXELS=25000000
+OMP_NUM_THREADS=1
+OPENBLAS_NUM_THREADS=1
+MKL_NUM_THREADS=1
+EOF
+```
+
+### 5.2 Model Snapshot Verification (Task 1.4 / Safeguard C)
+```bash
+# Check if snapshot directory exists
+ls -la /home/ubuntu/sureinspect/artifacts/snapshots/pcb1-wide_resnet50_2-256-edc526f4da11-agent-v1/ || true
+
+# If using S3 artifact sync:
+# aws s3 sync s3://sureinspect-production-artifacts/artifacts/ /home/ubuntu/sureinspect/artifacts/
+```
+
+### 5.3 Build & Container Startup (Task 4)
+```bash
+cd /home/ubuntu/sureinspect/deploy
+sudo docker compose up -d --build
+sudo docker compose ps
+```
+
+### 5.4 Live Verification & Port 8000 Security Audit (Task 4.2 & Task 5)
+```bash
+# Verify Health Endpoint locally
+curl -s http://localhost:8000/api/health | jq .
+
+# Verify Reverse Proxy through Caddy (port 80)
+curl -s http://localhost/api/health | jq .
+
+# Verify Port 8000 Isolation (must reject external connections)
+# curl from an external machine to http://3.27.171.151:8000 must timeout or be refused.
+```
+
