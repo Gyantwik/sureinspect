@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "test:camera-browser": "node scripts/camera-browser-smoke.mjs",
+    "test:camera-browser:real": "node scripts/camera-browser-smoke.mjs --real-camera",
     "test": "vitest",
     "types:check": "tsc --noEmit",
     "gen:types": "openapi-typescript ../contracts/openapi.json -o src/services/api-types.ts"

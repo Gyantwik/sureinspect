@@ -5,6 +5,7 @@ import { sendFeedback } from "../services/api";
 
 const tone: Record<Decision, string> = { PASS: "text-pass", FAIL: "text-fail", HUMAN: "text-human", RETAKE: "text-retake" };
 const word: Record<Decision, string> = { PASS: "Pass", FAIL: "Fail", HUMAN: "Human review", RETAKE: "Retake" };
+const next: Record<Decision, string> = { PASS: "Continue the line and retain this trace for audit.", FAIL: "Quarantine the item and request a defect review.", HUMAN: "Send the item and evidence trace to a trained reviewer.", RETAKE: "Capture a new image under the requested quality conditions." };
 const f = (n: number | null | undefined, d = 3) => (n == null ? "not measured" : n.toFixed(d));
 
 function Row({ k, v }: { k: string; v: string }) {
@@ -31,9 +32,10 @@ function ScoreBar({ r }: { r: Inspection }) {
 
 export default function DecisionCard({ r }: { r: Inspection | null }) {
   const [sent, setSent] = useState<string | null>(null);
+  const [sending, setSending] = useState(false);
   if (!r) return <section className="panel p-5"><h2 className="font-display text-2xl">Decision</h2><p className="text-sm text-muted mt-3">The official decision appears here.</p></section>;
   const m = r.measurements;
-  const fb = async (l: "NORMAL" | "DEFECT") => { try { await sendFeedback(r.inspection_id, l); setSent(l); } catch { setSent("error"); } };
+  const fb = async (l: "NORMAL" | "DEFECT") => { setSending(true); try { await sendFeedback(r.inspection_id, l); setSent(l); } catch { setSent("error"); } finally { setSending(false); } };
   return (
     <section className="panel p-5" aria-label="Decision" aria-live="polite">
       <span className="label">Official frozen decision</span>
@@ -48,9 +50,18 @@ export default function DecisionCard({ r }: { r: Inspection | null }) {
       <Row k="Area %" v={m ? f(m.area_pct, 2) : "not measured"} />
       <Row k="Shape" v={m?.shape_class ?? "not measured"} />
       <Row k="Alignment" v={r.alignment ? `${f(r.alignment.quality, 2)} (min ${f(r.alignment.q_min, 2)})` : "not measured"} />
+      <Row k="Recovered geometry" v={r.alignment?.scale != null ? `${f(r.alignment.scale, 3)}× scale · ${f(r.alignment.overlap, 2)} overlap` : "not measured"} />
 
       <p className="text-xs text-muted mt-4 leading-relaxed"><span className="label block mb-1">Calibration · {r.calibration.status.replace(/_/g, " ")}</span>{r.calibration.assumptions}</p>
       <p className="text-sm leading-relaxed mt-4">{r.grounded_report}</p>
+      <div className="mt-4 rounded-lg border border-line bg-white p-3 text-sm">
+        <span className="label block mb-1">Next action · {r.next_action?.action?.replace(/_/g, " ") ?? r.decision}</span>
+        <p>{r.next_action?.reason ?? next[r.decision]}</p>
+        <p className="mt-2 text-xs text-muted">
+          {r.next_action?.requires_human_confirmation ? "Human confirmation required" : "No confirmation required"}
+          {" · "}Recommendation only · No external actuation
+        </p>
+      </div>
 
       {r.counterfactuals.length > 0 && (
         <div className="mt-4"><span className="label">Counterfactual α</span>
@@ -68,10 +79,10 @@ export default function DecisionCard({ r }: { r: Inspection | null }) {
 
       <div className="mt-5 flex items-center gap-2">
         <span className="label mr-auto">Ground truth?</span>
-        <button onClick={() => fb("NORMAL")} className="flex items-center gap-1 rounded-lg border border-line bg-white px-3 py-1.5 text-xs"><Check size={13} />Normal</button>
-        <button onClick={() => fb("DEFECT")} className="flex items-center gap-1 rounded-lg border border-line bg-white px-3 py-1.5 text-xs"><Flag size={13} />Defect</button>
+        <button type="button" disabled={sending || r.decision === "RETAKE"} onClick={() => fb("NORMAL")} className="flex items-center gap-1 rounded-lg border border-line bg-white px-3 py-2 text-xs disabled:opacity-40"><Check aria-hidden="true" size={13} />Normal</button>
+        <button type="button" disabled={sending || r.decision === "RETAKE"} onClick={() => fb("DEFECT")} className="flex items-center gap-1 rounded-lg border border-line bg-white px-3 py-2 text-xs disabled:opacity-40"><Flag aria-hidden="true" size={13} />Defect</button>
       </div>
-      {sent && <p className="text-xs text-muted mt-2">{sent === "error" ? "Feedback failed." : `Logged: ${sent}`}</p>}
+      {sent && <p role="status" className="text-xs text-muted mt-2">{sent === "error" ? "Feedback failed; please retry." : `Logged for audit only: ${sent}`}</p>}
 
       <p className="font-mono text-[10px] text-muted mt-5 break-all">{r.snapshot.model_version} · {r.snapshot.bank_version} · {r.snapshot.calibration_version} · {r.snapshot.policy_version}</p>
     </section>

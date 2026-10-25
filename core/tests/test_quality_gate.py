@@ -29,6 +29,7 @@ from core.quality_gate import (
     fit_and_report,
     fit_gate_thresholds,
     gate_reject_report,
+    recover_board_framing,
     validate_standardized_image,
 )
 
@@ -43,6 +44,31 @@ def make_clean_image(seed: int = 42, width: int = 256, height: int = 256) -> np.
         color = (int(rng.randint(60, 200)), int(rng.randint(60, 200)), int(rng.randint(60, 200)))
         cv2.line(base, pt1, pt2, color, thickness=2)
     return base
+
+
+def test_board_framing_recovery_removes_bright_background_without_editing_board():
+    image = np.full((480, 640, 3), 250, dtype=np.uint8)
+    cv2.rectangle(image, (120, 160), (520, 340), (180, 90, 15), -1)
+    cv2.circle(image, (240, 250), 55, (210, 210, 210), -1)
+    cv2.circle(image, (400, 250), 55, (210, 210, 210), -1)
+    cv2.putText(image, "HC-SR04", (260, 190), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (255, 255, 255), 2)
+
+    recovered, metadata = recover_board_framing(image)
+
+    assert recovered is not None
+    assert recovered.shape == image.shape
+    assert metadata["recovered"] is True
+    original_bright = compute_frame_metrics(image)["bright_fraction"]
+    recovered_bright = compute_frame_metrics(recovered)["bright_fraction"]
+    assert recovered_bright < original_bright * 0.35
+    assert np.all(recovered[0, 0] == 32)
+
+
+def test_board_framing_recovery_rejects_non_pcb_grayscale_frame():
+    image = np.full((256, 256, 3), 245, dtype=np.uint8)
+    recovered, metadata = recover_board_framing(image)
+    assert recovered is None
+    assert metadata["recovered"] is False
 
 
 @pytest.fixture
@@ -392,4 +418,56 @@ def test_extra_keys_in_thresholds_tolerated(clean_normals, fitted_thresholds):
     report = gate_reject_report([clean_normals[0]], extended_th)
     assert report["n"] == 1
     assert report["n_rejected"] == 0
+
+
+def test_quality_gate_v1_1_central_defocus_rejection():
+    """D1 fix: Localized center defocus is detected and rejected under v1.1."""
+    clean = make_clean_image(seed=42, width=256, height=256)
+    h, w, _ = clean.shape
+    blurred = clean.copy()
+    y1, y2 = h // 4, 3 * h // 4
+    x1, x2 = w // 4, 3 * w // 4
+    blurred[y1:y2, x1:x2] = cv2.GaussianBlur(blurred[y1:y2, x1:x2], (31, 31), 10.0)
+
+    # v1.1 thresholds fitted from clean images
+    clean_set = [make_clean_image(seed=i) for i in range(25)]
+    th_v1_1 = fit_gate_thresholds(clean_set, gate_version="v1.1")
+
+    # Evaluate with v1.1
+    res = check_quality(blurred, th_v1_1)
+    assert res["status"] == "FAILED"
+    assert res["action"] == "REQUEST_RETAKE"
+    assert "Center Laplacian variance" in res["reason"]
+
+
+def test_quality_gate_v1_1_denoised_noise_rejection():
+    """D2 fix: Sensor noise on blurred image cannot spoof Laplacian variance under v1.1."""
+    clean = make_clean_image(seed=42, width=256, height=256)
+    blurred = cv2.GaussianBlur(clean, (19, 19), 0)
+    rng = np.random.default_rng(42)
+    noise = rng.normal(0, 12, blurred.shape).astype(np.float64)
+    noisy_blurred = np.clip(blurred.astype(np.float64) + noise, 0, 255).astype(np.uint8)
+
+    clean_set = [make_clean_image(seed=i) for i in range(25)]
+    th_v1_1 = fit_gate_thresholds(clean_set, gate_version="v1.1")
+
+    res = check_quality(noisy_blurred, th_v1_1)
+    assert res["status"] == "FAILED"
+    assert res["action"] == "REQUEST_RETAKE"
+    assert "Denoised Laplacian variance" in res["reason"]
+
+
+def test_quality_gate_v1_1_tinted_glare_rejection():
+    """D3 fix: Warm/tinted specular glare (high V, saturated) is detected and rejected under v1.1."""
+    # Warm amber/yellow LED glare (e.g., V=255, S~75, B=180, G=255, R=255)
+    glare_img = np.full((256, 256, 3), [180, 255, 255], dtype=np.uint8)
+
+    clean_set = [make_clean_image(seed=i) for i in range(25)]
+    th_v1_1 = fit_gate_thresholds(clean_set, gate_version="v1.1")
+
+    res = check_quality(glare_img, th_v1_1)
+    assert res["status"] == "FAILED"
+    assert res["action"] == "REQUEST_RETAKE"
+    assert "Glare pixel fraction" in res["reason"]
+
 

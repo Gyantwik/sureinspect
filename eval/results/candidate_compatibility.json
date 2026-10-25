@@ -1,0 +1,20 @@
+{
+  "schema_version": "sureinspect.candidate-compatibility.v1",
+  "measured_inference_commit": "a882d717155af48897683b2c4d138d4828b3b683",
+  "candidate_commit": "a882d717155af48897683b2c4d138d4828b3b683",
+  "critical_scopes": [
+    "core",
+    "artifacts/snapshots/pcb1-wide_resnet50_2-256-edc526f4da11"
+  ],
+  "critical_files_changed": [],
+  "uncommitted_critical_files_changed": [
+    "core/agent.py",
+    "core/quality_gate.py",
+    "core/tests/test_agent.py",
+    "core/tests/test_quality_gate.py"
+  ],
+  "measured_pipeline_fingerprint": "ff055ccd3eb8f54beb95bc63212bbd9a77b00d716af845b708ed6a601d9c27a7",
+  "candidate_pipeline_fingerprint": "ff055ccd3eb8f54beb95bc63212bbd9a77b00d716af845b708ed6a601d9c27a7",
+  "compatible": true,
+  "interpretation": "Measured inference is candidate-compatible only when the content hash of inference code, snapshot artifacts, and templates exactly matches; uncommitted changes are included."
+}

@@ -10,11 +10,15 @@ FastAPI application factory implementing all SureInspect v8.1 routes:
 """
 from __future__ import annotations
 
+import os
+import platform
 import secrets
 import time
 import uuid
 from pathlib import Path
 from typing import Any
+
+import cv2
 
 from fastapi import (
     Depends,
@@ -203,12 +207,18 @@ def create_app() -> FastAPI:
     # -----------------------------------------------------------------------
     @app.get("/api/health", response_model=HealthResponse)
     def health_check():
+        aws_region = os.environ.get("AWS_REGION") or os.environ.get("AWS_DEFAULT_REGION")
         return HealthResponse(
             status="healthy",
             engine=EXECUTOR.get_engine_mode(),
             model_version=EXECUTOR.model_version,
             enabled_categories=["pcb1"],
             loaded_categories=["pcb1"],
+            opencv_version=cv2.__version__,
+            python_version=platform.python_version(),
+            architecture=platform.machine(),
+            deployment_provider="aws" if aws_region else "local_or_unspecified",
+            aws_region=aws_region,
         )
 
     @app.post("/api/session", response_model=SessionCreateResponse)

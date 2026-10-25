@@ -224,6 +224,15 @@ export interface components {
             q_min: number;
             /** Rotation Deg */
             rotation_deg: number;
+            /** Scale */
+            scale?: number | null;
+            /** Overlap */
+            overlap?: number | null;
+            /** Translation Px */
+            translation_px?: [
+                number,
+                number
+            ] | null;
         };
         /** AssetsInfo */
         AssetsInfo: {
@@ -448,6 +457,19 @@ export interface components {
             enabled_categories: string[];
             /** Loaded Categories */
             loaded_categories: string[];
+            /** Opencv Version */
+            opencv_version: string;
+            /** Python Version */
+            python_version: string;
+            /** Architecture */
+            architecture: string;
+            /**
+             * Deployment Provider
+             * @enum {string}
+             */
+            deployment_provider: "aws" | "local_or_unspecified";
+            /** Aws Region */
+            aws_region?: string | null;
         };
         /** ImageMetadata */
         ImageMetadata: {
@@ -491,6 +513,7 @@ export interface components {
             image: components["schemas"]["ImageMetadata"];
             decision: components["schemas"]["DecisionEnum"];
             decision_path: components["schemas"]["DecisionPathEnum"];
+            next_action: components["schemas"]["NextActionInfo"];
             /** Suggested Decision */
             suggested_decision?: ("PASS" | "FAIL") | null;
             /** Anomaly Score */
@@ -553,6 +576,34 @@ export interface components {
             elongation?: number | null;
             /** Shape Class */
             shape_class?: ("elongated" | "compact" | "irregular") | null;
+        };
+        /** NextActionInfo */
+        NextActionInfo: {
+            /**
+             * Action
+             * @enum {string}
+             */
+            action: "CONTINUE_LINE" | "QUARANTINE_PENDING_CONFIRMATION" | "REVIEW_EVIDENCE" | "REQUEST_RETAKE";
+            /**
+             * Execution Mode
+             * @default recommendation_only
+             * @constant
+             */
+            execution_mode: "recommendation_only";
+            /** Requires Human Confirmation */
+            requires_human_confirmation: boolean;
+            /**
+             * External Actuation Performed
+             * @default false
+             */
+            external_actuation_performed: boolean;
+            /**
+             * Reversible
+             * @default true
+             */
+            reversible: boolean;
+            /** Reason */
+            reason: string;
         };
         /** QualityGateResult */
         QualityGateResult: {
@@ -670,7 +721,7 @@ export interface components {
          * ToolEnum
          * @enum {string}
          */
-        ToolEnum: "SIMULATED_DEGRADATION" | "QUALITY_GATE" | "PATCHCORE_PERCEPTION" | "T1_ALIGN_REFERENCE" | "T2_ROI_COMPARE" | "T3_ROI_ZOOM_MEASURE" | "T4_LIGHT_NORMALIZE" | "T5_NEXT_ROI_COMPARE";
+        ToolEnum: "SIMULATED_DEGRADATION" | "ACQUISITION_NORMALIZE" | "QUALITY_GATE" | "PATCHCORE_PERCEPTION" | "T1_ALIGN_REFERENCE" | "T2_ROI_COMPARE" | "T3_ROI_ZOOM_MEASURE" | "T4_LIGHT_NORMALIZE" | "T5_NEXT_ROI_COMPARE";
         /** TraceStep */
         TraceStep: {
             /** Step */

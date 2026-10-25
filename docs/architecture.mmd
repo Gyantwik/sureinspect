@@ -1,0 +1,95 @@
+flowchart TD
+    %% -------------------------------------------------------------
+    %% SureInspect System Architecture Diagram (OpenCV AI Competition 2026)
+    %% -------------------------------------------------------------
+
+    subgraph ClientLayer ["1. Client & Ingestion Layer"]
+        A["Input Inspection Image (JPEG / PNG)"]
+        B["Edge Validation & Standardization\n(Standardize to Max Side 1024, INTER_AREA)"]
+    end
+
+    subgraph QualityGateLayer ["2. Physical Quality Gate (core/quality_gate.py)"]
+        QG{"OpenCV 5 Quality Gate"}
+        QG_BLUR["Blur Variance Check (cv2.Laplacian)"]
+        QG_EXP["Exposure Check (Dark/Bright Frac)"]
+        QG_GLARE["Specular Glare Check (Thresholding)"]
+        QG_SHIFT["Illumination Covariate Shift (CIELAB L* Shift)"]
+        RETAKE["Decision: RETAKE\n(QUALITY_REJECTED)"]
+    end
+
+    subgraph PerceptionLayer ["3. Conformal Perception Engine (core/perception.py)"]
+        DNN["OpenCV 5 DNN Backbone\n(WideResNet-50 Feature Extractor)"]
+        CORESET["Coreset Memory Bank Distance\n(PatchCore NN Search)"]
+        CONFORMAL{"Conformal Bounds Evaluation\n(t_pass = 2.0405, t_fail = 2.2863)"}
+    end
+
+    subgraph PolicyLayer ["4. Agent Policy & Evidence Tools (core/agent.py & core/tools.py)"]
+        FAST_PASS["Decision: PASS\n(FAST_PASS)\n(s <= t_pass & Lighting Normal)"]
+        
+        T1["Tool T1: Alignment (ORB + ECC Refinement)\n(cv2.estimateAffinePartial2D / findTransformECC)"]
+        ALIGN_FAIL["Decision: HUMAN\n(ALIGN_FAILED)\n(q < q_min or Inliers < 10)"]
+        
+        T4["Tool T4: Lighting Normalization\n(CLAHE test & ref copies)"]
+        
+        T2["Tool T2: ROI Structural Residual\n(Photometric Matching & absdiff)"]
+        T5["Tool T5: Secondary ROI Comparison\n(If ROI 0 normal & multiple candidate ROIs)"]
+        T3["Tool T3: Zoom & Defect Geometry\n(Otsu Threshold & cv2.minAreaRect)"]
+        
+        EVAL_RES{"Evaluate Multi-Tool Evidence"}
+    end
+
+    subgraph DecisionLayer ["5. Decision Outcomes & Governance"]
+        PASS_CLEARED["Decision: PASS\n(AGENT_CLEARED)\n(Ambiguous s, low residual r <= r_low)"]
+        FAIL_CONFIRMED["Decision: FAIL\n(AGENT_CONFIRMED)\n(s > t_fail & high residual r >= r_high)"]
+        
+        HUMAN_CONFLICT["Decision: HUMAN\n(EVIDENCE_CONFLICT)\n(s > t_fail but r <= r_low)"]
+        HUMAN_SUSPECT["Decision: HUMAN\n(SUSPECTED_DEFECT)\n(r >= r_high with marginal s)"]
+        HUMAN_SHIFT["Decision: HUMAN\n(LIGHTING_SHIFT_REVIEW)\n(Covariate shift detected)"]
+        HUMAN_INCONC["Decision: HUMAN\n(INCONCLUSIVE)\n(Residual in indeterminate zone or unchecked ROIs)"]
+        HUMAN_BUDGET["Decision: HUMAN\n(BUDGET_EXHAUSTED)\n(Step budget >= 4 or latency > 2.0s)"]
+    end
+
+    subgraph ProposedAWS ["6. Deployment Architecture (AWS Graviton Target)"]
+        CADDY["Caddy Reverse Proxy (Edge TLS & 10MB Limit) [Implemented]"]
+        DOCKER["FastAPI Container (OpenCV Headless 5.0.0.93) [Implemented]"]
+        CACHE["200 MiB Bounded In-Memory LRU Cache [Implemented]"]
+        EC2["AWS EC2 Graviton t4g.small Instance [Proposed Target]"]
+        S3["Private AWS S3 Audit & Snapshot Storage [Proposed Target]"]
+    end
+
+    %% Flow Connections
+    A --> B
+    B --> QG
+    QG --> QG_BLUR & QG_EXP & QG_GLARE & QG_SHIFT
+    QG_BLUR & QG_EXP & QG_GLARE -->|Fails Threshold| RETAKE
+    QG_BLUR & QG_EXP & QG_GLARE -->|Passes Quality Gate| DNN
+
+    DNN --> CORESET --> CONFORMAL
+    CONFORMAL -->|s <= t_pass & Shift=False| FAST_PASS
+    CONFORMAL -->|s > t_pass or Shift=True| T1
+
+    T1 -->|Alignment Quality q < 0.65| ALIGN_FAIL
+    T1 -->|Alignment Valid (q >= 0.65)| T2
+
+    QG_SHIFT -.->|If Shift=True| T4
+    T4 -.-> T2
+
+    T2 -->|ROI 0 Clean & ROIs >= 2| T5
+    T2 -->|Budget Available| T3
+    T5 -->|Budget Available| T3
+
+    T2 & T5 & T3 --> EVAL_RES
+
+    EVAL_RES -->|r <= r_low & s <= t_fail & all ROIs checked| PASS_CLEARED
+    EVAL_RES -->|r >= r_high & s > t_fail| FAIL_CONFIRMED
+    EVAL_RES -->|r <= r_low & s > t_fail| HUMAN_CONFLICT
+    EVAL_RES -->|r >= r_high & s <= t_fail| HUMAN_SUSPECT
+    EVAL_RES -->|Shift=True & r <= r_low| HUMAN_SHIFT
+    EVAL_RES -->|r_low < r < r_high or unchecked ROIs| HUMAN_INCONC
+    EVAL_RES -->|Steps >= 4 or Timeout > 2.0s| HUMAN_BUDGET
+
+    %% AWS linkages
+    DOCKER --- CACHE
+    CADDY --> DOCKER
+    DOCKER -.-> EC2
+    DOCKER -.-> S3

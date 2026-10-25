@@ -1,4 +1,4 @@
-opencv-python-headless==5.0.0.93
+opencv-python-headless==5.0.0.93  # Mandatory OpenCV AI Competition 2026 requirement
 numpy>=1.26,<3
 fastapi==0.143.3
 starlette==1.8.0

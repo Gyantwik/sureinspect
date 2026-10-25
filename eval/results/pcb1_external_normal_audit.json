@@ -1,0 +1,679 @@
+{
+  "schema_version": "sureinspect.pcb1-external-development-robustness.v2",
+  "evaluation_type": "external_normal_development_robustness_audit",
+  "complete_independent_effectiveness_evaluation": false,
+  "limitations": "Visible-normal labels only; electrical function is unverified and no labelled defects are present. This set cannot estimate defect escape rate or complete PCB1 task accuracy.",
+  "generated_at": "2026-10-23T12:14:23Z",
+  "git_commit": "a882d717155af48897683b2c4d138d4828b3b683",
+  "pipeline_fingerprint": "a88c51f28e34ccb685566cebb5d78fdd53dcd9d256abed4ef7d307a4ea377f32",
+  "acquisition_manifest_sha256": "c8d125d5e719dd5dfe5d11ff30b68aee09d0ef579b4b013ae5cc20e6f08b0c22",
+  "exact_overlap_with_frozen_visa_pcb1": 0,
+  "near_duplicate_overlap_at_dhash_distance_2": 0,
+  "frozen_visa_pcb1_hashes_checked": 1104,
+  "elapsed_seconds": 12.51,
+  "budget_violations": [],
+  "repeatability": {
+    "runs_per_record": 3,
+    "records_checked": 6,
+    "stable_records": 6
+  },
+  "summary": {
+    "primary_front_blue_hc_sr04": {
+      "n": 4,
+      "decisions": {
+        "HUMAN": 3,
+        "RETAKE": 1
+      },
+      "paths": {
+        "ALIGN_FAILED": 3,
+        "QUALITY_REJECTED": 1
+      },
+      "quality_reasons": {
+        "Focus and exposure within limits; lighting shift detected in illumination": 3,
+        "Laplacian variance 166.1 is below focus threshold 190.0": 1
+      },
+      "normal_automatic_failures": 0,
+      "normal_automatic_failure_rate": 0.0,
+      "normal_pass_rate": 0.0,
+      "abstention_rate": 1.0,
+      "automated_coverage": 0.0
+    },
+    "supplemental_views_and_variant": {
+      "n": 2,
+      "decisions": {
+        "HUMAN": 1,
+        "RETAKE": 1
+      },
+      "paths": {
+        "ALIGN_FAILED": 1,
+        "QUALITY_REJECTED": 1
+      },
+      "quality_reasons": {
+        "Bright pixel fraction 0.688 exceeds threshold 0.118; Glare pixel fraction 0.697 exceeds threshold 0.105": 1,
+        "Focus and exposure within limits; lighting shift detected in illumination": 1
+      },
+      "normal_automatic_failures": 0,
+      "normal_automatic_failure_rate": 0.0,
+      "normal_pass_rate": 0.0,
+      "abstention_rate": 1.0,
+      "automated_coverage": 0.0
+    },
+    "all": {
+      "n": 6,
+      "decisions": {
+        "HUMAN": 4,
+        "RETAKE": 2
+      },
+      "paths": {
+        "ALIGN_FAILED": 4,
+        "QUALITY_REJECTED": 2
+      },
+      "quality_reasons": {
+        "Bright pixel fraction 0.688 exceeds threshold 0.118; Glare pixel fraction 0.697 exceeds threshold 0.105": 1,
+        "Focus and exposure within limits; lighting shift detected in illumination": 4,
+        "Laplacian variance 166.1 is below focus threshold 190.0": 1
+      },
+      "normal_automatic_failures": 0,
+      "normal_automatic_failure_rate": 0.0,
+      "normal_pass_rate": 0.0,
+      "abstention_rate": 1.0,
+      "automated_coverage": 0.0
+    }
+  },
+  "records": [
+    {
+      "path": "data/real_tests/pcb1_commons/normal_01.jpg",
+      "title": "File:HC SR04 Ultrasonic Module.jpg",
+      "description_url": "https://commons.wikimedia.org/wiki/File:HC_SR04_Ultrasonic_Module.jpg",
+      "license": "CC BY-SA 4.0",
+      "cohort": "primary_front_blue_hc_sr04",
+      "image_sha256": "39f2705311a44409273cd601a04b3054e8fcb4e051e256b7ef6f66bbdca7241f",
+      "image_dhash": "0000160f0f0e0000",
+      "minimum_frozen_visa_dhash_distance": 22,
+      "ground_truth": "visible_normal_unverified_function",
+      "decision": "HUMAN",
+      "decision_path": "ALIGN_FAILED",
+      "anomaly_score": 4.7239,
+      "steps_used": 2,
+      "step_budget": 4,
+      "quality_gate": {
+        "status": "PASSED",
+        "action": null,
+        "reason": "Focus and exposure within limits; lighting shift detected in illumination",
+        "blur_variance": 534.6536134242314,
+        "blur_threshold": 189.95039166383236,
+        "dark_fraction": 0.0165443699670571,
+        "bright_fraction": 0.014594104593704246,
+        "glare_fraction": 0.04843492633601757,
+        "glare_threshold": 0.10481971153846154,
+        "l_mean": 104.51170159224012,
+        "exposure_ok": true,
+        "lighting_shift_detected": true
+      },
+      "alignment": null,
+      "next_action": {
+        "action": "REVIEW_EVIDENCE",
+        "execution_mode": "recommendation_only",
+        "requires_human_confirmation": true,
+        "external_actuation_performed": false,
+        "reversible": true,
+        "reason": "The agent abstained and routed its evidence trace to a trained reviewer."
+      },
+      "execution_trace": [
+        {
+          "step": 1,
+          "tool": "QUALITY_GATE",
+          "reason": "Glare pixel fraction 0.349 exceeds threshold 0.105",
+          "status": "FAILED",
+          "counts_toward_budget": false,
+          "duration_ms": 105.3,
+          "overlay_url": null
+        },
+        {
+          "step": 2,
+          "tool": "ACQUISITION_NORMALIZE",
+          "reason": "detected PCB reframed onto calibrated dark canvas",
+          "status": "COMPLETED",
+          "counts_toward_budget": false,
+          "duration_ms": 0.0,
+          "overlay_url": null
+        },
+        {
+          "step": 3,
+          "tool": "QUALITY_GATE",
+          "reason": "Reframed board: Focus and exposure within limits; lighting shift detected in illumination",
+          "status": "PASSED",
+          "counts_toward_budget": false,
+          "duration_ms": 15.7,
+          "overlay_url": null
+        },
+        {
+          "step": 4,
+          "tool": "PATCHCORE_PERCEPTION",
+          "reason": "Anomaly score 4.724 computed against coreset memory bank",
+          "status": "COMPLETED",
+          "counts_toward_budget": false,
+          "duration_ms": 301.9,
+          "overlay_url": "/api/assets/insp_ac2a21ea_heatmap.jpg"
+        },
+        {
+          "step": 5,
+          "tool": "T4_LIGHT_NORMALIZE",
+          "reason": "Lighting shift detected; compute normalized reference comparison",
+          "status": "COMPLETED",
+          "counts_toward_budget": true,
+          "duration_ms": 0.0,
+          "overlay_url": null
+        },
+        {
+          "step": 6,
+          "tool": "T1_ALIGN_REFERENCE",
+          "reason": "Alignment failed after 5 template(s): implausible scale 0.034",
+          "status": "FAILED",
+          "counts_toward_budget": true,
+          "duration_ms": 403.1,
+          "overlay_url": "/api/assets/insp_ac2a21ea_reference.jpg"
+        }
+      ],
+      "timing_ms": 3686.32,
+      "repeatability": {
+        "runs": 3,
+        "observed": [
+          {
+            "decision": "HUMAN",
+            "decision_path": "ALIGN_FAILED"
+          },
+          {
+            "decision": "HUMAN",
+            "decision_path": "ALIGN_FAILED"
+          },
+          {
+            "decision": "HUMAN",
+            "decision_path": "ALIGN_FAILED"
+          }
+        ],
+        "stable": true
+      }
+    },
+    {
+      "path": "data/real_tests/pcb1_commons/normal_02.jpg",
+      "title": "File:HC SR04 Ultrasonic sensor 1480319 20 21 HDR Enhancer.jpg",
+      "description_url": "https://commons.wikimedia.org/wiki/File:HC_SR04_Ultrasonic_sensor_1480319_20_21_HDR_Enhancer.jpg",
+      "license": "CC BY-SA 3.0",
+      "cohort": "primary_front_blue_hc_sr04",
+      "image_sha256": "b765856a91eaa42b55ea48943fd68c21ef846529937abbd6a23fb897a747a235",
+      "image_dhash": "f0f0332b2b1b9bd9",
+      "minimum_frozen_visa_dhash_distance": 31,
+      "ground_truth": "visible_normal_unverified_function",
+      "decision": "HUMAN",
+      "decision_path": "ALIGN_FAILED",
+      "anomaly_score": 3.8806,
+      "steps_used": 2,
+      "step_budget": 4,
+      "quality_gate": {
+        "status": "PASSED",
+        "action": null,
+        "reason": "Focus and exposure within limits; lighting shift detected in illumination",
+        "blur_variance": 247.82504056253754,
+        "blur_threshold": 189.95039166383236,
+        "dark_fraction": 0.0,
+        "bright_fraction": 0.00630950927734375,
+        "glare_fraction": 0.0620880126953125,
+        "glare_threshold": 0.10481971153846154,
+        "l_mean": 195.04661560058594,
+        "exposure_ok": true,
+        "lighting_shift_detected": true
+      },
+      "alignment": null,
+      "next_action": {
+        "action": "REVIEW_EVIDENCE",
+        "execution_mode": "recommendation_only",
+        "requires_human_confirmation": true,
+        "external_actuation_performed": false,
+        "reversible": true,
+        "reason": "The agent abstained and routed its evidence trace to a trained reviewer."
+      },
+      "execution_trace": [
+        {
+          "step": 1,
+          "tool": "QUALITY_GATE",
+          "reason": "Focus and exposure within limits; lighting shift detected in illumination",
+          "status": "PASSED",
+          "counts_toward_budget": false,
+          "duration_ms": 5.3,
+          "overlay_url": null
+        },
+        {
+          "step": 2,
+          "tool": "PATCHCORE_PERCEPTION",
+          "reason": "Anomaly score 3.881 computed against coreset memory bank",
+          "status": "COMPLETED",
+          "counts_toward_budget": false,
+          "duration_ms": 261.5,
+          "overlay_url": "/api/assets/insp_4a462643_heatmap.jpg"
+        },
+        {
+          "step": 3,
+          "tool": "T4_LIGHT_NORMALIZE",
+          "reason": "Lighting shift detected; compute normalized reference comparison",
+          "status": "COMPLETED",
+          "counts_toward_budget": true,
+          "duration_ms": 0.0,
+          "overlay_url": null
+        },
+        {
+          "step": 4,
+          "tool": "T1_ALIGN_REFERENCE",
+          "reason": "Alignment failed after 2 template(s): implausible rotation 90.0 deg",
+          "status": "FAILED",
+          "counts_toward_budget": true,
+          "duration_ms": 180.7,
+          "overlay_url": "/api/assets/insp_4a462643_reference.jpg"
+        }
+      ],
+      "timing_ms": 592.96,
+      "repeatability": {
+        "runs": 3,
+        "observed": [
+          {
+            "decision": "HUMAN",
+            "decision_path": "ALIGN_FAILED"
+          },
+          {
+            "decision": "HUMAN",
+            "decision_path": "ALIGN_FAILED"
+          },
+          {
+            "decision": "HUMAN",
+            "decision_path": "ALIGN_FAILED"
+          }
+        ],
+        "stable": true
+      }
+    },
+    {
+      "path": "data/real_tests/pcb1_commons/normal_03.jpg",
+      "title": "File:HC SR04 Ultrasonic sensor 1480322 3 4 HDR Enhancer.jpg",
+      "description_url": "https://commons.wikimedia.org/wiki/File:HC_SR04_Ultrasonic_sensor_1480322_3_4_HDR_Enhancer.jpg",
+      "license": "CC BY-SA 3.0",
+      "cohort": "primary_front_blue_hc_sr04",
+      "image_sha256": "b5e1645fca8f57045bf9ba0242d94e10ed1ce3a0b1e22abff4d9600a67f0b1b1",
+      "image_dhash": "f8f2332b132b99d9",
+      "minimum_frozen_visa_dhash_distance": 31,
+      "ground_truth": "visible_normal_unverified_function",
+      "decision": "RETAKE",
+      "decision_path": "QUALITY_REJECTED",
+      "anomaly_score": null,
+      "steps_used": 0,
+      "step_budget": 4,
+      "quality_gate": {
+        "status": "FAILED",
+        "action": "REQUEST_RETAKE",
+        "reason": "Laplacian variance 166.1 is below focus threshold 190.0",
+        "blur_variance": 166.0763035255015,
+        "blur_threshold": 189.95039166383236,
+        "dark_fraction": 2.556446335078534e-06,
+        "bright_fraction": 0.004971009898560209,
+        "glare_fraction": 0.0008576877454188482,
+        "glare_threshold": 0.10481971153846154,
+        "l_mean": 181.84127791639398,
+        "exposure_ok": true,
+        "lighting_shift_detected": true
+      },
+      "alignment": null,
+      "next_action": {
+        "action": "REQUEST_RETAKE",
+        "execution_mode": "recommendation_only",
+        "requires_human_confirmation": false,
+        "external_actuation_performed": false,
+        "reversible": true,
+        "reason": "Admission checks require a new frame before any defect decision."
+      },
+      "execution_trace": [
+        {
+          "step": 1,
+          "tool": "QUALITY_GATE",
+          "reason": "Laplacian variance 166.1 is below focus threshold 190.0",
+          "status": "FAILED",
+          "counts_toward_budget": false,
+          "duration_ms": 21.5,
+          "overlay_url": null
+        }
+      ],
+      "timing_ms": 144.81,
+      "repeatability": {
+        "runs": 3,
+        "observed": [
+          {
+            "decision": "RETAKE",
+            "decision_path": "QUALITY_REJECTED"
+          },
+          {
+            "decision": "RETAKE",
+            "decision_path": "QUALITY_REJECTED"
+          },
+          {
+            "decision": "RETAKE",
+            "decision_path": "QUALITY_REJECTED"
+          }
+        ],
+        "stable": true
+      }
+    },
+    {
+      "path": "data/real_tests/pcb1_commons/normal_04.jpg",
+      "title": "File:HC-SR04 ultrasonic distance sensor module pcb.jpg",
+      "description_url": "https://commons.wikimedia.org/wiki/File:HC-SR04_ultrasonic_distance_sensor_module_pcb.jpg",
+      "license": "CC BY-SA 4.0",
+      "cohort": "supplemental_back_view",
+      "image_sha256": "11d142612ca0a28c248656ab786d30285867da999675d72eca44bf7d2e262e92",
+      "image_dhash": "0000032b070f0400",
+      "minimum_frozen_visa_dhash_distance": 23,
+      "ground_truth": "visible_normal_unverified_function",
+      "decision": "HUMAN",
+      "decision_path": "ALIGN_FAILED",
+      "anomaly_score": 5.3777,
+      "steps_used": 2,
+      "step_budget": 4,
+      "quality_gate": {
+        "status": "PASSED",
+        "action": null,
+        "reason": "Focus and exposure within limits; lighting shift detected in illumination",
+        "blur_variance": 482.87870321650803,
+        "blur_threshold": 189.95039166383236,
+        "dark_fraction": 0.002410665263543192,
+        "bright_fraction": 0.01324436081625183,
+        "glare_fraction": 0.08049277086383602,
+        "glare_threshold": 0.10481971153846154,
+        "l_mean": 108.53349766654466,
+        "exposure_ok": true,
+        "lighting_shift_detected": true
+      },
+      "alignment": null,
+      "next_action": {
+        "action": "REVIEW_EVIDENCE",
+        "execution_mode": "recommendation_only",
+        "requires_human_confirmation": true,
+        "external_actuation_performed": false,
+        "reversible": true,
+        "reason": "The agent abstained and routed its evidence trace to a trained reviewer."
+      },
+      "execution_trace": [
+        {
+          "step": 1,
+          "tool": "QUALITY_GATE",
+          "reason": "Glare pixel fraction 0.378 exceeds threshold 0.105",
+          "status": "FAILED",
+          "counts_toward_budget": false,
+          "duration_ms": 8.4,
+          "overlay_url": null
+        },
+        {
+          "step": 2,
+          "tool": "ACQUISITION_NORMALIZE",
+          "reason": "detected PCB reframed onto calibrated dark canvas",
+          "status": "COMPLETED",
+          "counts_toward_budget": false,
+          "duration_ms": 0.0,
+          "overlay_url": null
+        },
+        {
+          "step": 3,
+          "tool": "QUALITY_GATE",
+          "reason": "Reframed board: Focus and exposure within limits; lighting shift detected in illumination",
+          "status": "PASSED",
+          "counts_toward_budget": false,
+          "duration_ms": 22.6,
+          "overlay_url": null
+        },
+        {
+          "step": 4,
+          "tool": "PATCHCORE_PERCEPTION",
+          "reason": "Anomaly score 5.378 computed against coreset memory bank",
+          "status": "COMPLETED",
+          "counts_toward_budget": false,
+          "duration_ms": 258.1,
+          "overlay_url": "/api/assets/insp_10039b61_heatmap.jpg"
+        },
+        {
+          "step": 5,
+          "tool": "T4_LIGHT_NORMALIZE",
+          "reason": "Lighting shift detected; compute normalized reference comparison",
+          "status": "COMPLETED",
+          "counts_toward_budget": true,
+          "duration_ms": 0.0,
+          "overlay_url": null
+        },
+        {
+          "step": 6,
+          "tool": "T1_ALIGN_REFERENCE",
+          "reason": "Alignment failed after 5 template(s): low quality 0.144 < 0.50",
+          "status": "FAILED",
+          "counts_toward_budget": true,
+          "duration_ms": 301.9,
+          "overlay_url": "/api/assets/insp_10039b61_reference.jpg"
+        }
+      ],
+      "timing_ms": 659.14,
+      "repeatability": {
+        "runs": 3,
+        "observed": [
+          {
+            "decision": "HUMAN",
+            "decision_path": "ALIGN_FAILED"
+          },
+          {
+            "decision": "HUMAN",
+            "decision_path": "ALIGN_FAILED"
+          },
+          {
+            "decision": "HUMAN",
+            "decision_path": "ALIGN_FAILED"
+          }
+        ],
+        "stable": true
+      }
+    },
+    {
+      "path": "data/real_tests/pcb1_commons/normal_05.jpg",
+      "title": "File:HC04 Ultrasonic module 01.jpg",
+      "description_url": "https://commons.wikimedia.org/wiki/File:HC04_Ultrasonic_module_01.jpg",
+      "license": "CC BY-SA 4.0",
+      "cohort": "primary_front_blue_hc_sr04",
+      "image_sha256": "feaf1b24f87bf546f97da095f96a972aa9ec3dc3646f93daa3ba1cd7748642c0",
+      "image_dhash": "000017060e0c0000",
+      "minimum_frozen_visa_dhash_distance": 17,
+      "ground_truth": "visible_normal_unverified_function",
+      "decision": "HUMAN",
+      "decision_path": "ALIGN_FAILED",
+      "anomaly_score": 4.8073,
+      "steps_used": 2,
+      "step_budget": 4,
+      "quality_gate": {
+        "status": "PASSED",
+        "action": null,
+        "reason": "Focus and exposure within limits; lighting shift detected in illumination",
+        "blur_variance": 418.9117319042826,
+        "blur_threshold": 189.95039166383236,
+        "dark_fraction": 0.01555493914714495,
+        "bright_fraction": 0.014559789073938506,
+        "glare_fraction": 0.04401108391288434,
+        "glare_threshold": 0.10481971153846154,
+        "l_mean": 118.51906656066984,
+        "exposure_ok": true,
+        "lighting_shift_detected": true
+      },
+      "alignment": null,
+      "next_action": {
+        "action": "REVIEW_EVIDENCE",
+        "execution_mode": "recommendation_only",
+        "requires_human_confirmation": true,
+        "external_actuation_performed": false,
+        "reversible": true,
+        "reason": "The agent abstained and routed its evidence trace to a trained reviewer."
+      },
+      "execution_trace": [
+        {
+          "step": 1,
+          "tool": "QUALITY_GATE",
+          "reason": "Glare pixel fraction 0.350 exceeds threshold 0.105",
+          "status": "FAILED",
+          "counts_toward_budget": false,
+          "duration_ms": 7.9,
+          "overlay_url": null
+        },
+        {
+          "step": 2,
+          "tool": "ACQUISITION_NORMALIZE",
+          "reason": "detected PCB reframed onto calibrated dark canvas",
+          "status": "COMPLETED",
+          "counts_toward_budget": false,
+          "duration_ms": 0.0,
+          "overlay_url": null
+        },
+        {
+          "step": 3,
+          "tool": "QUALITY_GATE",
+          "reason": "Reframed board: Focus and exposure within limits; lighting shift detected in illumination",
+          "status": "PASSED",
+          "counts_toward_budget": false,
+          "duration_ms": 16.0,
+          "overlay_url": null
+        },
+        {
+          "step": 4,
+          "tool": "PATCHCORE_PERCEPTION",
+          "reason": "Anomaly score 4.807 computed against coreset memory bank",
+          "status": "COMPLETED",
+          "counts_toward_budget": false,
+          "duration_ms": 273.7,
+          "overlay_url": "/api/assets/insp_5f8ea59d_heatmap.jpg"
+        },
+        {
+          "step": 5,
+          "tool": "T4_LIGHT_NORMALIZE",
+          "reason": "Lighting shift detected; compute normalized reference comparison",
+          "status": "COMPLETED",
+          "counts_toward_budget": true,
+          "duration_ms": 0.0,
+          "overlay_url": null
+        },
+        {
+          "step": 6,
+          "tool": "T1_ALIGN_REFERENCE",
+          "reason": "Alignment failed after 5 template(s): implausible rotation -65.3 deg",
+          "status": "FAILED",
+          "counts_toward_budget": true,
+          "duration_ms": 486.9,
+          "overlay_url": "/api/assets/insp_5f8ea59d_reference.jpg"
+        }
+      ],
+      "timing_ms": 853.75,
+      "repeatability": {
+        "runs": 3,
+        "observed": [
+          {
+            "decision": "HUMAN",
+            "decision_path": "ALIGN_FAILED"
+          },
+          {
+            "decision": "HUMAN",
+            "decision_path": "ALIGN_FAILED"
+          },
+          {
+            "decision": "HUMAN",
+            "decision_path": "ALIGN_FAILED"
+          }
+        ],
+        "stable": true
+      }
+    },
+    {
+      "path": "data/real_tests/pcb1_commons/normal_06.jpg",
+      "title": "File:SparkFun HC-SR04 Ultrasonic-Sensor 13959-01a.jpg",
+      "description_url": "https://commons.wikimedia.org/wiki/File:SparkFun_HC-SR04_Ultrasonic-Sensor_13959-01a.jpg",
+      "license": "CC BY 2.0",
+      "cohort": "supplemental_red_product_variant",
+      "image_sha256": "6ae29c99fe4fd6f1d49a1e2f3cea3f79c914eea926e60fcf75d93ae20c1aa144",
+      "image_dhash": "00383b43090b1300",
+      "minimum_frozen_visa_dhash_distance": 23,
+      "ground_truth": "visible_normal_unverified_function",
+      "decision": "RETAKE",
+      "decision_path": "QUALITY_REJECTED",
+      "anomaly_score": null,
+      "steps_used": 0,
+      "step_budget": 4,
+      "quality_gate": {
+        "status": "FAILED",
+        "action": "REQUEST_RETAKE",
+        "reason": "Bright pixel fraction 0.688 exceeds threshold 0.118; Glare pixel fraction 0.697 exceeds threshold 0.105",
+        "blur_variance": 936.8631166666667,
+        "blur_threshold": 189.95039166383236,
+        "dark_fraction": 0.0024416666666666666,
+        "bright_fraction": 0.6881833333333334,
+        "glare_fraction": 0.6972333333333334,
+        "glare_threshold": 0.10481971153846154,
+        "l_mean": 221.94387777777777,
+        "exposure_ok": false,
+        "lighting_shift_detected": true
+      },
+      "alignment": null,
+      "next_action": {
+        "action": "REQUEST_RETAKE",
+        "execution_mode": "recommendation_only",
+        "requires_human_confirmation": false,
+        "external_actuation_performed": false,
+        "reversible": true,
+        "reason": "Admission checks require a new frame before any defect decision."
+      },
+      "execution_trace": [
+        {
+          "step": 1,
+          "tool": "QUALITY_GATE",
+          "reason": "Bright pixel fraction 0.688 exceeds threshold 0.118; Glare pixel fraction 0.697 exceeds threshold 0.105",
+          "status": "FAILED",
+          "counts_toward_budget": false,
+          "duration_ms": 15.9,
+          "overlay_url": null
+        },
+        {
+          "step": 2,
+          "tool": "ACQUISITION_NORMALIZE",
+          "reason": "detected PCB reframed onto calibrated dark canvas",
+          "status": "COMPLETED",
+          "counts_toward_budget": false,
+          "duration_ms": 0.0,
+          "overlay_url": null
+        },
+        {
+          "step": 3,
+          "tool": "QUALITY_GATE",
+          "reason": "Reframed board: Bright pixel fraction 0.336 exceeds threshold 0.118; Glare pixel fraction 0.344 exceeds threshold 0.105",
+          "status": "FAILED",
+          "counts_toward_budget": false,
+          "duration_ms": 0.0,
+          "overlay_url": null
+        }
+      ],
+      "timing_ms": 30.66,
+      "repeatability": {
+        "runs": 3,
+        "observed": [
+          {
+            "decision": "RETAKE",
+            "decision_path": "QUALITY_REJECTED"
+          },
+          {
+            "decision": "RETAKE",
+            "decision_path": "QUALITY_REJECTED"
+          },
+          {
+            "decision": "RETAKE",
+            "decision_path": "QUALITY_REJECTED"
+          }
+        ],
+        "stable": true
+      }
+    }
+  ]
+}

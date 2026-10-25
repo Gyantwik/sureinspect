@@ -8,11 +8,12 @@ export interface Inspection {
   inspection_id: string; engine: "live" | "mock"; category: string;
   snapshot: { model_version: string; bank_version: string; calibration_version: string; policy_version: string };
   decision: Decision; decision_path: string; suggested_decision: "PASS" | "FAIL" | null;
+  next_action: { action: "CONTINUE_LINE" | "QUARANTINE_PENDING_CONFIRMATION" | "REVIEW_EVIDENCE" | "REQUEST_RETAKE"; execution_mode: "recommendation_only"; requires_human_confirmation: boolean; external_actuation_performed: boolean; reversible: boolean; reason: string };
   anomaly_score: number | null;
   thresholds: { t_pass: number | null; t_fail: number | null; alpha_pass: number; alpha_fail: number; n_calib: number };
   calibration: { status: string; claim: string | null; assumptions: string };
   quality_gate: { status: string; reason: string };
-  alignment: { quality: number; q_min: number; method: string } | null;
+  alignment: { quality: number; q_min: number; method: string; scale?: number | null; overlap?: number | null; translation_px?: [number, number] | null } | null;
   measurements: { residual_mean: number; r_low: number; r_high: number; area_pct: number | null; elongation: number | null; shape_class: string | null; rois_checked: number; rois_total: number } | null;
   assets: { input_standardized: string; reference_aligned: string | null; anomaly_heatmap: string | null; contour_mask: string | null };
   execution_trace: TraceStep[]; steps_used: number; step_budget: number;
