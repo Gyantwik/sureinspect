@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
-P1="Biswabasini90"; P2="Gyantwik"; P3="Khushbu656"
+P1="Biswabasini90"; P2="Gyantwik"; P3="Khushbu656"; P4="K842"
 AUTHOR="${AUTHOR:?}"; BASE="${BASE:?}"; LABELS=",${LABELS:-},"
 case "${AUTHOR,,}" in
   "${P1,,}") OWN='^(core|train|config|data/templates|docs/failure_cases)/' ;;
   "${P2,,}") OWN='^(backend|deploy|eval|data/samples)/|^docs/aws_section\.md$|^core/(degrade|quality_gate)\.py$|^core/tests/test_(degrade|quality_gate)\.py$' ;;
   "${P3,,}") OWN='^(frontend|docs)/' ;;
+  "${P4,,}") OWN='^(deploy)/|^docs/aws_section\.md$' ;;
   *) echo "Unknown author: $AUTHOR"; exit 1 ;;
 esac
 SHARED='^(README\.md|TEAM_SYNC\.md|requirements[^/]*\.txt|\.gitignore|\.gitattributes|\.dockerignore|\.env\.example)$|^\.github/'
